@@ -18,16 +18,16 @@
             <div class="modal-content">
               <h3>Add New Book</h3>
               <div class="form-group">
-                <label>Title</label>
-                <input type="text" [(ngModel)]="newBook.title">
+                <label for="bookTitle">Title</label>
+                <input id="bookTitle" type="text" [(ngModel)]="newBook.title">
               </div>
               <div class="form-group">
-                <label>Author</label>
-                <input type="text" [(ngModel)]="newBook.author">
+                <label for="bookAuthor">Author</label>
+                <input id="bookAuthor" type="text" [(ngModel)]="newBook.author">
               </div>
               <div class="form-group">
-                <label>Price</label>
-                <input type="number" [(ngModel)]="newBook.price">
+                <label for="bookPrice">Price</label>
+                <input id="bookPrice" type="number" [(ngModel)]="newBook.price">
               </div>
               <div class="form-actions">
                 <button (click)="addBook()">Save</button>

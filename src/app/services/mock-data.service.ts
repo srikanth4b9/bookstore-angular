@@ -1,90 +1,22 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Book, Category, CartItem, User, UserRole, Order, OrderStatus, Address } from '../models/models';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Book, Category, CartItem, User, UserRole, Order, Address } from '../models/models';
+import { firstValueFrom } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockDataService {
-  // --- BOOKS ---
-  private _books = signal<Book[]>([
-    {
-      id: '1',
-      title: 'The Great Gatsby',
-      author: 'F. Scott Fitzgerald',
-      description: 'A novel set in the Roaring Twenties that tells the story of the mysterious Jay Gatsby and his obsession with the beautiful Daisy Buchanan.',
-      price: 15.99,
-      availability: true,
-      stock: 50,
-      category: 'Fiction',
-      genre: ['Classic', 'Literary Fiction'],
-      isbn: '9780743273565',
-      rating: 4.5,
-      reviews: [],
-      imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1490528560i/4671.jpg',
-      createdAt: new Date('2024-01-01')
-    },
-    {
-      id: '2',
-      title: 'Clean Code',
-      author: 'Robert C. Martin',
-      description: 'A Handbook of Agile Software Craftsmanship.',
-      price: 45.00,
-      availability: true,
-      stock: 20,
-      category: 'Technology',
-      genre: ['Software Development', 'Programming'],
-      isbn: '9780132350884',
-      rating: 4.8,
-      reviews: [],
-      imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1436202607i/3735293.jpg',
-      createdAt: new Date('2024-01-15')
-    },
-    {
-        id: '3',
-        title: 'To Kill a Mockingbird',
-        author: 'Harper Lee',
-        description: 'The unforgettable novel of a childhood in a sleepy Southern town and the crisis of conscience that rocked it.',
-        price: 12.99,
-        availability: true,
-        stock: 35,
-        category: 'Fiction',
-        genre: ['Classic', 'Southern Gothic'],
-        isbn: '9780061120084',
-        rating: 4.9,
-        reviews: [],
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1553383690i/2657.jpg',
-        createdAt: new Date('2024-02-01')
-      },
-      {
-        id: '4',
-        title: 'Sapiens: A Brief History of Humankind',
-        author: 'Yuval Noah Harari',
-        description: 'Earth is 4.5 billion years old. In just a fraction of that time, one species among countless others has conquered it: us. We are the most advanced and most destructive animals ever to have lived.',
-        price: 22.50,
-        availability: true,
-        stock: 15,
-        category: 'Non-fiction',
-        genre: ['History', 'Anthropology'],
-        isbn: '9780062316097',
-        rating: 4.7,
-        reviews: [],
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1595674533i/23692271.jpg',
-        createdAt: new Date('2024-02-10')
-      }
-  ]);
+  private http = inject(HttpClient);
+  private apiUrl = API_CONFIG.baseUrl;
 
+  // --- BOOKS ---
+  private _books = signal<Book[]>([]);
   readonly books = this._books.asReadonly();
 
   // --- CATEGORIES ---
-  private _categories = signal<Category[]>([
-    { id: '1', name: 'Fiction' },
-    { id: '2', name: 'Non-fiction' },
-    { id: '3', name: 'Technology' },
-    { id: '4', name: 'Science' },
-    { id: '5', name: 'Kids' },
-    { id: '6', name: 'Education' }
-  ]);
-
+  private _categories = signal<Category[]>([]);
   readonly categories = this._categories.asReadonly();
 
   // --- USER ---
@@ -114,10 +46,25 @@ export class MockDataService {
   readonly orders = this._orders.asReadonly();
 
   constructor() {
-    // Intentionally empty for mock data service
+    this.fetchInitialData();
   }
 
-  // Methods to interact with mock data
+  private async fetchInitialData() {
+    try {
+      const booksData = await firstValueFrom(this.http.get<Book[]>(`${this.apiUrl}/books`));
+      this._books.set(booksData);
+
+      const categoriesData = await firstValueFrom(this.http.get<Category[]>(`${this.apiUrl}/categories`));
+      this._categories.set(categoriesData);
+
+      const ordersData = await firstValueFrom(this.http.get<Order[]>(`${this.apiUrl}/orders`));
+      this._orders.set(ordersData);
+    } catch (error) {
+      console.error('Error fetching initial data:', error);
+    }
+  }
+
+  // Methods to interact with data
   addToCart(book: Book) {
     this._cart.update(items => {
       const existing = items.find(i => i.bookId === book.id);
@@ -147,19 +94,41 @@ export class MockDataService {
     this._cart.update(items => items.map(i => i.id === itemId ? { ...i, quantity } : i));
   }
 
-  placeOrder(address: Address, paymentMethod: string) {
-    const newOrder: Order = {
-      id: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+  async placeOrder(address: Address, paymentMethod: string) {
+    const orderData = {
       userId: this._currentUser()?.id || 'guest',
       items: [...this._cart()],
       total: this.cartSubtotal(),
       shippingAddress: address,
       paymentMethod,
-      status: OrderStatus.PENDING,
-      orderDate: new Date()
     };
-    this._orders.update(orders => [newOrder, ...orders]);
-    this._cart.set([]);
-    return newOrder;
+
+    try {
+      const newOrder = await firstValueFrom(this.http.post<Order>(`${this.apiUrl}/orders`, orderData));
+      this._orders.update(orders => [newOrder, ...orders]);
+      this._cart.set([]);
+      return newOrder;
+    } catch (error) {
+      console.error('Error placing order:', error);
+      throw error;
+    }
+  }
+
+  // Admin methods
+  async addBook(book: Partial<Book>) {
+    const newBook = await firstValueFrom(this.http.post<Book>(`${this.apiUrl}/books`, book));
+    this._books.update(books => [...books, newBook]);
+    return newBook;
+  }
+
+  async updateBook(id: string, book: Partial<Book>) {
+    const updatedBook = await firstValueFrom(this.http.put<Book>(`${this.apiUrl}/books/${id}`, book));
+    this._books.update(books => books.map(b => b.id === id ? updatedBook : b));
+    return updatedBook;
+  }
+
+  async deleteBook(id: string) {
+    await firstValueFrom(this.http.delete(`${this.apiUrl}/books/${id}`));
+    this._books.update(books => books.filter(b => b.id !== id));
   }
 }

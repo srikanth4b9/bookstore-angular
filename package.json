@@ -8,7 +8,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "lint:fix": "ng lint --fix"
+    "lint:server": "eslint server/**/*.ts",
+    "lint:all": "npm run lint && npm run lint:server",
+    "lint:fix": "ng lint --fix",
+    "lint:fix:server": "eslint server/**/*.ts --fix",
+    "lint:fix:all": "npm run lint:fix && npm run lint:fix:server"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -29,6 +33,9 @@
     "@eslint/js": "^10.0.1",
     "angular-eslint": "21.3.0",
     "eslint": "^10.0.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-n": "^17.24.0",
+    "eslint-plugin-promise": "^7.2.1",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",

@@ -2,12 +2,12 @@
   <aside class="filters">
     <h3>Filters</h3>
     <div class="filter-group">
-      <label>Search</label>
-      <input type="text" [(ngModel)]="searchTerm" placeholder="Title, author, ISBN...">
+      <label for="searchInput">Search</label>
+      <input id="searchInput" type="text" [(ngModel)]="searchTerm" placeholder="Title, author, ISBN...">
     </div>
     <div class="filter-group">
-      <label>Category</label>
-      <select [(ngModel)]="selectedCategory">
+      <label for="categorySelect">Category</label>
+      <select id="categorySelect" [(ngModel)]="selectedCategory">
         <option value="">All Categories</option>
         @for (cat of categories(); track cat.id) {
           <option [value]="cat.name">{{ cat.name }}</option>
@@ -15,8 +15,8 @@
       </select>
     </div>
     <div class="filter-group">
-      <label>Sort By</label>
-      <select [(ngModel)]="sortBy">
+      <label for="sortSelect">Sort By</label>
+      <select id="sortSelect" [(ngModel)]="sortBy">
         <option value="price-asc">Price: Low to High</option>
         <option value="price-desc">Price: High to Low</option>
         <option value="rating">Top Rated</option>
