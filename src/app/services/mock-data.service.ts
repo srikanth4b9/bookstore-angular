@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Book, Category, Review, CartItem, Cart, User, UserRole, Order, OrderStatus, Address } from '../models/models';
+import { Book, Category, CartItem, User, UserRole, Order, OrderStatus, Address } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -113,7 +113,9 @@ export class MockDataService {
   private _orders = signal<Order[]>([]);
   readonly orders = this._orders.asReadonly();
 
-  constructor() {}
+  constructor() {
+    // Intentionally empty for mock data service
+  }
 
   // Methods to interact with mock data
   addToCart(book: Book) {
