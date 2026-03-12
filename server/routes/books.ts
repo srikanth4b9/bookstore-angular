@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { Router } from 'express';
 import { BookModel } from '../models/book.model.js';
 import { logger } from '../utils/logger.js';
-import type { FilterQuery } from 'mongoose';
+import mongoose from 'mongoose';
 import type { Book } from '../types/models.js';
 import { bookQuerySchema, bookCreateSchema } from '../validation/book.validation.js';
 
@@ -14,7 +14,7 @@ const validateQuery = (req: Request, res: Response, next: NextFunction) => {
   if (error) {
     return res.status(400).json({ message: 'Validation Error', errors: error.details });
   }
-  req.query = value;
+  // No re-assignment of req.query as it's read-only in Express 5
   return next();
 };
 
@@ -23,7 +23,7 @@ const validateBody = (req: Request, res: Response, next: NextFunction) => {
   if (error) {
     return res.status(400).json({ message: 'Validation Error', errors: error.details });
   }
-  req.body = value;
+  // No re-assignment of req.body as it's read-only in Express 5
   return next();
 };
 
@@ -43,7 +43,7 @@ router.get('/', validateQuery, async (req: Request, res: Response) => {
     const { page, limit, search, category, minPrice, maxPrice, minRating, sortBy, sortOrder } = queryData;
     const skip = (page - 1) * limit;
 
-    const query: FilterQuery<Book> = {};
+    const query: any = {};
 
     // Search functionality
     if (search) {
@@ -94,7 +94,7 @@ router.get('/', validateQuery, async (req: Request, res: Response) => {
 
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const book = await BookModel.findOne({ id: req.params.id });
+    const book = await BookModel.findOne({ id: req.params['id'] as string });
     if (book) {
       res.json(book);
     } else {
@@ -125,7 +125,7 @@ router.post('/', validateBody, async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
   try {
     const updatedBook = await BookModel.findOneAndUpdate(
-      { id: req.params.id },
+      { id: req.params['id'] as string },
       { $set: req.body },
       { new: true }
     );
@@ -142,7 +142,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const result = await BookModel.deleteOne({ id: req.params.id });
+    const result = await BookModel.deleteOne({ id: req.params['id'] as string });
     if (result.deletedCount > 0) {
       res.status(204).send();
     } else {
