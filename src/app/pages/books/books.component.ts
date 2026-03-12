@@ -3,6 +3,7 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { MockDataService } from '../../services/mock-data.service';
+import { Book } from '../../models/models';
 
 @Component({
   selector: 'app-books',
@@ -58,7 +59,7 @@ export class BooksComponent {
     return books;
   });
 
-  addToCart(book: any) {
+  addToCart(book: Book) {
     this.mockData.addToCart(book);
     alert(`${book.title} added to cart!`);
   }
