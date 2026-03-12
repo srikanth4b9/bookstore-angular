@@ -2,13 +2,37 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatListModule } from '@angular/material/list';
 import { MockDataService } from '../../services/mock-data.service';
 import { Address } from '../../models/models';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [RouterLink, FormsModule, CurrencyPipe],
+  imports: [
+    RouterLink,
+    FormsModule,
+    CurrencyPipe,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatRadioModule,
+    MatStepperModule,
+    MatIconModule,
+    MatDividerModule,
+    MatListModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
@@ -18,6 +42,7 @@ export class CheckoutComponent {
 
   cartItems = this.mockData.cartItems;
   subtotal = this.mockData.cartSubtotal;
+  isLoading = this.mockData.isLoading;
 
   address: Address = {
     id: '',

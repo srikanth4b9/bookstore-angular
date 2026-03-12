@@ -1,83 +1,159 @@
-@use 'sass:color';
 @use 'styles/variables' as vars;
 @use 'styles/mixins';
 
-.hero {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-  background-size: cover;
-  background-position: center;
-  color: vars.$white;
+.home-page {
+  display: flex;
+  flex-direction: column;
 }
 
-.cta-button {
-  display: inline-block;
-  margin-top: 1rem;
-  @include mixins.button-base;
-  background: vars.$primary-color;
+.hero-section {
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   color: vars.$white;
-  font-weight: bold;
+  padding: 2rem;
 
-  &:hover {
-    background: color.adjust(vars.$primary-color, $lightness: -10%);
+  .hero-content {
+    max-width: 800px;
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1px;
+
+      @media (max-width: 768px) {
+        font-size: 2.5rem;
+      }
+    }
+
+    p {
+      font-size: 1.5rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+      }
+    }
+
+    .cta-btn {
+      padding: 0.5rem 2rem;
+      height: 56px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
   }
 }
 
-.section {
-  padding: 2rem;
+.featured-section {
+  padding: 4rem 0;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h2 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+  }
 }
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 2rem;
 }
 
 .book-card {
-  border: 1px solid vars.$border-color;
-  padding: 1rem;
-  border-radius: vars.$border-radius * 2;
-  text-align: center;
-}
-
-.book-card img {
-  max-width: 100%;
-  height: 250px;
-  object-fit: cover;
-  margin-bottom: 1rem;
-}
-
-.price {
-  font-weight: bold;
-  color: #e67e22;
-}
-
-.view-btn {
-  display: block;
-  margin-top: 0.5rem;
-  @include mixins.button-base;
-  background: vars.$dark-color;
-  color: vars.$white;
-  text-decoration: none;
-}
-
-.category-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.category-card {
-  padding: 1rem 2rem;
-  background: vars.$light-color;
-  border-radius: vars.$border-radius;
-  text-decoration: none;
-  color: vars.$text-main;
-  transition: background 0.3s, color 0.3s;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 
   &:hover {
-    background: vars.$primary-color;
-    color: vars.$white;
+    transform: translateY(-10px);
+  }
+
+  img {
+    height: 350px;
+    object-fit: cover;
+  }
+
+  mat-card-content {
+    padding: 1rem;
+    text-align: center;
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .author {
+      color: vars.$text-muted;
+      margin-bottom: 0.5rem;
+    }
+
+    .price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: vars.$primary-color;
+    }
+  }
+}
+
+.categories-section {
+  padding: 4rem 0;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .category-card {
+    text-decoration: none;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    mat-card-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem !important;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+      }
+
+      span {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: vars.$text-main;
+      }
+    }
   }
 }

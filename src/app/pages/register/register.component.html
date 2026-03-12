@@ -1,23 +1,37 @@
-<div class="auth-page">
-  <div class="auth-card">
-    <h1>Register</h1>
-    <form (submit)="register()">
-      <div class="form-group">
-        <label for="nameInput">Full Name</label>
-        <input id="nameInput" type="text" [(ngModel)]="name" name="name" required>
-      </div>
-      <div class="form-group">
-        <label for="emailInput">Email</label>
-        <input id="emailInput" type="email" [(ngModel)]="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label for="passwordInput">Password</label>
-        <input id="passwordInput" type="password" [(ngModel)]="password" name="password" required>
-      </div>
-      <button type="submit" class="auth-btn">Register</button>
-    </form>
-    <p class="switch-auth">
-      Already have an account? <a routerLink="/login">Login here</a>
-    </p>
-  </div>
+<div class="auth-page flex-center">
+  <mat-card class="auth-card shadow">
+    <mat-card-header>
+      <mat-card-title>Register</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (submit)="register()" class="auth-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Full Name</mat-label>
+          <input matInput id="nameInput" type="text" [(ngModel)]="name" name="name" required placeholder="John Doe">
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput id="emailInput" type="email" [(ngModel)]="email" name="email" required placeholder="john@example.com">
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput id="passwordInput" [type]="hide ? 'password' : 'text'" [(ngModel)]="password" name="password" required>
+          <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" class="auth-btn">REGISTER</button>
+      </form>
+    </mat-card-content>
+    <mat-card-footer>
+      <p class="switch-auth">
+        Already have an account? <a routerLink="/login">Login here</a>
+      </p>
+    </mat-card-footer>
+  </mat-card>
 </div>
