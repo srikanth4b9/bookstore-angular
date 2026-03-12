@@ -44,11 +44,15 @@ export class CheckoutComponent {
     return this.address.street && this.address.city && this.address.zipCode;
   }
 
-  placeOrder() {
+  async placeOrder() {
     if (this.isFormValid()) {
-      const order = this.mockData.placeOrder(this.address, this.paymentMethod);
-      this.lastOrderId.set(order.id);
-      this.orderPlaced.set(true);
+      try {
+        const order = await this.mockData.placeOrder(this.address, this.paymentMethod);
+        this.lastOrderId.set(order.id);
+        this.orderPlaced.set(true);
+      } catch {
+        alert('Failed to place order. Please try again.');
+      }
     }
   }
 }
