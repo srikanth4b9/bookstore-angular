@@ -1,0 +1,54 @@
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CurrencyPipe } from '@angular/common';
+import { MockDataService } from '../../services/mock-data.service';
+import { Address } from '../../models/models';
+
+@Component({
+  selector: 'app-checkout',
+  standalone: true,
+  imports: [RouterLink, FormsModule, CurrencyPipe],
+  templateUrl: './checkout.component.html',
+  styleUrl: './checkout.component.scss'
+})
+export class CheckoutComponent {
+  private mockData = inject(MockDataService);
+  private router = inject(Router);
+
+  cartItems = this.mockData.cartItems;
+  subtotal = this.mockData.cartSubtotal;
+
+  address: Address = {
+    id: '',
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+    isDefault: false
+  };
+
+  paymentMethod = 'Credit Card';
+  orderPlaced = signal(false);
+  lastOrderId = signal('');
+
+  constructor() {
+    const user = this.mockData.currentUser();
+    if (user && user.addresses.length > 0) {
+      this.address = { ...user.addresses[0] };
+    }
+  }
+
+  isFormValid() {
+    return this.address.street && this.address.city && this.address.zipCode;
+  }
+
+  placeOrder() {
+    if (this.isFormValid()) {
+      const order = this.mockData.placeOrder(this.address, this.paymentMethod);
+      this.lastOrderId.set(order.id);
+      this.orderPlaced.set(true);
+    }
+  }
+}

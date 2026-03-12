@@ -1,0 +1,47 @@
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.auth-page {
+  @include mixins.flex-center;
+  min-height: 70vh;
+}
+
+.auth-card {
+  background: vars.$white;
+  padding: 2rem;
+  border-radius: vars.$border-radius * 2;
+  @include mixins.shadow;
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$border-radius;
+  }
+}
+
+.auth-btn {
+  @include mixins.button-base;
+  width: 100%;
+  padding: 0.75rem;
+  background: vars.$primary-color;
+  color: vars.$white;
+  margin-top: 1rem;
+}
+
+.switch-auth {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}

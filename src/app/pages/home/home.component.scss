@@ -1,0 +1,83 @@
+@use 'sass:color';
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+  background-size: cover;
+  background-position: center;
+  color: vars.$white;
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 1rem;
+  @include mixins.button-base;
+  background: vars.$primary-color;
+  color: vars.$white;
+  font-weight: bold;
+
+  &:hover {
+    background: color.adjust(vars.$primary-color, $lightness: -10%);
+  }
+}
+
+.section {
+  padding: 2rem;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.book-card {
+  border: 1px solid vars.$border-color;
+  padding: 1rem;
+  border-radius: vars.$border-radius * 2;
+  text-align: center;
+}
+
+.book-card img {
+  max-width: 100%;
+  height: 250px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-weight: bold;
+  color: #e67e22;
+}
+
+.view-btn {
+  display: block;
+  margin-top: 0.5rem;
+  @include mixins.button-base;
+  background: vars.$dark-color;
+  color: vars.$white;
+  text-decoration: none;
+}
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.category-card {
+  padding: 1rem 2rem;
+  background: vars.$light-color;
+  border-radius: vars.$border-radius;
+  text-decoration: none;
+  color: vars.$text-main;
+  transition: background 0.3s, color 0.3s;
+
+  &:hover {
+    background: vars.$primary-color;
+    color: vars.$white;
+  }
+}

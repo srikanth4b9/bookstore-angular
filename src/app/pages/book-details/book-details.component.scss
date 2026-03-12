@@ -1,0 +1,92 @@
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.book-details {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.book-main {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.book-cover {
+  width: 100%;
+  border-radius: vars.$border-radius * 2;
+  @include mixins.shadow;
+}
+
+.book-info h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.author {
+  font-size: 1.2rem;
+  color: vars.$text-muted;
+  margin-bottom: 1rem;
+}
+
+.rating {
+  color: vars.$warning-color;
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #e67e22;
+  margin-bottom: 1rem;
+}
+
+.availability {
+  font-weight: bold;
+  color: vars.$success-color;
+  margin-bottom: 2rem;
+
+  &.out-of-stock {
+    color: vars.$danger-color;
+  }
+}
+
+.add-btn {
+  @include mixins.button-base;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background: vars.$success-color;
+  color: vars.$white;
+  margin-bottom: 2rem;
+
+  &:disabled {
+    background: vars.$secondary-color;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.meta p {
+  margin-bottom: 0.5rem;
+  color: vars.$text-main;
+}
+
+.description, .reviews {
+  border-top: 1px solid vars.$border-color;
+  padding-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+.review-card {
+  padding: 1rem;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$border-radius;
+  margin-bottom: 1rem;
+}
+
+.review-header {
+  @include mixins.flex-between;
+  margin-bottom: 0.5rem;
+}

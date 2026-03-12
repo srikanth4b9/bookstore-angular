@@ -1,0 +1,96 @@
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.books-page {
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.filters {
+  width: 250px;
+  padding: 1rem;
+  background: vars.$light-color;
+  border-radius: vars.$border-radius * 2;
+  height: fit-content;
+}
+
+.filter-group {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$border-radius;
+  }
+}
+
+.book-list {
+  flex: 1;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.book-card {
+  border: 1px solid vars.$border-color;
+  padding: 1rem;
+  border-radius: vars.$border-radius * 2;
+  text-align: center;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+    @include mixins.shadow;
+  }
+
+  img {
+    max-width: 100%;
+    height: 250px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+  }
+}
+
+.price {
+  font-weight: bold;
+  color: #e67e22; // Keep this specific color or use a variable if defined
+  margin: 0.5rem 0;
+}
+
+.rating {
+  margin-bottom: 1rem;
+  color: vars.$warning-color;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn, .add-btn {
+  flex: 1;
+  @include mixins.button-base;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.view-btn {
+  background: vars.$dark-color;
+  color: vars.$white;
+}
+
+.add-btn {
+  background: vars.$success-color;
+  color: vars.$white;
+}

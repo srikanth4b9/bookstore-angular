@@ -1,0 +1,74 @@
+<div class="checkout-page">
+  <h1>Checkout</h1>
+
+  @if (orderPlaced()) {
+    <div class="success-message">
+      <h2>Order Placed Successfully!</h2>
+      <p>Your order ID is: <strong>{{ lastOrderId() }}</strong></p>
+      <a routerLink="/account" class="btn">View My Orders</a>
+    </div>
+  } @else {
+    <div class="checkout-container">
+      <div class="checkout-form">
+        <section>
+          <h3>Shipping Address</h3>
+          <div class="form-group">
+            <label>Street</label>
+            <input type="text" [(ngModel)]="address.street">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" [(ngModel)]="address.city">
+            </div>
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" [(ngModel)]="address.state">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Zip Code</label>
+              <input type="text" [(ngModel)]="address.zipCode">
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <input type="text" [(ngModel)]="address.country">
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Payment Options</h3>
+          <div class="payment-methods">
+            <label>
+              <input type="radio" name="payment" value="Credit Card" [(ngModel)]="paymentMethod" checked>
+              Credit Card
+            </label>
+            <label>
+              <input type="radio" name="payment" value="PayPal" [(ngModel)]="paymentMethod">
+              PayPal
+            </label>
+          </div>
+        </section>
+
+        <button class="place-order-btn" (click)="placeOrder()" [disabled]="!isFormValid()">Place Order</button>
+      </div>
+
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        @for (item of cartItems(); track item.id) {
+          <div class="summary-item">
+            <span>{{ item.quantity }}x {{ item.bookTitle }}</span>
+            <span>{{ (item.bookPrice * item.quantity) | currency }}</span>
+          </div>
+        }
+        <hr>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>{{ subtotal() | currency }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

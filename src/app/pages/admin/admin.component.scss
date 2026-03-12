@@ -1,0 +1,124 @@
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.admin-page {
+  @include mixins.container;
+  margin: 2rem auto;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid vars.$border-color;
+  padding-bottom: 1rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &.active {
+      color: vars.$primary-color;
+      font-weight: bold;
+      border-bottom: 2px solid vars.$primary-color;
+    }
+  }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid vars.$border-color;
+  }
+
+  th {
+    background: vars.$light-color;
+  }
+}
+
+.add-btn {
+  @include mixins.button-base;
+  background: vars.$success-color;
+  color: vars.$white;
+  margin-bottom: 1rem;
+}
+
+.edit-btn {
+  color: vars.$primary-color;
+  background: none;
+  border: none;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.delete-btn {
+  color: vars.$danger-color;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.stat-card {
+  background: vars.$white;
+  padding: 2rem;
+  border-radius: vars.$border-radius * 2;
+  @include mixins.shadow;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: vars.$dark-color;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  @include mixins.flex-center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: vars.$white;
+  padding: 2rem;
+  border-radius: vars.$border-radius * 2;
+  width: 400px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$border-radius;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}

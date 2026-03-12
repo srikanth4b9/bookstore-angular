@@ -1,0 +1,48 @@
+@if (book(); as b) {
+  <div class="book-details">
+    <div class="book-main">
+      <img [src]="b.imageUrl" [alt]="b.title" class="book-cover">
+      <div class="book-info">
+        <h1>{{ b.title }}</h1>
+        <p class="author">by {{ b.author }}</p>
+        <div class="rating">⭐ {{ b.rating }} ({{ b.reviews.length }} reviews)</div>
+        <p class="price">{{ b.price | currency }}</p>
+        <p class="availability" [class.out-of-stock]="!b.availability">
+          {{ b.availability ? 'In Stock (' + b.stock + ' available)' : 'Out of Stock' }}
+        </p>
+        <div class="actions">
+          <button [disabled]="!b.availability" (click)="addToCart(b)" class="add-btn">Add to Cart</button>
+        </div>
+        <div class="meta">
+          <p><strong>ISBN:</strong> {{ b.isbn }}</p>
+          <p><strong>Category:</strong> {{ b.category }}</p>
+          <p><strong>Genres:</strong> {{ b.genre.join(', ') }}</p>
+        </div>
+      </div>
+    </div>
+    <section class="description">
+      <h2>Description</h2>
+      <p>{{ b.description }}</p>
+    </section>
+    <section class="reviews">
+      <h2>Customer Reviews</h2>
+      @for (review of b.reviews; track review.id) {
+        <div class="review-card">
+          <div class="review-header">
+            <strong>{{ review.userName }}</strong>
+            <span>⭐ {{ review.rating }}</span>
+          </div>
+          <p>{{ review.comment }}</p>
+          <small>{{ review.date | date }}</small>
+        </div>
+      } @empty {
+        <p>No reviews yet. Be the first to review this book!</p>
+      }
+    </section>
+  </div>
+} @else {
+  <div class="not-found">
+    <p>Book not found.</p>
+    <a routerLink="/books">Back to Books</a>
+  </div>
+}

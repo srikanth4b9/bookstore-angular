@@ -1,0 +1,35 @@
+<div class="home-container">
+  <header class="hero">
+    <h1>Welcome to BookStore</h1>
+    <p>Find your next favorite book here.</p>
+    <a routerLink="/books" class="cta-button">Browse Books</a>
+  </header>
+
+  <section class="featured-sections">
+    <div class="section">
+      <h2>Featured Books</h2>
+      <div class="book-grid">
+        @for (book of featuredBooks(); track book.id) {
+          <div class="book-card">
+            <img [src]="book.imageUrl" [alt]="book.title">
+            <h3>{{ book.title }}</h3>
+            <p>{{ book.author }}</p>
+            <p class="price">{{ book.price | currency }}</p>
+            <a [routerLink]="['/books', book.id]" class="view-btn">View Details</a>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Categories</h2>
+      <div class="category-grid">
+        @for (cat of categories(); track cat.id) {
+          <a [routerLink]="['/books']" [queryParams]="{category: cat.name}" class="category-card">
+            {{ cat.name }}
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+</div>

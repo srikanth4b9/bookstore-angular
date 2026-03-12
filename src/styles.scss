@@ -1,0 +1,76 @@
+@use 'sass:color';
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: vars.$font-family-sans-serif;
+  line-height: 1.6;
+  color: vars.$text-main;
+  background-color: vars.$white;
+}
+
+h1, h2, h3 {
+  margin-bottom: 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: vars.$primary-color;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.container {
+  @include mixins.container;
+}
+
+// Reusable Utility Classes
+.btn {
+  @include mixins.button-base;
+
+  &-primary {
+    background-color: vars.$primary-color;
+    color: vars.$white;
+    &:hover {
+      background-color: color.adjust(vars.$primary-color, $lightness: -10%);
+    }
+  }
+
+  &-secondary {
+    background-color: vars.$secondary-color;
+    color: vars.$white;
+    &:hover {
+      background-color: color.adjust(vars.$secondary-color, $lightness: -10%);
+    }
+  }
+
+  &-danger {
+    background-color: vars.$danger-color;
+    color: vars.$white;
+    &:hover {
+      background-color: color.adjust(vars.$danger-color, $lightness: -10%);
+    }
+  }
+}
+
+.shadow {
+  @include mixins.shadow;
+}
+
+.flex-center {
+  @include mixins.flex-center;
+}
+
+.flex-between {
+  @include mixins.flex-between;
+}

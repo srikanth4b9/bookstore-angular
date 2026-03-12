@@ -1,0 +1,118 @@
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.cart-page {
+  @include mixins.container;
+  margin: 2rem auto;
+}
+
+.cart-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+}
+
+.cart-items {
+  background: vars.$white;
+  border-radius: vars.$border-radius * 2;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 100px;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid vars.$border-color;
+  align-items: center;
+
+  img {
+    width: 100%;
+    border-radius: vars.$border-radius;
+  }
+}
+
+.item-details h3 {
+  margin-bottom: 0.5rem;
+}
+
+.price {
+  color: #e67e22;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.quantity-controls {
+  @include mixins.flex-center;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid vars.$border-color;
+    background: vars.$white;
+    border-radius: vars.$border-radius;
+    @include mixins.flex-center;
+  }
+}
+
+.remove-btn {
+  color: vars.$danger-color;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.item-total {
+  font-weight: bold;
+  text-align: right;
+}
+
+.cart-summary {
+  background: vars.$light-color;
+  padding: 1.5rem;
+  border-radius: vars.$border-radius * 2;
+  height: fit-content;
+}
+
+.summary-row {
+  @include mixins.flex-between;
+  margin-bottom: 1rem;
+}
+
+.total {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.checkout-btn {
+  @include mixins.button-base;
+  width: 100%;
+  padding: 1rem;
+  background: vars.$success-color;
+  color: vars.$white;
+  margin-top: 1rem;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 4rem;
+}
+
+.browse-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  @include mixins.button-base;
+  background: vars.$primary-color;
+  color: vars.$white;
+  text-decoration: none;
+}
