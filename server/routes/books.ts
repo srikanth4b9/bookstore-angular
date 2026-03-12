@@ -1,14 +1,91 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { Router } from 'express';
 import { BookModel } from '../models/book.model.js';
 import { logger } from '../utils/logger.js';
+import type { FilterQuery } from 'mongoose';
+import type { Book } from '../types/models.js';
+import { bookQuerySchema, bookCreateSchema } from '../validation/book.validation.js';
 
 const router = Router();
 
-router.get('/', async (req: Request, res: Response) => {
+// Validation middleware
+const validateQuery = (req: Request, res: Response, next: NextFunction) => {
+  const { error, value } = bookQuerySchema.validate(req.query, { abortEarly: false, stripUnknown: true });
+  if (error) {
+    return res.status(400).json({ message: 'Validation Error', errors: error.details });
+  }
+  req.query = value;
+  return next();
+};
+
+const validateBody = (req: Request, res: Response, next: NextFunction) => {
+  const { error, value } = bookCreateSchema.validate(req.body, { abortEarly: false, stripUnknown: true });
+  if (error) {
+    return res.status(400).json({ message: 'Validation Error', errors: error.details });
+  }
+  req.body = value;
+  return next();
+};
+
+router.get('/', validateQuery, async (req: Request, res: Response) => {
   try {
-    const books = await BookModel.find().sort({ createdAt: -1 });
-    res.json(books);
+    const queryData = req.query as unknown as {
+      page: number;
+      limit: number;
+      search?: string;
+      category?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      minRating?: number;
+      sortBy: string;
+      sortOrder: 'asc' | 'desc';
+    };
+    const { page, limit, search, category, minPrice, maxPrice, minRating, sortBy, sortOrder } = queryData;
+    const skip = (page - 1) * limit;
+
+    const query: FilterQuery<Book> = {};
+
+    // Search functionality
+    if (search) {
+      query.$text = { $search: search };
+    }
+
+    // Category filter
+    if (category) {
+      query.category = category;
+    }
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = minPrice;
+      if (maxPrice) query.price.$lte = maxPrice;
+    }
+
+    // Rating filter
+    if (minRating) {
+      query.rating = { $gte: minRating };
+    }
+
+    // Sorting
+    const sort: Record<string, 1 | -1> = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+
+    const books = await BookModel.find(query)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await BookModel.countDocuments(query);
+
+    res.json({
+      books,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     logger.error('Error fetching books:', error);
     res.status(500).json({ message: 'Error fetching books' });
@@ -29,7 +106,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', validateBody, async (req: Request, res: Response) => {
   try {
     const newBookData = {
       ...req.body,

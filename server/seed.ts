@@ -9,73 +9,6 @@ dotenv.config();
 
 const MONGODB_URI = process.env['MONGODB_URI'] || 'mongodb://localhost:27017/bookstore';
 
-const initialBooks: Book[] = [
-  {
-    id: '1',
-    title: 'The Great Gatsby',
-    author: 'F. Scott Fitzgerald',
-    description: 'A novel set in the Roaring Twenties that tells the story of the mysterious Jay Gatsby and his obsession with the beautiful Daisy Buchanan.',
-    price: 15.99,
-    availability: true,
-    stock: 50,
-    category: 'Fiction',
-    genre: ['Classic', 'Literary Fiction'],
-    isbn: '9780743273565',
-    rating: 4.5,
-    reviews: [],
-    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1490528560i/4671.jpg',
-    createdAt: new Date('2024-01-01')
-  },
-  {
-    id: '2',
-    title: 'Clean Code',
-    author: 'Robert C. Martin',
-    description: 'A Handbook of Agile Software Craftsmanship.',
-    price: 45.00,
-    availability: true,
-    stock: 20,
-    category: 'Technology',
-    genre: ['Software Development', 'Programming'],
-    isbn: '9780132350884',
-    rating: 4.8,
-    reviews: [],
-    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1436202607i/3735293.jpg',
-    createdAt: new Date('2024-01-15')
-  },
-  {
-    id: '3',
-    title: 'To Kill a Mockingbird',
-    author: 'Harper Lee',
-    description: 'The unforgettable novel of a childhood in a sleepy Southern town and the crisis of conscience that rocked it.',
-    price: 12.99,
-    availability: true,
-    stock: 35,
-    category: 'Fiction',
-    genre: ['Classic', 'Southern Gothic'],
-    isbn: '9780061120084',
-    rating: 4.9,
-    reviews: [],
-    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1553383690i/2657.jpg',
-    createdAt: new Date('2024-02-01')
-  },
-  {
-    id: '4',
-    title: 'Sapiens: A Brief History of Humankind',
-    author: 'Yuval Noah Harari',
-    description: 'Earth is 4.5 billion years old. In just a fraction of that time, one species among countless others has conquered it: us. We are the most advanced and most destructive animals ever to have lived.',
-    price: 22.50,
-    availability: true,
-    stock: 15,
-    category: 'Non-fiction',
-    genre: ['History', 'Anthropology'],
-    isbn: '9780062316097',
-    rating: 4.7,
-    reviews: [],
-    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1595674533i/23692271.jpg',
-    createdAt: new Date('2024-02-10')
-  }
-];
-
 const initialCategories: Category[] = [
   { id: '1', name: 'Fiction' },
   { id: '2', name: 'Non-fiction' },
@@ -84,6 +17,34 @@ const initialCategories: Category[] = [
   { id: '5', name: 'Kids' },
   { id: '6', name: 'Education' }
 ];
+
+const generateRandomBooks = (count: number): Book[] => {
+  const books: Book[] = [];
+  const authors = ['F. Scott Fitzgerald', 'Robert C. Martin', 'Harper Lee', 'Yuval Noah Harari', 'J.K. Rowling', 'Stephen King', 'Ernest Hemingway', 'George Orwell'];
+  const categories = initialCategories.map(c => c.name);
+  const genres = ['Classic', 'Literary Fiction', 'Software Development', 'Programming', 'History', 'Anthropology', 'Fantasy', 'Horror', 'Mystery'];
+
+  for (let i = 1; i <= count; i++) {
+    const category = categories[Math.floor(Math.random() * categories.length)];
+    books.push({
+      id: i.toString(),
+      title: `Book Title ${i}`,
+      author: authors[Math.floor(Math.random() * authors.length)],
+      description: `This is the description for book ${i}. It provides insightful information about the topic.`,
+      price: parseFloat((Math.random() * 50 + 10).toFixed(2)),
+      availability: true,
+      stock: Math.floor(Math.random() * 100),
+      category: category!,
+      genre: [genres[Math.floor(Math.random() * genres.length)]!, genres[Math.floor(Math.random() * genres.length)]!],
+      isbn: `978${Math.floor(Math.random() * 10000000000)}`,
+      rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
+      reviews: [],
+      imageUrl: `https://picsum.photos/seed/${i}/200/300`,
+      createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000))
+    });
+  }
+  return books;
+};
 
 const seedDatabase = async () => {
   try {
@@ -99,9 +60,15 @@ const seedDatabase = async () => {
     await CategoryModel.insertMany(initialCategories);
     logger.info(`Successfully seeded ${initialCategories.length} categories`);
 
-    // Seed Books
-    await BookModel.insertMany(initialBooks);
-    logger.info(`Successfully seeded ${initialBooks.length} books`);
+    // Seed 1000 Books
+    const booksToSeed = generateRandomBooks(1000);
+    // Insert in chunks for performance
+    const chunkSize = 100;
+    for (let i = 0; i < booksToSeed.length; i += chunkSize) {
+      const chunk = booksToSeed.slice(i, i + chunkSize);
+      await BookModel.insertMany(chunk);
+      logger.info(`Seeded books ${i + 1} to ${Math.min(i + chunkSize, booksToSeed.length)}`);
+    }
 
     logger.info('Database seeding completed successfully');
     process.exit(0);

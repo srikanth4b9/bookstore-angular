@@ -12,20 +12,23 @@ const reviewSchema = new Schema<Review>({
 });
 
 const bookSchema = new Schema<Book>({
-  id: { type: String, required: true, unique: true },
-  title: { type: String, required: true },
-  author: { type: String, required: true },
+  id: { type: String, required: true, unique: true, index: true },
+  title: { type: String, required: true, index: true },
+  author: { type: String, required: true, index: true },
   description: { type: String, required: true },
-  price: { type: Number, required: true },
+  price: { type: Number, required: true, index: true },
   availability: { type: Boolean, default: true },
   stock: { type: Number, required: true },
-  category: { type: String, required: true },
-  genre: [{ type: String }],
-  isbn: { type: String, required: true },
-  rating: { type: Number, default: 0 },
+  category: { type: String, required: true, index: true },
+  genre: [{ type: String, index: true }],
+  isbn: { type: String, required: true, unique: true },
+  rating: { type: Number, default: 0, index: true },
   reviews: [reviewSchema],
   imageUrl: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now, index: true }
 });
+
+// Text index for search
+bookSchema.index({ title: 'text', author: 'text', description: 'text' });
 
 export const BookModel = model<Book>('Book', bookSchema);

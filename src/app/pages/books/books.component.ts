@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
@@ -16,11 +16,14 @@ export class BooksComponent {
   private mockData = inject(MockDataService);
   private route = inject(ActivatedRoute);
 
+  books = this.mockData.books;
   categories = this.mockData.categories;
+  pagination = this.mockData.pagination;
 
   searchTerm = signal('');
   selectedCategory = signal('');
-  sortBy = signal('price-asc');
+  sortBy = signal('createdAt');
+  sortOrder = signal('desc');
 
   constructor() {
     this.route.queryParams.subscribe(params => {
@@ -28,36 +31,26 @@ export class BooksComponent {
         this.selectedCategory.set(params['category']);
       }
     });
+
+    // Reactive fetch on state change
+    effect(() => {
+      this.mockData.fetchBooks(
+        this.pagination().page,
+        this.pagination().limit,
+        this.searchTerm(),
+        this.selectedCategory()
+      );
+    }, { allowSignalWrites: true });
   }
 
-  filteredBooks = computed(() => {
-    let books = [...this.mockData.books()];
-
-    // Search
-    if (this.searchTerm()) {
-      const term = this.searchTerm().toLowerCase();
-      books = books.filter(b =>
-        b.title.toLowerCase().includes(term) ||
-        b.author.toLowerCase().includes(term) ||
-        b.isbn.includes(term)
-      );
-    }
-
-    // Category
-    if (this.selectedCategory()) {
-      books = books.filter(b => b.category === this.selectedCategory());
-    }
-
-    // Sort
-    books.sort((a, b) => {
-      if (this.sortBy() === 'price-asc') return a.price - b.price;
-      if (this.sortBy() === 'price-desc') return b.price - a.price;
-      if (this.sortBy() === 'rating') return b.rating - a.rating;
-      return 0;
-    });
-
-    return books;
-  });
+  onPageChange(page: number) {
+    this.mockData.fetchBooks(
+      page,
+      this.pagination().limit,
+      this.searchTerm(),
+      this.selectedCategory()
+    );
+  }
 
   addToCart(book: Book) {
     this.mockData.addToCart(book);
