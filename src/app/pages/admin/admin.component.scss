@@ -2,123 +2,113 @@
 @use 'styles/mixins';
 
 .admin-page {
-  @include mixins.container;
+  max-width: 1200px;
   margin: 2rem auto;
+  padding: 0 1rem;
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
 }
 
 .admin-tabs {
+  background: vars.$white;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .tab-content {
+    padding: 2rem;
+  }
+}
+
+.header-row {
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
-  border-bottom: 2px solid vars.$border-color;
-  padding-bottom: 1rem;
 
-  button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: none;
-    font-size: 1rem;
-    cursor: pointer;
+  h2 {
+    margin: 0;
+    font-weight: 600;
+  }
+}
 
-    &.active {
-      color: vars.$primary-color;
-      font-weight: bold;
-      border-bottom: 2px solid vars.$primary-color;
+.add-form-card {
+  margin-bottom: 2rem;
+  background: #fdfdfd;
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+
+    mat-form-field {
+      width: 100%;
     }
   }
 }
 
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-
-  th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid vars.$border-color;
-  }
-
-  th {
-    background: vars.$light-color;
-  }
-}
-
-.add-btn {
-  @include mixins.button-base;
-  background: vars.$success-color;
-  color: vars.$white;
-  margin-bottom: 1rem;
-}
-
-.edit-btn {
-  color: vars.$primary-color;
-  background: none;
-  border: none;
-  margin-right: 0.5rem;
-  cursor: pointer;
-}
-
-.delete-btn {
-  color: vars.$danger-color;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-}
-
-.stat-card {
+.table-container {
   background: vars.$white;
-  padding: 2rem;
-  border-radius: vars.$border-radius * 2;
-  @include mixins.shadow;
-  text-align: center;
-}
+  border-radius: 8px;
+  overflow-x: auto;
 
-.stat-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: vars.$dark-color;
-}
-
-.modal {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  @include mixins.flex-center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: vars.$white;
-  padding: 2rem;
-  border-radius: vars.$border-radius * 2;
-  width: 400px;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  input {
+  table {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid vars.$border-color;
-    border-radius: vars.$border-radius;
+  }
+
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    background: #eee;
+
+    &[data-status="delivered"] { background: #e8f5e9; color: #2e7d32; }
+    &[data-status="pending"] { background: #fff3e0; color: #ef6c00; }
+    &[data-status="shipped"] { background: #e3f2fd; color: #1565c0; }
+    &[data-status="cancelled"] { background: #ffebee; color: #c62828; }
+  }
+
+  .status-select {
+    width: 140px;
+    margin-top: 15px;
   }
 }
 
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+
+  .stat-card {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    mat-card-header {
+      margin-bottom: 1rem;
+    }
+
+    mat-card-content {
+      display: flex;
+      justify-content: flex-end;
+
+      mat-icon {
+        font-size: 48px;
+        height: 48px;
+        width: 48px;
+        opacity: 0.2;
+      }
+    }
+
+    mat-card-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: vars.$primary-color;
+    }
+  }
 }

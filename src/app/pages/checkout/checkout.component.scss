@@ -2,105 +2,153 @@
 @use 'styles/mixins';
 
 .checkout-page {
-  @include mixins.container;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 2rem auto;
+  padding: 0 1rem;
+
+  .page-title {
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
 }
 
-.checkout-container {
-  display: grid;
-  grid-template-columns: 1fr 350px;
+.checkout-layout {
+  display: flex;
   gap: 2rem;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
 }
 
-.checkout-form section {
-  background: vars.$white;
-  padding: 1.5rem;
-  border-radius: vars.$border-radius * 2;
-  @include mixins.shadow;
-  margin-bottom: 2rem;
-}
+.checkout-card {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
 
-.form-group {
-  margin-bottom: 1rem;
-
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
+  mat-stepper {
+    background: transparent;
   }
 
-  input {
+  .step-content {
+    padding: 1.5rem 0;
+
+    .full-width {
+      width: 100%;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      mat-form-field {
+        flex: 1;
+      }
+    }
+
+    .payment-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .review-details {
+      background: #f9f9f9;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+
+      p {
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+    }
+
+    .stepper-actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+
+      button {
+        min-width: 120px;
+        height: 48px;
+      }
+    }
+  }
+}
+
+.summary-section {
+  width: 380px;
+
+  @media (max-width: 992px) {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid vars.$border-color;
-    border-radius: vars.$border-radius;
+  }
+
+  .summary-card {
+    position: sticky;
+    top: 100px;
+
+    mat-card-header {
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    mat-list-item {
+      height: auto;
+      padding: 0.5rem 0;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+
+      .total-price {
+        color: vars.$primary-color;
+        font-size: 1.5rem;
+      }
+    }
   }
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.payment-methods label {
-  display: block;
-  margin-bottom: 1rem;
-  cursor: pointer;
-}
-
-.place-order-btn {
-  @include mixins.button-base;
-  width: 100%;
-  padding: 1rem;
-  background: vars.$success-color;
-  color: vars.$white;
-  font-size: 1.1rem;
-  font-weight: bold;
-
-  &:disabled {
-    background: vars.$secondary-color;
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.order-summary {
-  background: vars.$light-color;
-  padding: 1.5rem;
-  border-radius: vars.$border-radius * 2;
-  height: fit-content;
-}
-
-.summary-item {
-  @include mixins.flex-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.summary-row {
-  @include mixins.flex-between;
-  margin-top: 1rem;
-}
-
-.total {
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.success-message {
+.success-container {
+  flex-direction: column;
+  padding: 5rem 1rem;
   text-align: center;
-  padding: 4rem;
-  background: vars.$white;
-  border-radius: vars.$border-radius * 2;
-  @include mixins.shadow;
-}
+  gap: 1.5rem;
 
-.btn {
-  @include mixins.button-base;
-  display: inline-block;
-  margin-top: 1rem;
-  background: vars.$primary-color;
-  color: vars.$white;
-  text-decoration: none;
+  .success-icon {
+    font-size: 100px;
+    height: 100px;
+    width: 100px;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    color: vars.$text-main;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: vars.$text-muted;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button, a {
+      height: 48px;
+      min-width: 200px;
+    }
+  }
 }

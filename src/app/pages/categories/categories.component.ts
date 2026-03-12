@@ -1,26 +1,26 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CurrencyPipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MockDataService } from '../../services/mock-data.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-categories',
   standalone: true,
   imports: [
     RouterLink,
-    CurrencyPipe,
-    MatButtonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  templateUrl: './categories.component.html',
+  styleUrl: './categories.component.scss'
 })
-export class HomeComponent {
+export class CategoriesComponent {
   private mockData = inject(MockDataService);
-  featuredBooks = this.mockData.books; // Simplified: just show all books as featured for now
   categories = this.mockData.categories;
+  isLoading = this.mockData.isLoading;
 }
