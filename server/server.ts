@@ -1,14 +1,21 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import bookRoutes from './routes/books.js';
 import categoryRoutes from './routes/categories.js';
 import orderRoutes from './routes/orders.js';
 import { errorHandler, notFound } from './middleware/error-handler.js';
 import { requestLogger } from './middleware/request-logger.js';
 import { logger } from './utils/logger.js';
+import { connectDB } from './config/db.js';
+
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env['PORT'] || 3000;
+
+// Connect to Database
+connectDB();
 
 app.use(cors());
 app.use(express.json());
