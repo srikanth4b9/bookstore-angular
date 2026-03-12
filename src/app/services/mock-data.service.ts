@@ -15,6 +15,9 @@ export class MockDataService {
   private _books = signal<Book[]>([]);
   readonly books = this._books.asReadonly();
 
+  private _pagination = signal({ total: 0, page: 1, limit: 12, pages: 1 });
+  readonly pagination = this._pagination.asReadonly();
+
   // --- CATEGORIES ---
   private _categories = signal<Category[]>([]);
   readonly categories = this._categories.asReadonly();
@@ -51,8 +54,7 @@ export class MockDataService {
 
   private async fetchInitialData() {
     try {
-      const booksData = await firstValueFrom(this.http.get<Book[]>(`${this.apiUrl}/books`));
-      this._books.set(booksData);
+      await this.fetchBooks(1, 12);
 
       const categoriesData = await firstValueFrom(this.http.get<Category[]>(`${this.apiUrl}/categories`));
       this._categories.set(categoriesData);
@@ -61,6 +63,20 @@ export class MockDataService {
       this._orders.set(ordersData);
     } catch (error) {
       console.error('Error fetching initial data:', error);
+    }
+  }
+
+  async fetchBooks(page = 1, limit = 12, search?: string, category?: string) {
+    try {
+      const params: Record<string, string | number> = { page, limit };
+      if (search) params['search'] = search;
+      if (category) params['category'] = category;
+
+      const response = await firstValueFrom(this.http.get<{ books: Book[], pagination: { total: number, page: number, limit: number, pages: number } }>(`${this.apiUrl}/books`, { params }));
+      this._books.set(response.books);
+      this._pagination.set(response.pagination);
+    } catch (error) {
+      console.error('Error fetching books:', error);
     }
   }
 

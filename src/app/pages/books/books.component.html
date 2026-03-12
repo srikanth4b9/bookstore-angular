@@ -17,9 +17,17 @@
     <div class="filter-group">
       <label for="sortSelect">Sort By</label>
       <select id="sortSelect" [(ngModel)]="sortBy">
-        <option value="price-asc">Price: Low to High</option>
-        <option value="price-desc">Price: High to Low</option>
-        <option value="rating">Top Rated</option>
+        <option value="createdAt">Newest</option>
+        <option value="price">Price</option>
+        <option value="rating">Rating</option>
+        <option value="title">Title</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="sortOrder">Order</label>
+      <select id="sortOrder" [(ngModel)]="sortOrder">
+        <option value="desc">Descending</option>
+        <option value="asc">Ascending</option>
       </select>
     </div>
   </aside>
@@ -27,7 +35,7 @@
   <main class="book-list">
     <h2>Books</h2>
     <div class="book-grid">
-      @for (book of filteredBooks(); track book.id) {
+      @for (book of books(); track book.id) {
         <div class="book-card">
           <img [src]="book.imageUrl" [alt]="book.title">
           <h3>{{ book.title }}</h3>
@@ -42,6 +50,12 @@
       } @empty {
         <p>No books found matching your criteria.</p>
       }
+    </div>
+
+    <div class="pagination-controls">
+      <button [disabled]="pagination().page === 1" (click)="onPageChange(pagination().page - 1)">Previous</button>
+      <span>Page {{ pagination().page }} of {{ pagination().pages }}</span>
+      <button [disabled]="pagination().page === pagination().pages" (click)="onPageChange(pagination().page + 1)">Next</button>
     </div>
   </main>
 </div>
