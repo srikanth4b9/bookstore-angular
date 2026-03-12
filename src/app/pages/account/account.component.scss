@@ -1,0 +1,69 @@
+@use 'sass:color';
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.account-page {
+  @include mixins.container;
+  margin: 2rem auto;
+}
+
+.account-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  background: vars.$light-color;
+  border-radius: vars.$border-radius * 2;
+}
+
+.sidebar li a {
+  display: block;
+  padding: 1rem;
+  text-decoration: none;
+  color: vars.$text-main;
+  border-bottom: 1px solid vars.$border-color;
+
+  &:hover {
+    background: color.adjust(vars.$light-color, $lightness: -5%);
+  }
+}
+
+.card {
+  background: vars.$white;
+  padding: 1.5rem;
+  border-radius: vars.$border-radius * 2;
+  @include mixins.shadow;
+  margin-bottom: 2rem;
+}
+
+.address {
+  padding: 0.5rem;
+  background: vars.$light-color;
+  margin-top: 0.5rem;
+  border-radius: vars.$border-radius;
+}
+
+.order-item {
+  padding: 1rem;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$border-radius;
+  margin-bottom: 1rem;
+}
+
+.order-header {
+  @include mixins.flex-between;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid vars.$light-color;
+  padding-bottom: 0.5rem;
+}
+
+.status {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: vars.$success-color;
+}

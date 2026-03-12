@@ -1,0 +1,47 @@
+<div class="books-page">
+  <aside class="filters">
+    <h3>Filters</h3>
+    <div class="filter-group">
+      <label>Search</label>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Title, author, ISBN...">
+    </div>
+    <div class="filter-group">
+      <label>Category</label>
+      <select [(ngModel)]="selectedCategory">
+        <option value="">All Categories</option>
+        @for (cat of categories(); track cat.id) {
+          <option [value]="cat.name">{{ cat.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Sort By</label>
+      <select [(ngModel)]="sortBy">
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+  </aside>
+
+  <main class="book-list">
+    <h2>Books</h2>
+    <div class="book-grid">
+      @for (book of filteredBooks(); track book.id) {
+        <div class="book-card">
+          <img [src]="book.imageUrl" [alt]="book.title">
+          <h3>{{ book.title }}</h3>
+          <p>{{ book.author }}</p>
+          <p class="price">{{ book.price | currency }}</p>
+          <div class="rating">⭐ {{ book.rating }}</div>
+          <div class="actions">
+            <a [routerLink]="['/books', book.id]" class="view-btn">Details</a>
+            <button (click)="addToCart(book)" class="add-btn">Add to Cart</button>
+          </div>
+        </div>
+      } @empty {
+        <p>No books found matching your criteria.</p>
+      }
+    </div>
+  </main>
+</div>

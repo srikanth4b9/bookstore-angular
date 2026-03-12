@@ -1,0 +1,126 @@
+<div class="admin-page">
+  <h1>Admin Dashboard</h1>
+
+  <div class="admin-tabs">
+    <button [class.active]="activeTab() === 'books'" (click)="activeTab.set('books')">Manage Books</button>
+    <button [class.active]="activeTab() === 'orders'" (click)="activeTab.set('orders')">Manage Orders</button>
+    <button [class.active]="activeTab() === 'analytics'" (click)="activeTab.set('analytics')">Sales Analytics</button>
+  </div>
+
+  <div class="admin-content">
+    @if (activeTab() === 'books') {
+      <section>
+        <h2>Manage Books</h2>
+        <button class="add-btn" (click)="showAddForm.set(true)">Add New Book</button>
+
+        @if (showAddForm()) {
+          <div class="modal">
+            <div class="modal-content">
+              <h3>Add New Book</h3>
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" [(ngModel)]="newBook.title">
+              </div>
+              <div class="form-group">
+                <label>Author</label>
+                <input type="text" [(ngModel)]="newBook.author">
+              </div>
+              <div class="form-group">
+                <label>Price</label>
+                <input type="number" [(ngModel)]="newBook.price">
+              </div>
+              <div class="form-actions">
+                <button (click)="addBook()">Save</button>
+                <button (click)="showAddForm.set(false)">Cancel</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (book of books(); track book.id) {
+              <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.price | currency }}</td>
+                <td>{{ book.stock }}</td>
+                <td>
+                  <button class="edit-btn">Edit</button>
+                  <button class="delete-btn">Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+
+    @if (activeTab() === 'orders') {
+      <section>
+        <h2>Manage Orders</h2>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.id) {
+              <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.orderDate | date }}</td>
+                <td>User ID: {{ order.userId }}</td>
+                <td>{{ order.total | currency }}</td>
+                <td>{{ order.status }}</td>
+                <td>
+                  <select [value]="order.status">
+                    <option value="pending">Pending</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                  </select>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+
+    @if (activeTab() === 'analytics') {
+      <section>
+        <h2>Sales Analytics</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Sales</h3>
+            <p class="stat-value">{{ totalSales() | currency }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Orders</h3>
+            <p class="stat-value">{{ orders().length }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Books</h3>
+            <p class="stat-value">{{ books().length }}</p>
+          </div>
+        </div>
+      </section>
+    }
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <a routerLink="/">📚 BookStore</a>
+  </div>
+  <ul class="nav-links">
+    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+    <li><a routerLink="/books" routerLinkActive="active">Books</a></li>
+    <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
+    <li><a routerLink="/cart" routerLinkActive="active">Cart ({{ cartCount() }})</a></li>
+    @if (user()) {
+      <li><a routerLink="/account" routerLinkActive="active">My Account</a></li>
+    } @else {
+      <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+    }
+  </ul>
+</nav>
