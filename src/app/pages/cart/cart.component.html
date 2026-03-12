@@ -1,51 +1,75 @@
 <div class="cart-page">
-  <h1>Shopping Cart</h1>
+  <h1 class="page-title">Shopping Cart</h1>
 
   @if (cartItems().length > 0) {
-    <div class="cart-container">
-      <div class="cart-items">
-        @for (item of cartItems(); track item.id) {
-          <div class="cart-item">
-            <img [src]="item.imageUrl" [alt]="item.bookTitle">
-            <div class="item-details">
-              <h3>{{ item.bookTitle }}</h3>
-              <p class="price">{{ item.bookPrice | currency }}</p>
-              <div class="quantity-controls">
-                <button (click)="updateQuantity(item.id, item.quantity - 1)">-</button>
-                <span>{{ item.quantity }}</span>
-                <button (click)="updateQuantity(item.id, item.quantity + 1)">+</button>
-              </div>
-              <button (click)="removeItem(item.id)" class="remove-btn">Remove</button>
-            </div>
-            <div class="item-total">
-              {{ (item.bookPrice * item.quantity) | currency }}
-            </div>
-          </div>
-        }
+    <div class="cart-layout">
+      <div class="cart-items-section">
+        <mat-card class="shadow">
+          <mat-list>
+            @for (item of cartItems(); track item.id; let last = $last) {
+              <mat-list-item class="cart-item-row">
+                <img matListItemAvatar [src]="item.imageUrl" [alt]="item.bookTitle" class="item-avatar">
+                <div matListItemTitle class="item-title">{{ item.bookTitle }}</div>
+                <div matListItemLine class="item-details">
+                  <span class="price">{{ item.bookPrice | currency }}</span>
+                  <div class="quantity-controls">
+                    <button mat-icon-button (click)="updateQuantity(item.id, item.quantity - 1)">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <span class="qty">{{ item.quantity }}</span>
+                    <button mat-icon-button (click)="updateQuantity(item.id, item.quantity + 1)">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                  <span class="item-total">{{ (item.bookPrice * item.quantity) | currency }}</span>
+                </div>
+                <div matListItemMeta>
+                  <button mat-icon-button color="warn" (click)="removeItem(item.id)" aria-label="Remove item">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+              @if (!last) {
+                <mat-divider></mat-divider>
+              }
+            }
+          </mat-list>
+        </mat-card>
       </div>
 
-      <div class="cart-summary">
-        <h3>Order Summary</h3>
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span>{{ subtotal() | currency }}</span>
-        </div>
-        <div class="summary-row">
-          <span>Shipping</span>
-          <span>FREE</span>
-        </div>
-        <hr>
-        <div class="summary-row total">
-          <span>Total</span>
-          <span>{{ subtotal() | currency }}</span>
-        </div>
-        <button class="checkout-btn" routerLink="/checkout">Proceed to Checkout</button>
+      <div class="cart-summary-section">
+        <mat-card class="summary-card shadow">
+          <mat-card-header>
+            <mat-card-title>Order Summary</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span>{{ subtotal() | currency }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span class="free-text">FREE</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="summary-row total">
+              <span>Total</span>
+              <span class="total-amount">{{ subtotal() | currency }}</span>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" class="checkout-btn" routerLink="/checkout">
+              PROCEED TO CHECKOUT
+            </button>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </div>
   } @else {
-    <div class="empty-cart">
+    <div class="empty-cart flex-center">
+      <mat-icon class="huge-icon">shopping_cart_checkout</mat-icon>
       <p>Your cart is empty.</p>
-      <a routerLink="/books" class="browse-btn">Browse Books</a>
+      <a mat-raised-button color="primary" routerLink="/books">BROWSE BOOKS</a>
     </div>
   }
 </div>

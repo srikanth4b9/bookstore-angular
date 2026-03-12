@@ -48,25 +48,34 @@ export class MockDataService {
   private _orders = signal<Order[]>([]);
   readonly orders = this._orders.asReadonly();
 
+  // --- LOADING ---
+  private _isLoading = signal<boolean>(false);
+  readonly isLoading = this._isLoading.asReadonly();
+
   constructor() {
     this.fetchInitialData();
   }
 
   private async fetchInitialData() {
+    this._isLoading.set(true);
     try {
       await this.fetchBooks(1, 12);
 
-      const categoriesData = await firstValueFrom(this.http.get<Category[]>(`${this.apiUrl}/categories`));
+      const [categoriesData, ordersData] = await Promise.all([
+        firstValueFrom(this.http.get<Category[]>(`${this.apiUrl}/categories`)),
+        firstValueFrom(this.http.get<Order[]>(`${this.apiUrl}/orders`))
+      ]);
       this._categories.set(categoriesData);
-
-      const ordersData = await firstValueFrom(this.http.get<Order[]>(`${this.apiUrl}/orders`));
       this._orders.set(ordersData);
     } catch (error) {
       console.error('Error fetching initial data:', error);
+    } finally {
+      this._isLoading.set(false);
     }
   }
 
   async fetchBooks(page = 1, limit = 12, search?: string, category?: string) {
+    this._isLoading.set(true);
     try {
       const params: Record<string, string | number> = { page, limit };
       if (search) params['search'] = search;
@@ -77,6 +86,8 @@ export class MockDataService {
       this._pagination.set(response.pagination);
     } catch (error) {
       console.error('Error fetching books:', error);
+    } finally {
+      this._isLoading.set(false);
     }
   }
 

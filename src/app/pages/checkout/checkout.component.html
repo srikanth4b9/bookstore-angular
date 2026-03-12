@@ -1,73 +1,120 @@
 <div class="checkout-page">
-  <h1>Checkout</h1>
+  <h1 class="page-title">Checkout</h1>
 
   @if (orderPlaced()) {
-    <div class="success-message">
+    <div class="success-container flex-center">
+      <mat-icon class="success-icon">check_circle</mat-icon>
       <h2>Order Placed Successfully!</h2>
       <p>Your order ID is: <strong>{{ lastOrderId() }}</strong></p>
-      <a routerLink="/account" class="btn">View My Orders</a>
+      <div class="actions">
+        <a mat-raised-button color="primary" routerLink="/account">VIEW MY ORDERS</a>
+        <a mat-button routerLink="/books">CONTINUE SHOPPING</a>
+      </div>
     </div>
   } @else {
-    <div class="checkout-container">
-      <div class="checkout-form">
-        <section>
-          <h3>Shipping Address</h3>
-          <div class="form-group">
-            <label for="streetInput">Street</label>
-            <input id="streetInput" type="text" [(ngModel)]="address.street">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="cityInput">City</label>
-              <input id="cityInput" type="text" [(ngModel)]="address.city">
-            </div>
-            <div class="form-group">
-              <label for="stateInput">State</label>
-              <input id="stateInput" type="text" [(ngModel)]="address.state">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="zipInput">Zip Code</label>
-              <input id="zipInput" type="text" [(ngModel)]="address.zipCode">
-            </div>
-            <div class="form-group">
-              <label for="countryInput">Country</label>
-              <input id="countryInput" type="text" [(ngModel)]="address.country">
-            </div>
-          </div>
-        </section>
+    <div class="checkout-layout">
+      <mat-card class="checkout-card shadow">
+        <mat-stepper orientation="vertical" #stepper>
+          <!-- Step 1: Shipping -->
+          <mat-step [completed]="isFormValid()">
+            <ng-template matStepLabel>Shipping Address</ng-template>
+            <div class="step-content">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Street Address</mat-label>
+                <input matInput [(ngModel)]="address.street" required>
+              </mat-form-field>
 
-        <section>
-          <h3>Payment Options</h3>
-          <div class="payment-methods">
-            <label>
-              <input type="radio" name="payment" value="Credit Card" [(ngModel)]="paymentMethod" checked>
-              Credit Card
-            </label>
-            <label>
-              <input type="radio" name="payment" value="PayPal" [(ngModel)]="paymentMethod">
-              PayPal
-            </label>
-          </div>
-        </section>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>City</mat-label>
+                  <input matInput [(ngModel)]="address.city" required>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>State</mat-label>
+                  <input matInput [(ngModel)]="address.state">
+                </mat-form-field>
+              </div>
 
-        <button class="place-order-btn" (click)="placeOrder()" [disabled]="!isFormValid()">Place Order</button>
-      </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Zip Code</mat-label>
+                  <input matInput [(ngModel)]="address.zipCode" required>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Country</mat-label>
+                  <input matInput [(ngModel)]="address.country">
+                </mat-form-field>
+              </div>
 
-      <div class="order-summary">
-        <h3>Order Summary</h3>
-        @for (item of cartItems(); track item.id) {
-          <div class="summary-item">
-            <span>{{ item.quantity }}x {{ item.bookTitle }}</span>
-            <span>{{ (item.bookPrice * item.quantity) | currency }}</span>
-          </div>
-        }
-        <hr>
-        <div class="summary-row total">
-          <span>Total</span>
-          <span>{{ subtotal() | currency }}</span>
-        </div>
+              <div class="stepper-actions">
+                <button mat-raised-button color="primary" matStepperNext [disabled]="!isFormValid()">CONTINUE</button>
+              </div>
+            </div>
+          </mat-step>
+
+          <!-- Step 2: Payment -->
+          <mat-step>
+            <ng-template matStepLabel>Payment Options</ng-template>
+            <div class="step-content">
+              <mat-radio-group [(ngModel)]="paymentMethod" class="payment-group">
+                <mat-radio-button value="Credit Card">Credit Card</mat-radio-button>
+                <mat-radio-button value="PayPal">PayPal</mat-radio-button>
+                <mat-radio-button value="Bank Transfer">Bank Transfer</mat-radio-button>
+              </mat-radio-group>
+
+              <div class="stepper-actions">
+                <button mat-button matStepperPrevious>BACK</button>
+                <button mat-raised-button color="primary" matStepperNext>CONTINUE</button>
+              </div>
+            </div>
+          </mat-step>
+
+          <!-- Step 3: Review -->
+          <mat-step>
+            <ng-template matStepLabel>Review & Place Order</ng-template>
+            <div class="step-content">
+              <div class="review-details">
+                <p><strong>Shipping to:</strong> {{ address.street }}, {{ address.city }}</p>
+                <p><strong>Payment via:</strong> {{ paymentMethod }}</p>
+              </div>
+
+              <div class="stepper-actions">
+                <button mat-button matStepperPrevious>BACK</button>
+                <button mat-raised-button color="accent" (click)="placeOrder()" [disabled]="isLoading()">
+                  @if (isLoading()) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                  } @else {
+                    PLACE ORDER ({{ subtotal() | currency }})
+                  }
+                </button>
+              </div>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </mat-card>
+
+      <div class="summary-section">
+        <mat-card class="summary-card shadow">
+          <mat-card-header>
+            <mat-card-title>Order Summary</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              @for (item of cartItems(); track item.id) {
+                <mat-list-item>
+                  <span matListItemTitle>{{ item.bookTitle }}</span>
+                  <span matListItemLine>{{ item.quantity }} x {{ item.bookPrice | currency }}</span>
+                  <span matListItemMeta>{{ (item.bookPrice * item.quantity) | currency }}</span>
+                </mat-list-item>
+              }
+            </mat-list>
+            <mat-divider></mat-divider>
+            <div class="total-row">
+              <span>Total Amount</span>
+              <span class="total-price">{{ subtotal() | currency }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
   }

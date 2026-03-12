@@ -1,126 +1,181 @@
 <div class="admin-page">
-  <h1>Admin Dashboard</h1>
+  <h1 class="page-title">Admin Dashboard</h1>
 
-  <div class="admin-tabs">
-    <button [class.active]="activeTab() === 'books'" (click)="activeTab.set('books')">Manage Books</button>
-    <button [class.active]="activeTab() === 'orders'" (click)="activeTab.set('orders')">Manage Orders</button>
-    <button [class.active]="activeTab() === 'analytics'" (click)="activeTab.set('analytics')">Sales Analytics</button>
-  </div>
-
-  <div class="admin-content">
-    @if (activeTab() === 'books') {
-      <section>
-        <h2>Manage Books</h2>
-        <button class="add-btn" (click)="showAddForm.set(true)">Add New Book</button>
+  <mat-tab-group dynamicHeight class="admin-tabs shadow">
+    <!-- Books Management -->
+    <mat-tab label="Manage Books">
+      <div class="tab-content">
+        <div class="header-row">
+          <h2>Inventory</h2>
+          <button mat-raised-button color="primary" (click)="showAddForm.set(true)">
+            <mat-icon>add</mat-icon> ADD NEW BOOK
+          </button>
+        </div>
 
         @if (showAddForm()) {
-          <div class="modal">
-            <div class="modal-content">
-              <h3>Add New Book</h3>
-              <div class="form-group">
-                <label for="bookTitle">Title</label>
-                <input id="bookTitle" type="text" [(ngModel)]="newBook.title">
+          <mat-card class="add-form-card shadow">
+            <mat-card-header>
+              <mat-card-title>Add New Book</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="form-grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>Title</mat-label>
+                  <input matInput [(ngModel)]="newBook.title" placeholder="e.g. The Great Gatsby">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Author</mat-label>
+                  <input matInput [(ngModel)]="newBook.author" placeholder="e.g. F. Scott Fitzgerald">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Price</mat-label>
+                  <input matInput type="number" [(ngModel)]="newBook.price">
+                  <span matPrefix>$&nbsp;</span>
+                </mat-form-field>
               </div>
-              <div class="form-group">
-                <label for="bookAuthor">Author</label>
-                <input id="bookAuthor" type="text" [(ngModel)]="newBook.author">
-              </div>
-              <div class="form-group">
-                <label for="bookPrice">Price</label>
-                <input id="bookPrice" type="number" [(ngModel)]="newBook.price">
-              </div>
-              <div class="form-actions">
-                <button (click)="addBook()">Save</button>
-                <button (click)="showAddForm.set(false)">Cancel</button>
-              </div>
-            </div>
-          </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button (click)="showAddForm.set(false)">CANCEL</button>
+              <button mat-raised-button color="primary" (click)='addBook()'>SAVE BOOK</button>
+            </mat-card-actions>
+          </mat-card>
         }
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (book of books(); track book.id) {
-              <tr>
-                <td>{{ book.id }}</td>
-                <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
-                <td>{{ book.price | currency }}</td>
-                <td>{{ book.stock }}</td>
-                <td>
-                  <button class="edit-btn">Edit</button>
-                  <button class="delete-btn">Delete</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </section>
-    }
+        <div class="table-container shadow">
+          <table mat-table [dataSource]="books()">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef> ID </th>
+              <td mat-cell *matCellDef="let book"> {{book.id}} </td>
+            </ng-container>
 
-    @if (activeTab() === 'orders') {
-      <section>
-        <h2>Manage Orders</h2>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (order of orders(); track order.id) {
-              <tr>
-                <td>{{ order.id }}</td>
-                <td>{{ order.orderDate | date }}</td>
-                <td>User ID: {{ order.userId }}</td>
-                <td>{{ order.total | currency }}</td>
-                <td>{{ order.status }}</td>
-                <td>
-                  <select [value]="order.status">
-                    <option value="pending">Pending</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                  </select>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </section>
-    }
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef> Title </th>
+              <td mat-cell *matCellDef="let book"> {{book.title}} </td>
+            </ng-container>
 
-    @if (activeTab() === 'analytics') {
-      <section>
-        <h2>Sales Analytics</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Sales</h3>
-            <p class="stat-value">{{ totalSales() | currency }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Total Orders</h3>
-            <p class="stat-value">{{ orders().length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Total Books</h3>
-            <p class="stat-value">{{ books().length }}</p>
-          </div>
+            <ng-container matColumnDef="author">
+              <th mat-header-cell *matHeaderCellDef> Author </th>
+              <td mat-cell *matCellDef="let book"> {{book.author}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef> Price </th>
+              <td mat-cell *matCellDef="let book"> {{book.price | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef> Stock </th>
+              <td mat-cell *matCellDef="let book"> {{book.stock}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let book">
+                <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
+                <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderCellDef></tr>
+            <tr mat-row *matRowDef="let row; columns: bookColumns;"></tr>
+          </table>
         </div>
-      </section>
-    }
-  </div>
+      </div>
+    </mat-tab>
+
+    <!-- Orders Management -->
+    <mat-tab label="Manage Orders">
+      <div class="tab-content">
+        <div class="header-row">
+          <h2>Order History</h2>
+        </div>
+
+        <div class="table-container shadow">
+          <table mat-table [dataSource]="orders()">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef> Order ID </th>
+              <td mat-cell *matCellDef="let order"> {{order.id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderDate">
+              <th mat-header-cell *matHeaderCellDef> Date </th>
+              <td mat-cell *matCellDef="let order"> {{order.orderDate | date}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="userId">
+              <th mat-header-cell *matHeaderCellDef> Customer </th>
+              <td mat-cell *matCellDef="let order"> {{order.userId}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef> Total </th>
+              <td mat-cell *matCellDef="let order"> {{order.total | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let order">
+                <span class="status-badge" [attr.data-status]="order.status">
+                  {{order.status | uppercase}}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Update Status </th>
+              <td mat-cell *matCellDef="let order">
+                <mat-form-field appearance="outline" class="status-select">
+                  <mat-select [value]="order.status">
+                    <mat-option value="pending">PENDING</mat-option>
+                    <mat-option value="shipped">SHIPPED</mat-option>
+                    <mat-option value="delivered">DELIVERED</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderCellDef></tr>
+            <tr mat-row *matRowDef="let row; columns: orderColumns;"></tr>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Sales Analytics -->
+    <mat-tab label="Sales Analytics">
+      <div class="tab-content">
+        <div class="analytics-grid">
+          <mat-card class="stat-card shadow">
+            <mat-card-header>
+              <mat-card-subtitle>Total Revenue</mat-card-subtitle>
+              <mat-card-title>{{ totalSales() | currency }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-icon color="primary">payments</mat-icon>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card shadow">
+            <mat-card-header>
+              <mat-card-subtitle>Total Orders</mat-card-subtitle>
+              <mat-card-title>{{ orders().length }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-icon color="accent">shopping_bag</mat-icon>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card shadow">
+            <mat-card-header>
+              <mat-card-subtitle>Inventory Size</mat-card-subtitle>
+              <mat-card-title>{{ books().length }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-icon color="warn">auto_stories</mat-icon>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -1,16 +1,19 @@
-<nav class="navbar">
-  <div class="nav-brand">
-    <a routerLink="/">📚 BookStore</a>
-  </div>
-  <ul class="nav-links">
-    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-    <li><a routerLink="/books" routerLinkActive="active">Books</a></li>
-    <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
-    <li><a routerLink="/cart" routerLinkActive="active">Cart ({{ cartCount() }})</a></li>
+<mat-toolbar color="primary" class="navbar-toolbar shadow">
+  <span routerLink="/" class="nav-brand">📚 BookStore</span>
+  <span class="spacer"></span>
+  <div class="nav-links">
+    <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+    <a mat-button routerLink="/books" routerLinkActive="active">Books</a>
+    <a mat-button routerLink="/categories" routerLinkActive="active">Categories</a>
+    <a mat-button routerLink="/cart" routerLinkActive="active">
+      <mat-icon [matBadge]="cartCount()" matBadgeColor="accent">shopping_cart</mat-icon>
+    </a>
     @if (user()) {
-      <li><a routerLink="/account" routerLinkActive="active">My Account</a></li>
+      <a mat-button routerLink="/account" routerLinkActive="active">
+        <mat-icon>account_circle</mat-icon>
+      </a>
     } @else {
-      <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+      <a mat-button routerLink="/login" routerLinkActive="active">Login</a>
     }
-  </ul>
-</nav>
+  </div>
+</mat-toolbar>
