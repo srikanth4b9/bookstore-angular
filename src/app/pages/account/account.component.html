@@ -1,48 +1,104 @@
 <div class="account-page">
-  <h1>My Account</h1>
+  <h1 class="page-title">My Account</h1>
 
-  <div class="account-layout">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="#profile">Profile</a></li>
-        <li><a href="#orders">Orders</a></li>
-        <li><a href="#wishlist">Wishlist</a></li>
-      </ul>
-    </aside>
-
-    <main class="content">
-      <section id="profile" class="card">
-        <h2>Profile</h2>
+  <mat-tab-group dynamicHeight class="account-tabs shadow">
+    <!-- Profile Tab -->
+    <mat-tab label="Profile">
+      <div class="tab-content">
         @if (user(); as u) {
-          <p><strong>Name:</strong> {{ u.name }}</p>
-          <p><strong>Email:</strong> {{ u.email }}</p>
-          <h3>Addresses</h3>
-          @for (addr of u.addresses; track addr.id) {
-            <div class="address">
-              {{ addr.street }}, {{ addr.city }}, {{ addr.state }} {{ addr.zipCode }}, {{ addr.country }}
-            </div>
-          }
+          <mat-card flat>
+            <mat-card-header>
+              <div mat-card-avatar class="user-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              <mat-card-title>{{ u.name }}</mat-card-title>
+              <mat-card-subtitle>{{ u.email }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="profile-details">
+                <div class="info-group">
+                  <label>Role</label>
+                  <span>{{ u.role | uppercase }}</span>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="address-section">
+                  <h3>Saved Addresses</h3>
+                  <div class="address-grid">
+                    @for (addr of u.addresses; track addr.id) {
+                      <mat-card variant="outlined" class="address-card">
+                        <mat-card-content>
+                          <p>{{ addr.street }}</p>
+                          <p>{{ addr.city }}, {{ addr.state }} {{ addr.zipCode }}</p>
+                          <p>{{ addr.country }}</p>
+                          @if (addr.isDefault) {
+                            <span class="default-badge">DEFAULT</span>
+                          }
+                        </mat-card-content>
+                      </mat-card>
+                    }
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary">EDIT PROFILE</button>
+              <button mat-button color="primary">ADD ADDRESS</button>
+            </mat-card-actions>
+          </mat-card>
         }
-      </section>
+      </div>
+    </mat-tab>
 
-      <section id="orders" class="card">
-        <h2>Order History</h2>
+    <!-- Orders Tab -->
+    <mat-tab label="Order History">
+      <div class="tab-content">
         @for (order of orders(); track order.id) {
-          <div class="order-item">
-            <div class="order-header">
-              <strong>Order #{{ order.id }}</strong>
-              <span>{{ order.orderDate | date }}</span>
-              <span class="status">{{ order.status }}</span>
-            </div>
-            <div class="order-details">
-              <p>Total: {{ order.total | currency }}</p>
-              <p>Items: {{ order.items.length }}</p>
-            </div>
-          </div>
+          <mat-card class="order-card" variant="outlined">
+            <mat-card-header>
+              <mat-card-title>Order #{{ order.id }}</mat-card-title>
+              <mat-card-subtitle>Placed on {{ order.orderDate | date:'mediumDate' }}</mat-card-subtitle>
+              <span class="spacer"></span>
+              <span class="order-status" [attr.data-status]="order.status">{{ order.status | uppercase }}</span>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-list>
+                @for (item of order.items; track item.id) {
+                  <mat-list-item>
+                    <span matListItemTitle>{{ item.bookTitle }}</span>
+                    <span matListItemLine>{{ item.quantity }} x {{ item.bookPrice | currency }}</span>
+                  </mat-list-item>
+                }
+              </mat-list>
+              <mat-divider></mat-divider>
+              <div class="order-footer">
+                <span class="total-label">Total Amount:</span>
+                <span class="total-value">{{ order.total | currency }}</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button color="primary">TRACK ORDER</button>
+              <button mat-button>VIEW DETAILS</button>
+            </mat-card-actions>
+          </mat-card>
         } @empty {
-          <p>You haven't placed any orders yet.</p>
+          <div class="empty-state">
+            <mat-icon>receipt_long</mat-icon>
+            <p>You haven't placed any orders yet.</p>
+            <a mat-raised-button color="primary" routerLink="/books">START SHOPPING</a>
+          </div>
         }
-      </section>
-    </main>
-  </div>
+      </div>
+    </mat-tab>
+
+    <!-- Wishlist Tab -->
+    <mat-tab label="Wishlist">
+      <div class="tab-content">
+        <div class="empty-state">
+          <mat-icon>favorite_border</mat-icon>
+          <p>Your wishlist is empty.</p>
+          <a mat-button color="primary" routerLink="/books">Explore Books</a>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

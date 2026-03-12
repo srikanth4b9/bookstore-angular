@@ -1,69 +1,158 @@
-@use 'sass:color';
 @use 'styles/variables' as vars;
 @use 'styles/mixins';
 
 .account-page {
-  @include mixins.container;
+  max-width: 1000px;
   margin: 2rem auto;
-}
+  padding: 0 1rem;
 
-.account-layout {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 2rem;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  background: vars.$light-color;
-  border-radius: vars.$border-radius * 2;
-}
-
-.sidebar li a {
-  display: block;
-  padding: 1rem;
-  text-decoration: none;
-  color: vars.$text-main;
-  border-bottom: 1px solid vars.$border-color;
-
-  &:hover {
-    background: color.adjust(vars.$light-color, $lightness: -5%);
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
   }
 }
 
-.card {
+.account-tabs {
   background: vars.$white;
-  padding: 1.5rem;
-  border-radius: vars.$border-radius * 2;
-  @include mixins.shadow;
-  margin-bottom: 2rem;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .tab-content {
+    padding: 2rem;
+  }
 }
 
-.address {
-  padding: 0.5rem;
-  background: vars.$light-color;
-  margin-top: 0.5rem;
-  border-radius: vars.$border-radius;
+.user-avatar {
+  background: vars.$primary-color;
+  color: vars.$white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.order-item {
-  padding: 1rem;
-  border: 1px solid vars.$border-color;
-  border-radius: vars.$border-radius;
-  margin-bottom: 1rem;
+.profile-details {
+  .info-group {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    label {
+      font-size: 0.85rem;
+      color: vars.$text-muted;
+      font-weight: 600;
+    }
+
+    span {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+
+  .address-section {
+    margin-top: 2rem;
+
+    h3 {
+      margin-bottom: 1.5rem;
+    }
+
+    .address-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .address-card {
+      position: relative;
+      background: #fdfdfd;
+
+      p {
+        margin-bottom: 0.25rem;
+      }
+
+      .default-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+    }
+  }
 }
 
-.order-header {
-  @include mixins.flex-between;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid vars.$light-color;
-  padding-bottom: 0.5rem;
+.order-card {
+  margin-bottom: 1.5rem;
+
+  mat-card-header {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .order-status {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    background: #eee;
+
+    &[data-status="delivered"] { background: #e8f5e9; color: #2e7d32; }
+    &[data-status="pending"] { background: #fff3e0; color: #ef6c00; }
+    &[data-status="shipped"] { background: #e3f2fd; color: #1565c0; }
+    &[data-status="cancelled"] { background: #ffebee; color: #c62828; }
+  }
+
+  .order-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-top: 1rem;
+
+    .total-label {
+      font-weight: 500;
+      color: vars.$text-muted;
+    }
+
+    .total-value {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: vars.$primary-color;
+    }
+  }
 }
 
-.status {
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: vars.$success-color;
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  text-align: center;
+  gap: 1.5rem;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: vars.$text-muted;
+    opacity: 0.3;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: vars.$text-muted;
+  }
 }

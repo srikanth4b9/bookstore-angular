@@ -2,46 +2,60 @@
 @use 'styles/mixins';
 
 .auth-page {
-  @include mixins.flex-center;
-  min-height: 70vh;
+  min-height: 80vh;
+  padding: 2rem;
 }
 
 .auth-card {
-  background: vars.$white;
-  padding: 2rem;
-  border-radius: vars.$border-radius * 2;
-  @include mixins.shadow;
   width: 100%;
-  max-width: 400px;
-}
+  max-width: 450px;
+  padding: 1.5rem;
 
-.form-group {
-  margin-bottom: 1rem;
+  mat-card-header {
+    margin-bottom: 2rem;
+    justify-content: center;
 
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
+    mat-card-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: vars.$primary-color;
+    }
   }
 
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid vars.$border-color;
-    border-radius: vars.$border-radius;
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    .auth-btn {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      font-size: 1.1rem;
+      height: 48px;
+    }
   }
-}
 
-.auth-btn {
-  @include mixins.button-base;
-  width: 100%;
-  padding: 0.75rem;
-  background: vars.$primary-color;
-  color: vars.$white;
-  margin-top: 1rem;
-}
+  mat-card-footer {
+    padding: 1rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid rgba(0,0,0,0.05);
 
-.switch-auth {
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 0.9rem;
+    .switch-auth {
+      margin: 0;
+      font-size: 0.95rem;
+      color: vars.$text-muted;
+
+      a {
+        color: vars.$primary-color;
+        font-weight: 600;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
