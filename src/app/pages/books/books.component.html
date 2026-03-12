@@ -39,36 +39,49 @@
   <main class="book-list">
     <div class="header-row">
       <h2>Books</h2>
-      @if (isLoading()) {
-        <mat-spinner diameter="30"></mat-spinner>
-      }
     </div>
 
-    <div class="book-grid">
-      @for (book of books(); track book.id) {
-        <mat-card class="book-card shadow">
-          <img mat-card-image [src]="book.imageUrl" [alt]="book.title" class="book-image">
-          <mat-card-content>
-            <h3 class="book-title">{{ book.title }}</h3>
-            <p class="book-author">{{ book.author }}</p>
-            <p class="book-price">{{ book.price | currency }}</p>
-            <div class="book-rating">
-              <mat-icon color="warn">star</mat-icon> {{ book.rating }}
-            </div>
-          </mat-card-content>
-          <mat-card-actions align="end">
-            <a mat-button color="primary" [routerLink]="['/books', book.id]">DETAILS</a>
-            <button mat-raised-button color="primary" (click)="addToCart(book)">
-              <mat-icon>shopping_cart</mat-icon> ADD
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      } @empty {
-        @if (!isLoading()) {
+    @defer (on viewport; when !isLoading()) {
+      <div class="book-grid">
+        @for (book of books(); track book.id) {
+          <mat-card class="book-card shadow">
+            <img mat-card-image [src]="book.imageUrl" [alt]="book.title" class="book-image">
+            <mat-card-content>
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-author">{{ book.author }}</p>
+              <p class="book-price">{{ book.price | currency }}</p>
+              <div class="book-rating">
+                <mat-icon color="warn">star</mat-icon> {{ book.rating }}
+              </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <a mat-button color="primary" [routerLink]="['/books', book.id]">DETAILS</a>
+              <button mat-raised-button color="primary" (click)="addToCart(book)">
+                <mat-icon>shopping_cart</mat-icon> ADD
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        } @empty {
           <p class="no-results">No books found matching your criteria.</p>
         }
-      }
-    </div>
+      </div>
+    } @loading (after 100ms; minimum 500ms) {
+      <div class="loading-container flex-center">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading books...</p>
+      </div>
+    } @placeholder {
+      <div class="placeholder-grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="skeleton-card shadow"></div>
+        }
+      </div>
+    } @error {
+      <div class="error-container flex-center">
+        <mat-icon color="warn">error</mat-icon>
+        <p>Failed to load books. Please try again later.</p>
+      </div>
+    }
 
     <mat-paginator [length]="pagination().total"
                    [pageSize]="pagination().limit"
