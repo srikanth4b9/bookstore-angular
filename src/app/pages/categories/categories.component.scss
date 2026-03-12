@@ -1,0 +1,77 @@
+@use 'styles/variables' as vars;
+@use 'styles/mixins';
+
+.categories-page {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  position: relative;
+  min-height: 400px;
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 3rem;
+  }
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 1;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.category-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
+  }
+
+  mat-card-content {
+    padding: 2rem !important;
+    gap: 1.5rem;
+    justify-content: flex-start;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+
+    .cat-info {
+      h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0.5rem 0 0;
+        color: vars.$text-muted;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  mat-card-actions {
+    padding: 0 1rem 1rem;
+  }
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: vars.$text-muted;
+  grid-column: 1 / -1;
+}
