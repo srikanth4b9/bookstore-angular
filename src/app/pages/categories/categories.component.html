@@ -8,7 +8,10 @@
           <mat-card-content class="flex-center">
             <mat-icon color="primary">folder_open</mat-icon>
             <div class="cat-info">
-              <h3>{{ cat.name }}</h3>
+              <div class="title-row">
+                <h3>{{ cat.name }}</h3>
+                <span class="count-badge">{{ cat.bookCount || 0 }} books</span>
+              </div>
               @if (cat.description) {
                 <p>{{ cat.description }}</p>
               }
