@@ -44,7 +44,8 @@ export class BooksComponent {
   searchTerm = signal('');
   selectedCategory = signal('');
   sortBy = signal('createdAt');
-  sortOrder = signal('desc');
+  sortOrder = signal<'asc' | 'desc'>('desc');
+  viewMode = signal<'grid' | 'list'>('grid');
 
   constructor() {
     this.route.queryParams.subscribe(params => {
@@ -59,7 +60,9 @@ export class BooksComponent {
         this.pagination().page,
         this.pagination().limit,
         this.searchTerm(),
-        this.selectedCategory()
+        this.selectedCategory(),
+        this.sortBy(),
+        this.sortOrder()
       );
     }, { allowSignalWrites: true });
   }
@@ -69,7 +72,9 @@ export class BooksComponent {
       event.pageIndex + 1,
       event.pageSize,
       this.searchTerm(),
-      this.selectedCategory()
+      this.selectedCategory(),
+      this.sortBy(),
+      this.sortOrder()
     );
   }
 

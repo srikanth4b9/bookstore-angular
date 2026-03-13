@@ -74,10 +74,10 @@ export class MockDataService {
     }
   }
 
-  async fetchBooks(page = 1, limit = 12, search?: string, category?: string) {
+  async fetchBooks(page = 1, limit = 12, search?: string, category?: string, sortBy = 'createdAt', sortOrder: 'asc' | 'desc' = 'desc') {
     this._isLoading.set(true);
     try {
-      const params: Record<string, string | number> = { page, limit };
+      const params: Record<string, string | number> = { page, limit, sortBy, sortOrder };
       if (search) params['search'] = search;
       if (category) params['category'] = category;
 
