@@ -13,9 +13,10 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **Wishlist**: Save favorite books for future purchase.
 
 ### 2️⃣ Book Catalog & Discovery
-- **Advanced Search**: Case-insensitive, partial matching for Title, Author, or ISBN using MongoDB Regex.
+- **Advanced Search**: Case-insensitive, partial matching for Title, Author, or ISBN using MongoDB Regex, with debounced input to optimize performance.
 - **Dynamic Filtering**: Narrow down results by Category with real-time book count badges.
 - **Smart Sorting**: Fully functional server-side sorting by Price, Rating, Title, and New Arrivals.
+- **Performance Optimized**: Reactive Signal-based state management with loop-free updates and RxJS debouncing.
 - **Dual View Modes**: Seamlessly toggle between a visual **Grid View** and a detailed **List View**.
 - **Rich Details**: Comprehensive book pages featuring interactive ratings, chip-based genres, and customer reviews.
 
