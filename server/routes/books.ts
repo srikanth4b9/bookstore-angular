@@ -14,7 +14,8 @@ const validateQuery = (req: Request, res: Response, next: NextFunction) => {
   if (error) {
     return res.status(400).json({ message: 'Validation Error', errors: error.details });
   }
-  req.query = value;
+  // Store validated values in res.locals to avoid modifying read-only req.query in Express 5
+  res.locals['query'] = value;
   return next();
 };
 
@@ -23,13 +24,14 @@ const validateBody = (req: Request, res: Response, next: NextFunction) => {
   if (error) {
     return res.status(400).json({ message: 'Validation Error', errors: error.details });
   }
-  req.body = value;
+  // Store validated values in res.locals to avoid modifying read-only req.body in Express 5
+  res.locals['body'] = value;
   return next();
 };
 
 router.get('/', validateQuery, async (req: Request, res: Response) => {
   try {
-    const queryData = req.query as unknown as {
+    const queryData = res.locals['query'] as {
       page: number;
       limit: number;
       search?: string;
@@ -109,7 +111,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', validateBody, async (req: Request, res: Response) => {
   try {
     const newBookData = {
-      ...req.body,
+      ...res.locals['body'],
       id: Math.random().toString(36).substring(2, 11),
       createdAt: new Date(),
     };

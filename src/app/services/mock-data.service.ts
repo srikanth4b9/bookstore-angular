@@ -77,9 +77,6 @@ export class MockDataService {
   async fetchBooks(page = 1, limit = 12, search?: string, category?: string) {
     this._isLoading.set(true);
     try {
-      // Add 500ms delay as requested
-      await new Promise(resolve => setTimeout(resolve, 500));
-
       const params: Record<string, string | number> = { page, limit };
       if (search) params['search'] = search;
       if (category) params['category'] = category;
