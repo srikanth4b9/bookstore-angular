@@ -90,7 +90,7 @@
   margin-bottom: 1.5rem;
 
   mat-card-header {
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     padding-bottom: 1rem;
     margin-bottom: 1rem;
     align-items: center;
@@ -107,10 +107,22 @@
     font-weight: bold;
     background: #eee;
 
-    &[data-status="delivered"] { background: #e8f5e9; color: #2e7d32; }
-    &[data-status="pending"] { background: #fff3e0; color: #ef6c00; }
-    &[data-status="shipped"] { background: #e3f2fd; color: #1565c0; }
-    &[data-status="cancelled"] { background: #ffebee; color: #c62828; }
+    &[data-status='delivered'] {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    &[data-status='pending'] {
+      background: #fff3e0;
+      color: #ef6c00;
+    }
+    &[data-status='shipped'] {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+    &[data-status='cancelled'] {
+      background: #ffebee;
+      color: #c62828;
+    }
   }
 
   .order-footer {

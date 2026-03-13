@@ -1,19 +1,19 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatListModule } from '@angular/material/list';
-import { MockDataService } from '../../services/mock-data.service';
-import { Address } from '../../models/models';
+import {Component, inject, signal} from '@angular/core';
+import {Router, RouterLink} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {CurrencyPipe} from '@angular/common';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatIconModule} from '@angular/material/icon';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatListModule} from '@angular/material/list';
+import {MockDataService} from '../../services/mock-data.service';
+import {Address} from '../../models/models';
 
 @Component({
   selector: 'app-checkout',
@@ -31,10 +31,10 @@ import { Address } from '../../models/models';
     MatIconModule,
     MatDividerModule,
     MatListModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.scss'
+  styleUrl: './checkout.component.scss',
 })
 export class CheckoutComponent {
   private mockData = inject(MockDataService);
@@ -51,7 +51,7 @@ export class CheckoutComponent {
     state: '',
     zipCode: '',
     country: '',
-    isDefault: false
+    isDefault: false,
   };
 
   paymentMethod = 'Credit Card';
@@ -61,7 +61,7 @@ export class CheckoutComponent {
   constructor() {
     const user = this.mockData.currentUser();
     if (user && user.addresses.length > 0) {
-      this.address = { ...user.addresses[0] };
+      this.address = {...user.addresses[0]};
     }
   }
 

@@ -5,7 +5,9 @@
     <div class="success-container flex-center">
       <mat-icon class="success-icon">check_circle</mat-icon>
       <h2>Order Placed Successfully!</h2>
-      <p>Your order ID is: <strong>{{ lastOrderId() }}</strong></p>
+      <p>
+        Your order ID is: <strong>{{ lastOrderId() }}</strong>
+      </p>
       <div class="actions">
         <a mat-raised-button color="primary" routerLink="/account">VIEW MY ORDERS</a>
         <a mat-button routerLink="/books">CONTINUE SHOPPING</a>
@@ -21,33 +23,40 @@
             <div class="step-content">
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Street Address</mat-label>
-                <input matInput [(ngModel)]="address.street" required>
+                <input matInput [(ngModel)]="address.street" required />
               </mat-form-field>
 
               <div class="form-row">
                 <mat-form-field appearance="outline">
                   <mat-label>City</mat-label>
-                  <input matInput [(ngModel)]="address.city" required>
+                  <input matInput [(ngModel)]="address.city" required />
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                   <mat-label>State</mat-label>
-                  <input matInput [(ngModel)]="address.state">
+                  <input matInput [(ngModel)]="address.state" />
                 </mat-form-field>
               </div>
 
               <div class="form-row">
                 <mat-form-field appearance="outline">
                   <mat-label>Zip Code</mat-label>
-                  <input matInput [(ngModel)]="address.zipCode" required>
+                  <input matInput [(ngModel)]="address.zipCode" required />
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                   <mat-label>Country</mat-label>
-                  <input matInput [(ngModel)]="address.country">
+                  <input matInput [(ngModel)]="address.country" />
                 </mat-form-field>
               </div>
 
               <div class="stepper-actions">
-                <button mat-raised-button color="primary" matStepperNext [disabled]="!isFormValid()">CONTINUE</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  matStepperNext
+                  [disabled]="!isFormValid()"
+                >
+                  CONTINUE
+                </button>
               </div>
             </div>
           </mat-step>
@@ -80,7 +89,12 @@
 
               <div class="stepper-actions">
                 <button mat-button matStepperPrevious>BACK</button>
-                <button mat-raised-button color="accent" (click)="placeOrder()" [disabled]="isLoading()">
+                <button
+                  mat-raised-button
+                  color="accent"
+                  (click)="placeOrder()"
+                  [disabled]="isLoading()"
+                >
                   @if (isLoading()) {
                     <mat-spinner diameter="20"></mat-spinner>
                   } @else {
@@ -104,7 +118,7 @@
                 <mat-list-item>
                   <span matListItemTitle>{{ item.bookTitle }}</span>
                   <span matListItemLine>{{ item.quantity }} x {{ item.bookPrice | currency }}</span>
-                  <span matListItemMeta>{{ (item.bookPrice * item.quantity) | currency }}</span>
+                  <span matListItemMeta>{{ item.bookPrice * item.quantity | currency }}</span>
                 </mat-list-item>
               }
             </mat-list>

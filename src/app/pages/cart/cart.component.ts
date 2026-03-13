@@ -1,16 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { CurrencyPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MockDataService } from '../../services/mock-data.service';
+import {Component, inject, signal} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {CurrencyPipe} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatListModule} from '@angular/material/list';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MockDataService} from '../../services/mock-data.service';
 
 @Component({
   selector: 'app-cart',
@@ -26,10 +26,10 @@ import { MockDataService } from '../../services/mock-data.service';
     MatListModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss'
+  styleUrl: './cart.component.scss',
 })
 export class CartComponent {
   private mockData = inject(MockDataService);
@@ -60,15 +60,19 @@ export class CartComponent {
     if (code === 'SAVE10') {
       this.discountAmount.set(this.subtotal() * 0.1);
       this.isPromoApplied.set(true);
-      this.snackBar.open('Promo code SAVE10 applied! 10% discount added.', 'Close', { duration: 3000 });
+      this.snackBar.open('Promo code SAVE10 applied! 10% discount added.', 'Close', {
+        duration: 3000,
+      });
     } else if (code === 'WELCOME') {
       this.discountAmount.set(5);
       this.isPromoApplied.set(true);
-      this.snackBar.open('Promo code WELCOME applied! $5 discount added.', 'Close', { duration: 3000 });
+      this.snackBar.open('Promo code WELCOME applied! $5 discount added.', 'Close', {
+        duration: 3000,
+      });
     } else if (code === '') {
-      this.snackBar.open('Please enter a promo code.', 'Close', { duration: 3000 });
+      this.snackBar.open('Please enter a promo code.', 'Close', {duration: 3000});
     } else {
-      this.snackBar.open('Invalid promo code.', 'Close', { duration: 3000 });
+      this.snackBar.open('Invalid promo code.', 'Close', {duration: 3000});
     }
   }
 
@@ -76,6 +80,6 @@ export class CartComponent {
     this.promoCode.set('');
     this.discountAmount.set(0);
     this.isPromoApplied.set(false);
-    this.snackBar.open('Promo code removed.', 'Close', { duration: 3000 });
+    this.snackBar.open('Promo code removed.', 'Close', {duration: 3000});
   }
 }

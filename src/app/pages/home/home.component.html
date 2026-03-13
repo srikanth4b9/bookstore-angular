@@ -15,12 +15,14 @@
     <section class="featured-section">
       <div class="section-header">
         <h2>Featured Books</h2>
-        <a mat-button color="primary" routerLink="/books">View All <mat-icon>chevron_right</mat-icon></a>
+        <a mat-button color="primary" routerLink="/books"
+          >View All <mat-icon>chevron_right</mat-icon></a
+        >
       </div>
       <div class="book-grid">
         @for (book of featuredBooks().slice(0, 4); track book.id) {
           <mat-card class="book-card shadow" [routerLink]="['/books', book.id]">
-            <img [src]="book.imageUrl" [alt]="book.title" class="book-image">
+            <img [src]="book.imageUrl" [alt]="book.title" class="book-image" />
             <div class="book-details-overlay">
               <h3 class="title">{{ book.title }}</h3>
               <p class="author">{{ book.author }}</p>
@@ -35,7 +37,12 @@
       <h2>Browse by Category</h2>
       <div class="category-grid">
         @for (cat of categories(); track cat.id) {
-          <a mat-card class="category-card shadow" [routerLink]="['/books']" [queryParams]="{category: cat.name}">
+          <a
+            mat-card
+            class="category-card shadow"
+            [routerLink]="['/books']"
+            [queryParams]="{category: cat.name}"
+          >
             <mat-card-content>
               <mat-icon color="primary">folder_open</mat-icon>
               <span>{{ cat.name }}</span>

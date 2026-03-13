@@ -1,12 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatButtonModule } from '@angular/material/button';
-import { MockDataService } from '../../services/mock-data.service';
+import {Component, inject} from '@angular/core';
+import {CurrencyPipe, DatePipe, UpperCasePipe} from '@angular/common';
+import {MatCardModule} from '@angular/material/card';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatButtonModule} from '@angular/material/button';
+import {MockDataService} from '../../services/mock-data.service';
 
 @Component({
   selector: 'app-account',
@@ -20,10 +20,10 @@ import { MockDataService } from '../../services/mock-data.service';
     MatListModule,
     MatIconModule,
     MatDividerModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './account.component.html',
-  styleUrl: './account.component.scss'
+  styleUrl: './account.component.scss',
 })
 export class AccountComponent {
   private mockData = inject(MockDataService);

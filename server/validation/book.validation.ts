@@ -9,7 +9,7 @@ export const bookQuerySchema = Joi.object({
   maxPrice: Joi.number().min(0).optional(),
   minRating: Joi.number().min(0).max(5).optional(),
   sortBy: Joi.string().valid('createdAt', 'price', 'rating', 'title').default('createdAt'),
-  sortOrder: Joi.string().valid('asc', 'desc').default('desc')
+  sortOrder: Joi.string().valid('asc', 'desc').default('desc'),
 });
 
 export const bookCreateSchema = Joi.object({
@@ -21,5 +21,5 @@ export const bookCreateSchema = Joi.object({
   category: Joi.string().required(),
   genre: Joi.array().items(Joi.string()).optional(),
   isbn: Joi.string().required(),
-  imageUrl: Joi.string().uri().required()
+  imageUrl: Joi.string().uri().required(),
 });

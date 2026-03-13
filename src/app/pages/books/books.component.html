@@ -3,7 +3,7 @@
     <h3>Filters</h3>
     <mat-form-field appearance="outline">
       <mat-label>Search</mat-label>
-      <input matInput (input)="onSearchChange($event)" placeholder="Title, author, ISBN...">
+      <input matInput (input)="onSearchChange($event)" placeholder="Title, author, ISBN..." />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 
@@ -38,12 +38,24 @@
 
   <main class="book-list">
     <div class="header-row">
-      <h2>Books <small>({{ pagination().total }} total)</small></h2>
+      <h2>
+        Books <small>({{ pagination().total }} total)</small>
+      </h2>
       <div class="view-toggle">
-        <button mat-icon-button [color]="viewMode() === 'grid' ? 'primary' : ''" (click)="viewMode.set('grid')" title="Grid View">
+        <button
+          mat-icon-button
+          [color]="viewMode() === 'grid' ? 'primary' : ''"
+          (click)="viewMode.set('grid')"
+          title="Grid View"
+        >
           <mat-icon>grid_view</mat-icon>
         </button>
-        <button mat-icon-button [color]="viewMode() === 'list' ? 'primary' : ''" (click)="viewMode.set('list')" title="List View">
+        <button
+          mat-icon-button
+          [color]="viewMode() === 'list' ? 'primary' : ''"
+          (click)="viewMode.set('list')"
+          title="List View"
+        >
           <mat-icon>view_list</mat-icon>
         </button>
       </div>
@@ -54,9 +66,14 @@
         @for (book of books(); track book.id) {
           @if (viewMode() === 'grid') {
             <mat-card class="book-card shadow" [routerLink]="['/books', book.id]">
-              <img [src]="book.imageUrl" [alt]="book.title" class="book-image">
+              <img [src]="book.imageUrl" [alt]="book.title" class="book-image" />
               <div class="book-actions-overlay">
-                <button mat-icon-button class="add-btn" (click)="$event.stopPropagation(); addToCart(book)" title="Add to Cart">
+                <button
+                  mat-icon-button
+                  class="add-btn"
+                  (click)="$event.stopPropagation(); addToCart(book)"
+                  title="Add to Cart"
+                >
                   <mat-icon>shopping_cart</mat-icon>
                 </button>
               </div>
@@ -74,11 +91,11 @@
           } @else {
             <mat-card class="book-list-card shadow">
               <div class="list-item-content">
-                <img [src]="book.imageUrl" [alt]="book.title" class="list-image">
+                <img [src]="book.imageUrl" [alt]="book.title" class="list-image" />
                 <div class="list-info">
                   <h3 class="book-title">{{ book.title }}</h3>
                   <p class="book-author">by {{ book.author }}</p>
-                  <p class="book-description">{{ book.description | slice:0:150 }}...</p>
+                  <p class="book-description">{{ book.description | slice: 0 : 150 }}...</p>
                   <div class="book-rating">
                     <mat-icon color="warn">star</mat-icon> {{ book.rating }}
                   </div>
@@ -104,7 +121,7 @@
       </div>
     } @placeholder {
       <div class="placeholder-grid">
-        @for (i of [1,2,3,4,5,6]; track i) {
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
           <div class="skeleton-card shadow"></div>
         }
       </div>
@@ -115,11 +132,13 @@
       </div>
     }
 
-    <mat-paginator [length]="pagination().total"
-                   [pageSize]="pagination().limit"
-                   [pageSizeOptions]="[12, 24, 48]"
-                   (page)="onPageChange($event)"
-                   class="shadow">
+    <mat-paginator
+      [length]="pagination().total"
+      [pageSize]="pagination().limit"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPageChange($event)"
+      class="shadow"
+    >
     </mat-paginator>
   </main>
 </div>
