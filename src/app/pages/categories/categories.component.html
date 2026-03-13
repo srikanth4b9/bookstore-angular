@@ -4,7 +4,11 @@
   @defer (when !isLoading(); on timer(500ms)) {
     <div class="categories-grid">
       @for (cat of categories(); track cat.id) {
-        <mat-card class="category-card shadow" [routerLink]="['/books']" [queryParams]="{category: cat.name}">
+        <mat-card
+          class="category-card shadow"
+          [routerLink]="['/books']"
+          [queryParams]="{category: cat.name}"
+        >
           <mat-card-content class="flex-center">
             <mat-icon color="primary">folder_open</mat-icon>
             <div class="cat-info">
@@ -28,11 +32,11 @@
   } @loading {
     <div class="loading-shade flex-center">
       <mat-spinner diameter="50"></mat-spinner>
-      <p style="margin-top: 1rem;">Loading categories...</p>
+      <p style="margin-top: 1rem">Loading categories...</p>
     </div>
   } @placeholder {
     <div class="categories-grid">
-      @for (i of [1,2,3,4,5,6]; track i) {
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
         <div class="skeleton-category shadow"></div>
       }
     </div>

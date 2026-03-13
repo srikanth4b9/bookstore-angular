@@ -5,10 +5,10 @@ import dotenv from 'dotenv';
 import bookRoutes from './routes/books.js';
 import categoryRoutes from './routes/categories.js';
 import orderRoutes from './routes/orders.js';
-import { errorHandler, notFound } from './middleware/error-handler.js';
-import { requestLogger } from './middleware/request-logger.js';
-import { logger } from './utils/logger.js';
-import { connectDB } from './config/db.js';
+import {errorHandler, notFound} from './middleware/error-handler.js';
+import {requestLogger} from './middleware/request-logger.js';
+import {logger} from './utils/logger.js';
+import {connectDB} from './config/db.js';
 
 dotenv.config();
 

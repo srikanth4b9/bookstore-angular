@@ -62,7 +62,7 @@
         background: vars.$light-color;
         border-radius: 20px;
         padding: 4px;
-        border: 1px solid rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
 
         .qty {
           margin: 0 0.75rem;
@@ -115,7 +115,7 @@
 
     mat-card-header {
       margin-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       padding-bottom: 0.5rem;
     }
 
@@ -228,7 +228,8 @@
     color: vars.$text-muted;
   }
 
-  button, a {
+  button,
+  a {
     min-width: 200px;
     height: 48px;
   }

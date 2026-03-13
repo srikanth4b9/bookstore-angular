@@ -53,7 +53,7 @@
       max-width: 350px;
       height: auto;
       border-radius: 4px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
   }
 
@@ -156,7 +156,8 @@
       padding: 1rem 0 0;
       gap: 1rem;
 
-      button, a {
+      button,
+      a {
         min-width: 150px;
         height: 48px;
         font-size: 1rem;

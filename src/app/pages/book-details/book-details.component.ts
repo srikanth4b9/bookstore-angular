@@ -1,17 +1,17 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MockDataService } from '../../services/mock-data.service';
-import { Book } from '../../models/models';
-import { HttpClient } from '@angular/common/http';
-import { API_CONFIG } from '../../config/api.config';
-import { firstValueFrom } from 'rxjs';
+import {Component, inject, signal, OnInit} from '@angular/core';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {CurrencyPipe, DatePipe} from '@angular/common';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MockDataService} from '../../services/mock-data.service';
+import {Book} from '../../models/models';
+import {HttpClient} from '@angular/common/http';
+import {API_CONFIG} from '../../config/api.config';
+import {firstValueFrom} from 'rxjs';
 
 @Component({
   selector: 'app-book-details',
@@ -25,10 +25,10 @@ import { firstValueFrom } from 'rxjs';
     MatIconModule,
     MatChipsModule,
     MatDividerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './book-details.component.html',
-  styleUrl: './book-details.component.scss'
+  styleUrl: './book-details.component.scss',
 })
 export class BookDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -40,7 +40,7 @@ export class BookDetailsComponent implements OnInit {
   isLoading = signal(false);
 
   async ngOnInit() {
-    this.route.params.subscribe(async params => {
+    this.route.params.subscribe(async (params) => {
       const id = params['id'];
       this.isLoading.set(true);
       try {

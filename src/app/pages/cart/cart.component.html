@@ -8,7 +8,12 @@
           <mat-list>
             @for (item of cartItems(); track item.id; let last = $last) {
               <mat-list-item class="cart-item-row">
-                <img matListItemAvatar [src]="item.imageUrl" [alt]="item.bookTitle" class="item-avatar">
+                <img
+                  matListItemAvatar
+                  [src]="item.imageUrl"
+                  [alt]="item.bookTitle"
+                  class="item-avatar"
+                />
                 <div matListItemTitle class="item-title">{{ item.bookTitle }}</div>
                 <div matListItemLine class="item-details">
                   <span class="price">{{ item.bookPrice | currency }}</span>
@@ -21,10 +26,15 @@
                       <mat-icon>add</mat-icon>
                     </button>
                   </div>
-                  <span class="item-total">{{ (item.bookPrice * item.quantity) | currency }}</span>
+                  <span class="item-total">{{ item.bookPrice * item.quantity | currency }}</span>
                 </div>
                 <div matListItemMeta>
-                  <button mat-icon-button color="warn" (click)="removeItem(item.id)" aria-label="Remove item">
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="removeItem(item.id)"
+                    aria-label="Remove item"
+                  >
                     <mat-icon>delete_outline</mat-icon>
                   </button>
                 </div>
@@ -56,9 +66,11 @@
               @if (!isPromoApplied()) {
                 <mat-form-field appearance="outline" class="promo-field">
                   <mat-label>Promo Code</mat-label>
-                  <input matInput [(ngModel)]="promoCode" placeholder="Enter code (e.g. SAVE10)">
+                  <input matInput [(ngModel)]="promoCode" placeholder="Enter code (e.g. SAVE10)" />
                 </mat-form-field>
-                <button mat-flat-button color="accent" class="apply-btn" (click)="applyPromoCode()">APPLY</button>
+                <button mat-flat-button color="accent" class="apply-btn" (click)="applyPromoCode()">
+                  APPLY
+                </button>
               } @else {
                 <div class="applied-promo">
                   <div class="promo-info">

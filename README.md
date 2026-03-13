@@ -7,12 +7,14 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 ## 🚀 Key Features
 
 ### 1️⃣ User Management
+
 - **Registration & Login**: Secure user authentication flows.
 - **Profile Management**: Manage user details, addresses, and account settings.
 - **Order History**: Track past purchases and view detailed order summaries.
 - **Wishlist**: Save favorite books for future purchase.
 
 ### 2️⃣ Book Catalog & Discovery
+
 - **Advanced Search**: Case-insensitive, partial matching for Title, Author, or ISBN using MongoDB Regex, with debounced input to optimize performance.
 - **Dynamic Filtering**: Narrow down results by Category with real-time book count badges.
 - **Smart Sorting**: Fully functional server-side sorting by Price, Rating, Title, and New Arrivals.
@@ -21,11 +23,13 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **Rich Details**: Comprehensive book pages featuring interactive ratings, chip-based genres, and customer reviews.
 
 ### 3️⃣ Shopping Experience
+
 - **Signal-Based Cart**: High-performance, real-time cart updates using Angular Signals.
 - **Quantity Management**: Intuitive controls to update or remove items directly in the cart.
 - **Wizard-Style Checkout**: A smooth, multi-step `mat-stepper` flow for Shipping, Payment, and Review.
 
 ### 4️⃣ Admin Dashboard
+
 - **Inventory Management**: Add, edit, and delete books in real-time.
 - **Sales Analytics**: View total sales and monitor order statuses.
 - **Admin Portal**: Specialized UI for managing the entire store's backend data.
@@ -35,6 +39,7 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 ## 🛠 Tech Stack & Modern Concepts
 
 ### Frontend (Angular 21)
+
 - **Angular Material UI**: Integrated a comprehensive Design System using `mat-card`, `mat-toolbar`, `mat-stepper`, `mat-table`, and more.
 - **Deferrable Views (`@defer`)**: Optimized performance using the latest Angular deferral concepts with custom `@loading`, `@placeholder`, and `@error` states.
 - **Standalone Components**: Modular architecture without the overhead of NgModules.
@@ -43,18 +48,20 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **SCSS Architecture**: Professional styling with global variables, mixins, and a responsive Design System.
 
 ### Backend (Node.js & Express)
+
 - **MongoDB & Mongoose**: Fully dynamic data persistence replacing previous mock data files.
 - **Advanced Querying**: Implemented server-side **Pagination**, **Regex Search**, and **Relational Aggregations** (e.g., book counts per category).
 - **TypeScript & ESM**: Full type safety with modern ES Modules (`type: module`).
 - **Production-Grade Middleware**:
-    - **Helmet & Security**: Integrated security headers for production readiness.
-    - **Joi Validation**: Robust request payload validation schemas.
-    - **Global Error Handler**: Centralized 404 and 500 error management.
-    - **Structured Logging**: Custom logger utility with timestamps and log levels.
-    - **Request Logger**: Monitoring incoming traffic for better observability.
+  - **Helmet & Security**: Integrated security headers for production readiness.
+  - **Joi Validation**: Robust request payload validation schemas.
+  - **Global Error Handler**: Centralized 404 and 500 error management.
+  - **Structured Logging**: Custom logger utility with timestamps and log levels.
+  - **Request Logger**: Monitoring incoming traffic for better observability.
 - **CORS & JSON Parsing**: Secure and efficient API communication.
 
 ### Tools & Quality
+
 - **ESLint**: Strictly enforced code quality for both Frontend and Backend.
 - **TypeScript Strict Mode**: Zero-tolerance policy for `any` type and implicit returns.
 - **REST API Design**: Professionally documented endpoints in `API_DESIGN.md`.
@@ -90,17 +97,21 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 ## 🚦 Getting Started
 
 ### Prerequisites
+
 - **Node.js**: v20+
 - **npm**: v10+
 - **MongoDB**: v7.0+ (Local instance or Atlas)
 
 ### 1. Database Setup
+
 Ensure MongoDB is running. If you're on macOS using Homebrew:
+
 ```bash
 brew services start mongodb-community@7.0
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 # Install root (Frontend) dependencies
 npm install --legacy-peer-deps
@@ -112,6 +123,7 @@ cd ..
 ```
 
 ### 3. Seed & Run
+
 ```bash
 # 1. Seed the database with 1000+ books (Required for first run)
 cd server
@@ -132,7 +144,9 @@ Navigate to `http://localhost:4200` to see the app in action!
 ## 🧪 Quality Assurance
 
 ### Linting
+
 Maintain clean code standards with unified linting:
+
 ```bash
 # Run lint for everything (Frontend + Backend)
 npm run lint:all
@@ -142,8 +156,9 @@ npm run lint:fix:all
 ```
 
 ### Build
+
 Verify production readiness:
+
 ```bash
 npm run build
 ```
-

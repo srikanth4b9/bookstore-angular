@@ -1,16 +1,16 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MockDataService } from '../../services/mock-data.service';
+import {Component, inject, signal, computed} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {CurrencyPipe, DatePipe, UpperCasePipe} from '@angular/common';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatTableModule} from '@angular/material/table';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MockDataService} from '../../services/mock-data.service';
 
 @Component({
   selector: 'app-admin',
@@ -28,10 +28,10 @@ import { MockDataService } from '../../services/mock-data.service';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.scss'
+  styleUrl: './admin.component.scss',
 })
 export class AdminComponent {
   private mockData = inject(MockDataService);
@@ -46,7 +46,7 @@ export class AdminComponent {
   newBook = {
     title: '',
     author: '',
-    price: 0
+    price: 0,
   };
 
   totalSales = computed(() => this.orders().reduce((acc, order) => acc + order.total, 0));

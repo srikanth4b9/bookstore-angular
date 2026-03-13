@@ -56,16 +56,22 @@
           <mat-card class="order-card" variant="outlined">
             <mat-card-header>
               <mat-card-title>Order #{{ order.id }}</mat-card-title>
-              <mat-card-subtitle>Placed on {{ order.orderDate | date:'mediumDate' }}</mat-card-subtitle>
+              <mat-card-subtitle
+                >Placed on {{ order.orderDate | date: 'mediumDate' }}</mat-card-subtitle
+              >
               <span class="spacer"></span>
-              <span class="order-status" [attr.data-status]="order.status">{{ order.status | uppercase }}</span>
+              <span class="order-status" [attr.data-status]="order.status">{{
+                order.status | uppercase
+              }}</span>
             </mat-card-header>
             <mat-card-content>
               <mat-list>
                 @for (item of order.items; track item.id) {
                   <mat-list-item>
                     <span matListItemTitle>{{ item.bookTitle }}</span>
-                    <span matListItemLine>{{ item.quantity }} x {{ item.bookPrice | currency }}</span>
+                    <span matListItemLine
+                      >{{ item.quantity }} x {{ item.bookPrice | currency }}</span
+                    >
                   </mat-list-item>
                 }
               </mat-list>

@@ -21,22 +21,26 @@
               <div class="form-grid">
                 <mat-form-field appearance="outline">
                   <mat-label>Title</mat-label>
-                  <input matInput [(ngModel)]="newBook.title" placeholder="e.g. The Great Gatsby">
+                  <input matInput [(ngModel)]="newBook.title" placeholder="e.g. The Great Gatsby" />
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                   <mat-label>Author</mat-label>
-                  <input matInput [(ngModel)]="newBook.author" placeholder="e.g. F. Scott Fitzgerald">
+                  <input
+                    matInput
+                    [(ngModel)]="newBook.author"
+                    placeholder="e.g. F. Scott Fitzgerald"
+                  />
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                   <mat-label>Price</mat-label>
-                  <input matInput type="number" [(ngModel)]="newBook.price">
+                  <input matInput type="number" [(ngModel)]="newBook.price" />
                   <span matPrefix>$&nbsp;</span>
                 </mat-form-field>
               </div>
             </mat-card-content>
             <mat-card-actions align="end">
               <button mat-button (click)="showAddForm.set(false)">CANCEL</button>
-              <button mat-raised-button color="primary" (click)='addBook()'>SAVE BOOK</button>
+              <button mat-raised-button color="primary" (click)="addBook()">SAVE BOOK</button>
             </mat-card-actions>
           </mat-card>
         }
@@ -44,32 +48,32 @@
         <div class="table-container shadow">
           <table mat-table [dataSource]="books()">
             <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef> ID </th>
-              <td mat-cell *matCellDef="let book"> {{book.id}} </td>
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let book">{{ book.id }}</td>
             </ng-container>
 
             <ng-container matColumnDef="title">
-              <th mat-header-cell *matHeaderCellDef> Title </th>
-              <td mat-cell *matCellDef="let book"> {{book.title}} </td>
+              <th mat-header-cell *matHeaderCellDef>Title</th>
+              <td mat-cell *matCellDef="let book">{{ book.title }}</td>
             </ng-container>
 
             <ng-container matColumnDef="author">
-              <th mat-header-cell *matHeaderCellDef> Author </th>
-              <td mat-cell *matCellDef="let book"> {{book.author}} </td>
+              <th mat-header-cell *matHeaderCellDef>Author</th>
+              <td mat-cell *matCellDef="let book">{{ book.author }}</td>
             </ng-container>
 
             <ng-container matColumnDef="price">
-              <th mat-header-cell *matHeaderCellDef> Price </th>
-              <td mat-cell *matCellDef="let book"> {{book.price | currency}} </td>
+              <th mat-header-cell *matHeaderCellDef>Price</th>
+              <td mat-cell *matCellDef="let book">{{ book.price | currency }}</td>
             </ng-container>
 
             <ng-container matColumnDef="stock">
-              <th mat-header-cell *matHeaderCellDef> Stock </th>
-              <td mat-cell *matCellDef="let book"> {{book.stock}} </td>
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+              <td mat-cell *matCellDef="let book">{{ book.stock }}</td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let book">
                 <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
                 <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
@@ -77,7 +81,7 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderCellDef></tr>
-            <tr mat-row *matRowDef="let row; columns: bookColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: bookColumns"></tr>
           </table>
         </div>
       </div>
@@ -93,36 +97,36 @@
         <div class="table-container shadow">
           <table mat-table [dataSource]="orders()">
             <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef> Order ID </th>
-              <td mat-cell *matCellDef="let order"> {{order.id}} </td>
+              <th mat-header-cell *matHeaderCellDef>Order ID</th>
+              <td mat-cell *matCellDef="let order">{{ order.id }}</td>
             </ng-container>
 
             <ng-container matColumnDef="orderDate">
-              <th mat-header-cell *matHeaderCellDef> Date </th>
-              <td mat-cell *matCellDef="let order"> {{order.orderDate | date}} </td>
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let order">{{ order.orderDate | date }}</td>
             </ng-container>
 
             <ng-container matColumnDef="userId">
-              <th mat-header-cell *matHeaderCellDef> Customer </th>
-              <td mat-cell *matCellDef="let order"> {{order.userId}} </td>
+              <th mat-header-cell *matHeaderCellDef>Customer</th>
+              <td mat-cell *matCellDef="let order">{{ order.userId }}</td>
             </ng-container>
 
             <ng-container matColumnDef="total">
-              <th mat-header-cell *matHeaderCellDef> Total </th>
-              <td mat-cell *matCellDef="let order"> {{order.total | currency}} </td>
+              <th mat-header-cell *matHeaderCellDef>Total</th>
+              <td mat-cell *matCellDef="let order">{{ order.total | currency }}</td>
             </ng-container>
 
             <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <th mat-header-cell *matHeaderCellDef>Status</th>
               <td mat-cell *matCellDef="let order">
                 <span class="status-badge" [attr.data-status]="order.status">
-                  {{order.status | uppercase}}
+                  {{ order.status | uppercase }}
                 </span>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef> Update Status </th>
+              <th mat-header-cell *matHeaderCellDef>Update Status</th>
               <td mat-cell *matCellDef="let order">
                 <mat-form-field appearance="outline" class="status-select">
                   <mat-select [value]="order.status">
@@ -135,7 +139,7 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderCellDef></tr>
-            <tr mat-row *matRowDef="let row; columns: orderColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: orderColumns"></tr>
           </table>
         </div>
       </div>
