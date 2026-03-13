@@ -3,7 +3,7 @@ import {Router} from 'express';
 import {BookModel} from '../models/book.model.js';
 import {logger} from '../utils/logger.js';
 import {bookQuerySchema, bookCreateSchema} from '../validation/book.validation.js';
-import type {FilterQuery} from 'mongoose';
+import type { QueryFilter } from 'mongoose';
 import type {Book} from '../types/models.js';
 
 const router = Router();
@@ -53,7 +53,7 @@ router.get('/', validateQuery, async (req: Request, res: Response) => {
       queryData;
     const skip = (page - 1) * limit;
 
-    const query: FilterQuery<Book> = {};
+    const query: QueryFilter<Book> = {};
 
     // Search functionality - Use regex for better partial matching
     if (search) {

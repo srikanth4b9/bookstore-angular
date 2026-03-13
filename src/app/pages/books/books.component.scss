@@ -261,8 +261,38 @@
       &.add-btn {
         background: vars.$primary-color !important;
         color: white !important;
+        transition: all 0.3s ease;
+
+        &.added {
+          background: vars.$success-color !important;
+          transform: scale(1.1);
+          mat-icon {
+            animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          }
+        }
       }
     }
+  }
+}
+
+.list-actions {
+  button.added {
+    background-color: vars.$success-color !important;
+    color: white !important;
+    mat-icon {
+      animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
