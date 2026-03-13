@@ -1,94 +1,105 @@
 <div class="details-container">
-  @if (isLoading()) {
-    <div class="loading-shade">
-      <mat-spinner></mat-spinner>
-    </div>
-  }
+  @defer (when !isLoading(); on timer(500ms)) {
+    @if (book(); as b) {
+      <mat-card class="details-card shadow">
+        <div class="book-layout">
+          <div class="book-image-section">
+            <img [src]="b.imageUrl" [alt]="b.title" class="book-cover">
+          </div>
 
-  @if (book(); as b) {
-    <mat-card class="details-card shadow">
-      <div class="book-layout">
-        <div class="book-image-section">
-          <img [src]="b.imageUrl" [alt]="b.title" class="book-cover">
-        </div>
+          <div class="book-info-section">
+            <mat-card-header>
+              <mat-card-title>{{ b.title }}</mat-card-title>
+              <mat-card-subtitle>by {{ b.author }}</mat-card-subtitle>
+            </mat-card-header>
 
-        <div class="book-info-section">
-          <mat-card-header>
-            <mat-card-title>{{ b.title }}</mat-card-title>
-            <mat-card-subtitle>by {{ b.author }}</mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-content>
-            <div class="rating-row">
-              <mat-icon color="warn">star</mat-icon>
-              <span>{{ b.rating }} ({{ b.reviews.length }} reviews)</span>
-            </div>
-
-            <div class="price-row">
-              {{ b.price | currency }}
-            </div>
-
-            <p class="status-chip" [class.out]="!b.availability">
-              {{ b.availability ? 'In Stock (' + b.stock + ' available)' : 'Out of Stock' }}
-            </p>
-
-            <mat-divider></mat-divider>
-
-            <div class="meta-info">
-              <p><strong>ISBN:</strong> {{ b.isbn }}</p>
-              <p><strong>Category:</strong> {{ b.category }}</p>
-              <div class="genres-chips">
-                @for (g of b.genre; track g) {
-                  <mat-chip>{{ g }}</mat-chip>
-                }
+            <mat-card-content>
+              <div class="rating-row">
+                <mat-icon color="warn">star</mat-icon>
+                <span>{{ b.rating }} ({{ b.reviews.length }} reviews)</span>
               </div>
-            </div>
 
-            <mat-divider></mat-divider>
+              <div class="price-row">
+                {{ b.price | currency }}
+              </div>
 
-            <div class="description-section">
-              <h3>Description</h3>
-              <p>{{ b.description }}</p>
-            </div>
-          </mat-card-content>
+              <p class="status-chip" [class.out]="!b.availability">
+                {{ b.availability ? 'In Stock (' + b.stock + ' available)' : 'Out of Stock' }}
+              </p>
 
-          <mat-card-actions align="end">
-            <a mat-button color="primary" routerLink="/books">
-              <mat-icon>arrow_back</mat-icon> BACK
-            </a>
-            <button mat-raised-button color="primary" [disabled]="!b.availability" (click)="addToCart(b)">
-              <mat-icon>shopping_cart</mat-icon> ADD TO CART
-            </button>
-          </mat-card-actions>
+              <mat-divider></mat-divider>
+
+              <div class="meta-info">
+                <p><strong>ISBN:</strong> {{ b.isbn }}</p>
+                <p><strong>Category:</strong> {{ b.category }}</p>
+                <div class="genres-chips">
+                  @for (g of b.genre; track g) {
+                    <mat-chip>{{ g }}</mat-chip>
+                  }
+                </div>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="description-section">
+                <h3>Description</h3>
+                <p>{{ b.description }}</p>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <a mat-button color="primary" routerLink="/books">
+                <mat-icon>arrow_back</mat-icon> BACK
+              </a>
+              <button mat-raised-button color="primary" [disabled]="!b.availability" (click)="addToCart(b)">
+                <mat-icon>shopping_cart</mat-icon> ADD TO CART
+              </button>
+            </mat-card-actions>
+          </div>
         </div>
-      </div>
-    </mat-card>
+      </mat-card>
 
-    <div class="reviews-section shadow">
-      <h2>Customer Reviews</h2>
-      @for (review of b.reviews; track review.id) {
-        <mat-card class="review-card">
-          <mat-card-header>
-            <div mat-card-avatar class="avatar">{{ review.userName[0] }}</div>
-            <mat-card-title>{{ review.userName }}</mat-card-title>
-            <mat-card-subtitle>{{ review.date | date }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="review-rating">
-              <mat-icon color="warn">star</mat-icon> {{ review.rating }}
-            </div>
-            <p>{{ review.comment }}</p>
-          </mat-card-content>
-        </mat-card>
-      } @empty {
-        <p class="no-reviews">No reviews yet. Be the first to review this book!</p>
-      }
+      <div class="reviews-section shadow">
+        <h2>Customer Reviews</h2>
+        @for (review of b.reviews; track review.id) {
+          <mat-card class="review-card">
+            <mat-card-header>
+              <div mat-card-avatar class="avatar">{{ review.userName[0] }}</div>
+              <mat-card-title>{{ review.userName }}</mat-card-title>
+              <mat-card-subtitle>{{ review.date | date }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="review-rating">
+                <mat-icon color="warn">star</mat-icon> {{ review.rating }}
+              </div>
+              <p>{{ review.comment }}</p>
+            </mat-card-content>
+          </mat-card>
+        } @empty {
+          <p class="no-reviews">No reviews yet. Be the first to review this book!</p>
+        }
+      </div>
+    } @else {
+      <div class="not-found">
+        <mat-icon class="huge-icon">error_outline</mat-icon>
+        <p>Book not found.</p>
+        <a mat-raised-button color="primary" routerLink="/books">Back to Books</a>
+      </div>
+    }
+  } @loading {
+    <div class="loading-shade flex-center">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p style="margin-top: 1rem;">Loading book details...</p>
     </div>
-  } @else if (!isLoading()) {
-    <div class="not-found">
-      <mat-icon class="huge-icon">error_outline</mat-icon>
-      <p>Book not found.</p>
-      <a mat-raised-button color="primary" routerLink="/books">Back to Books</a>
+  } @placeholder {
+    <div class="placeholder-details">
+      <div class="skeleton-header shadow"></div>
+      <div class="skeleton-content shadow"></div>
+    </div>
+  } @error {
+    <div class="error-container flex-center">
+      <mat-icon color="warn">error</mat-icon>
+      <p>Error loading book. Please refresh.</p>
     </div>
   }
 </div>
