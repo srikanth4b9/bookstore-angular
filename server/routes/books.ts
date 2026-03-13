@@ -2,9 +2,9 @@ import type { Request, Response, NextFunction } from 'express';
 import { Router } from 'express';
 import { BookModel } from '../models/book.model.js';
 import { logger } from '../utils/logger.js';
-import mongoose from 'mongoose';
-import type { Book } from '../types/models.js';
 import { bookQuerySchema, bookCreateSchema } from '../validation/book.validation.js';
+import { FilterQuery } from 'mongoose';
+import type { Book } from '../types/models.js';
 
 const router = Router();
 
@@ -46,7 +46,7 @@ router.get('/', validateQuery, async (req: Request, res: Response) => {
     const { page, limit, search, category, minPrice, maxPrice, minRating, sortBy, sortOrder } = queryData;
     const skip = (page - 1) * limit;
 
-    const query: any = {};
+    const query: FilterQuery<Book> = {};
 
     // Search functionality - Use regex for better partial matching
     if (search) {
