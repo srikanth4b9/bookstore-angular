@@ -1,7 +1,7 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, SlicePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +20,7 @@ import { Book } from '../../models/models';
     RouterLink,
     FormsModule,
     CurrencyPipe,
+    SlicePipe,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -44,7 +45,8 @@ export class BooksComponent {
   searchTerm = signal('');
   selectedCategory = signal('');
   sortBy = signal('createdAt');
-  sortOrder = signal('desc');
+  sortOrder = signal<'asc' | 'desc'>('desc');
+  viewMode = signal<'grid' | 'list'>('grid');
 
   constructor() {
     this.route.queryParams.subscribe(params => {
@@ -59,7 +61,9 @@ export class BooksComponent {
         this.pagination().page,
         this.pagination().limit,
         this.searchTerm(),
-        this.selectedCategory()
+        this.selectedCategory(),
+        this.sortBy(),
+        this.sortOrder()
       );
     }, { allowSignalWrites: true });
   }
@@ -69,7 +73,9 @@ export class BooksComponent {
       event.pageIndex + 1,
       event.pageSize,
       this.searchTerm(),
-      this.selectedCategory()
+      this.selectedCategory(),
+      this.sortBy(),
+      this.sortOrder()
     );
   }
 

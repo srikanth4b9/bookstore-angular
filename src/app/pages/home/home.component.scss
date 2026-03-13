@@ -71,31 +71,50 @@
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2.5rem;
 }
 
 .book-card {
   cursor: pointer;
   transition: transform 0.3s ease;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  position: relative;
 
   &:hover {
     transform: translateY(-10px);
+    .book-details-overlay {
+      background: rgba(255, 255, 255, 0.95);
+    }
   }
 
-  img {
-    height: 350px;
-    object-fit: cover;
-  }
-
-  mat-card-content {
+  .book-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     padding: 1rem;
+    background: #f9f9f9;
+  }
+
+  .book-details-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 1rem;
+    transition: background 0.3s;
     text-align: center;
+    backdrop-filter: blur(4px);
 
     .title {
       font-size: 1.1rem;
       font-weight: 600;
-      margin-bottom: 0.25rem;
+      margin: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -103,13 +122,15 @@
 
     .author {
       color: vars.$text-muted;
-      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      margin: 0.4rem 0;
     }
 
     .price {
       font-size: 1.2rem;
       font-weight: bold;
       color: vars.$primary-color;
+      margin: 0;
     }
   }
 }
