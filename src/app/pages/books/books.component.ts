@@ -87,8 +87,7 @@ export class BooksComponent implements OnDestroy {
           this.sortBy(),
           this.sortOrder(),
         );
-      },
-      {allowSignalWrites: true},
+      }
     );
   }
 
