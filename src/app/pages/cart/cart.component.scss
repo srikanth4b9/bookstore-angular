@@ -59,21 +59,35 @@
       .quantity-controls {
         display: flex;
         align-items: center;
-        background: #f5f5f5;
+        background: vars.$light-color;
         border-radius: 20px;
-        padding: 2px;
+        padding: 4px;
+        border: 1px solid rgba(0,0,0,0.05);
 
         .qty {
-          margin: 0 1rem;
-          font-weight: bold;
-          min-width: 20px;
+          margin: 0 0.75rem;
+          font-weight: 600;
+          min-width: 24px;
           text-align: center;
+          font-size: 1rem;
         }
 
         button {
           width: 32px;
           height: 32px;
-          line-height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
         }
       }
 
@@ -130,6 +144,53 @@
         .free-text {
           color: #2e7d32;
           font-weight: 600;
+        }
+
+        &.discount {
+          color: #d32f2f;
+          font-weight: 500;
+        }
+      }
+
+      .promo-section {
+        margin: 1.5rem 0 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        .promo-field {
+          flex: 1;
+          ::v-deep .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+          }
+        }
+
+        .apply-btn {
+          height: 56px;
+        }
+
+        .applied-promo {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #e8f5e9;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          color: #2e7d32;
+
+          .promo-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+          }
         }
       }
     }
