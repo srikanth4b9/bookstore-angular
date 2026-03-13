@@ -63,6 +63,94 @@
   margin-bottom: 2rem;
 }
 
+.book-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .book-list-card {
+    .list-item-content {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem;
+
+      @media (max-width: 600px) {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .list-image {
+        width: 120px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .list-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .book-title {
+          font-size: 1.4rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .book-author {
+          color: vars.$text-muted;
+          margin-bottom: 1rem;
+        }
+
+        .book-description {
+          font-size: 0.95rem;
+          color: vars.$text-main;
+          margin-bottom: 1rem;
+          line-height: 1.5;
+        }
+
+        .book-rating {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: #fbc02d;
+        }
+      }
+
+      .list-actions {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1rem;
+        border-left: 1px solid rgba(0,0,0,0.05);
+        padding-left: 2rem;
+
+        @media (max-width: 600px) {
+          width: 100%;
+          border-left: none;
+          padding-left: 0;
+          border-top: 1px solid rgba(0,0,0,0.05);
+          padding-top: 1rem;
+        }
+
+        .book-price {
+          font-size: 1.8rem;
+          font-weight: bold;
+          color: vars.$primary-color;
+          margin: 0;
+        }
+
+        button, a {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
 .book-card {
   display: flex;
   flex-direction: column;

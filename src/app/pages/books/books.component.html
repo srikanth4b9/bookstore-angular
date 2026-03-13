@@ -39,28 +39,59 @@
   <main class="book-list">
     <div class="header-row">
       <h2>Books <small>({{ pagination().total }} total)</small></h2>
+      <div class="view-toggle">
+        <button mat-icon-button [color]="viewMode() === 'grid' ? 'primary' : ''" (click)="viewMode.set('grid')" title="Grid View">
+          <mat-icon>grid_view</mat-icon>
+        </button>
+        <button mat-icon-button [color]="viewMode() === 'list' ? 'primary' : ''" (click)="viewMode.set('list')" title="List View">
+          <mat-icon>view_list</mat-icon>
+        </button>
+      </div>
     </div>
 
     @defer (on viewport; when !isLoading()) {
-      <div class="book-grid">
+      <div [class]="viewMode() === 'grid' ? 'book-grid' : 'book-list-view'">
         @for (book of books(); track book.id) {
-          <mat-card class="book-card shadow">
-            <img mat-card-image [src]="book.imageUrl" [alt]="book.title" class="book-image">
-            <mat-card-content>
-              <h3 class="book-title">{{ book.title }}</h3>
-              <p class="book-author">{{ book.author }}</p>
-              <p class="book-price">{{ book.price | currency }}</p>
-              <div class="book-rating">
-                <mat-icon color="warn">star</mat-icon> {{ book.rating }}
+          @if (viewMode() === 'grid') {
+            <mat-card class="book-card shadow">
+              <img mat-card-image [src]="book.imageUrl" [alt]="book.title" class="book-image">
+              <mat-card-content>
+                <h3 class="book-title">{{ book.title }}</h3>
+                <p class="book-author">{{ book.author }}</p>
+                <p class="book-price">{{ book.price | currency }}</p>
+                <div class="book-rating">
+                  <mat-icon color="warn">star</mat-icon> {{ book.rating }}
+                </div>
+              </mat-card-content>
+              <mat-card-actions align="end">
+                <a mat-button color="primary" [routerLink]="['/books', book.id]">DETAILS</a>
+                <button mat-raised-button color="primary" (click)="addToCart(book)">
+                  <mat-icon>shopping_cart</mat-icon> ADD
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          } @else {
+            <mat-card class="book-list-card shadow">
+              <div class="list-item-content">
+                <img [src]="book.imageUrl" [alt]="book.title" class="list-image">
+                <div class="list-info">
+                  <h3 class="book-title">{{ book.title }}</h3>
+                  <p class="book-author">by {{ book.author }}</p>
+                  <p class="book-description">{{ book.description | slice:0:150 }}...</p>
+                  <div class="book-rating">
+                    <mat-icon color="warn">star</mat-icon> {{ book.rating }}
+                  </div>
+                </div>
+                <div class="list-actions">
+                  <p class="book-price">{{ book.price | currency }}</p>
+                  <button mat-raised-button color="primary" (click)="addToCart(book)">
+                    <mat-icon>shopping_cart</mat-icon> ADD
+                  </button>
+                  <a mat-button color="primary" [routerLink]="['/books', book.id]">DETAILS</a>
+                </div>
               </div>
-            </mat-card-content>
-            <mat-card-actions align="end">
-              <a mat-button color="primary" [routerLink]="['/books', book.id]">DETAILS</a>
-              <button mat-raised-button color="primary" (click)="addToCart(book)">
-                <mat-icon>shopping_cart</mat-icon> ADD
-              </button>
-            </mat-card-actions>
-          </mat-card>
+            </mat-card>
+          }
         } @empty {
           <p class="no-results">No books found matching your criteria.</p>
         }
