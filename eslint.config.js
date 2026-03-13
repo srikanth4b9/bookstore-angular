@@ -16,7 +16,7 @@ module.exports = defineConfig([
       tseslint.configs.stylistic,
       angular.configs.tsRecommended,
     ],
-    ignores: ['server/**/*.ts'],
+    ignores: ['server/**/*.ts', 'src/test-setup.ts'],
     processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/directive-selector': [
