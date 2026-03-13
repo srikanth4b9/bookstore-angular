@@ -1,7 +1,7 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, SlicePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +20,7 @@ import { Book } from '../../models/models';
     RouterLink,
     FormsModule,
     CurrencyPipe,
+    SlicePipe,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
