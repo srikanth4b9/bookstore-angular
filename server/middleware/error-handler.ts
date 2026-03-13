@@ -1,12 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger.js';
+import type {Request, Response, NextFunction} from 'express';
+import {logger} from '../utils/logger.js';
 
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
+export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {
   logger.error(`${req.method} ${req.url} - Error: ${err.message}`, err.stack);
 
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;

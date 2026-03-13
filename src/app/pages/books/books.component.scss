@@ -125,14 +125,14 @@
         flex-direction: column;
         justify-content: center;
         gap: 1rem;
-        border-left: 1px solid rgba(0,0,0,0.05);
+        border-left: 1px solid rgba(0, 0, 0, 0.05);
         padding-left: 2rem;
 
         @media (max-width: 600px) {
           width: 100%;
           border-left: none;
           padding-left: 0;
-          border-top: 1px solid rgba(0,0,0,0.05);
+          border-top: 1px solid rgba(0, 0, 0, 0.05);
           padding-top: 1rem;
         }
 
@@ -143,7 +143,8 @@
           margin: 0;
         }
 
-        button, a {
+        button,
+        a {
           width: 100%;
         }
       }
@@ -156,7 +157,9 @@
   flex-direction: column;
   height: 100%;
   aspect-ratio: 1 / 1;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   overflow: hidden;
   position: relative;
 
@@ -249,9 +252,10 @@
     gap: 0.5rem;
     transform: translateY(-100%);
     transition: transform 0.3s ease;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent);
 
-    button, a {
+    button,
+    a {
       background: white !important;
       color: vars.$primary-color !important;
       &.add-btn {
@@ -310,6 +314,10 @@ mat-paginator {
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

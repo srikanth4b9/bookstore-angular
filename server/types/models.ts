@@ -1,6 +1,6 @@
 export enum UserRole {
   USER = 'user',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
 }
 
 export interface User {
@@ -70,7 +70,7 @@ export enum OrderStatus {
   PENDING = 'pending',
   SHIPPED = 'shipped',
   DELIVERED = 'delivered',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export interface Order {

@@ -1,6 +1,6 @@
 // @ts-check
 const eslint = require('@eslint/js');
-const { defineConfig } = require('eslint/config');
+const {defineConfig} = require('eslint/config');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 const eslintPluginN = require('eslint-plugin-n');
@@ -44,11 +44,7 @@ module.exports = defineConfig([
   },
   {
     files: ['server/**/*.ts'],
-    extends: [
-      eslint.configs.recommended,
-      tseslint.configs.recommended,
-      tseslint.configs.stylistic,
-    ],
+    extends: [eslint.configs.recommended, tseslint.configs.recommended, tseslint.configs.stylistic],
     plugins: {
       n: eslintPluginN,
       promise: eslintPluginPromise,
@@ -59,8 +55,8 @@ module.exports = defineConfig([
       sourceType: 'module',
     },
     rules: {
-      'no-console': ['warn', { allow: ['info', 'error', 'warn', 'debug'] }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-console': ['warn', {allow: ['info', 'error', 'warn', 'debug']}],
+      '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
       '@typescript-eslint/explicit-function-return-type': 'off',
       'n/no-missing-import': 'off', // TypeScript handles this and we're using .js extensions
       'n/no-process-exit': 'error',
