@@ -48,9 +48,13 @@ router.get('/', validateQuery, async (req: Request, res: Response) => {
 
     const query: any = {};
 
-    // Search functionality
+    // Search functionality - Use regex for better partial matching
     if (search) {
-      query.$text = { $search: search };
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { author: { $regex: search, $options: 'i' } },
+        { isbn: { $regex: search, $options: 'i' } }
+      ];
     }
 
     // Category filter
