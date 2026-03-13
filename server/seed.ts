@@ -29,7 +29,7 @@ const generateRandomBooks = (count: number): Book[] => {
     books.push({
       id: i.toString(),
       title: `Book Title ${i}`,
-      author: authors[Math.floor(Math.random() * authors.length)],
+      author: authors[Math.floor(Math.random() * authors.length)]!,
       description: `This is the description for book ${i}. It provides insightful information about the topic.`,
       price: parseFloat((Math.random() * 50 + 10).toFixed(2)),
       availability: true,
