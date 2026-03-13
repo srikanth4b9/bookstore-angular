@@ -50,6 +50,7 @@ export class BooksComponent implements OnDestroy {
   sortBy = signal('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
   viewMode = signal<'grid' | 'list'>('grid');
+  addedBooks = signal<Set<string>>(new Set());
 
   constructor() {
     // Initial category from query params
@@ -117,6 +118,19 @@ export class BooksComponent implements OnDestroy {
 
   addToCart(book: Book) {
     this.mockData.addToCart(book);
+    this.addedBooks.update(set => {
+      const newSet = new Set(set);
+      newSet.add(book.id);
+      return newSet;
+    });
+
+    setTimeout(() => {
+      this.addedBooks.update(set => {
+        const newSet = new Set(set);
+        newSet.delete(book.id);
+        return newSet;
+      });
+    }, 2000);
   }
 
   ngOnDestroy() {

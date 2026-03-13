@@ -5,6 +5,14 @@
 /tmp
 /out-tsc
 /bazel-out
+server/**/*.js
+server/**/*.js.map
+server/**/*.d.ts
+server/**/*.d.ts.map
+!server/package.json
+!server/tsconfig.json
+!server/README.md
+!server/.env.example
 
 # Node
 /node_modules
