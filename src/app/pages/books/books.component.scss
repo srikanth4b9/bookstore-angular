@@ -58,8 +58,8 @@
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2.5rem;
   margin-bottom: 2rem;
 }
 
@@ -187,12 +187,12 @@
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, 0.85);
-    padding: 0.75rem;
+    padding: 1.25rem;
     transition: background 0.3s;
     backdrop-filter: blur(4px);
 
     .book-title {
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       font-weight: 600;
       margin: 0;
       white-space: nowrap;
@@ -202,8 +202,8 @@
 
     .book-author {
       color: vars.$text-muted;
-      font-size: 0.8rem;
-      margin: 0.25rem 0;
+      font-size: 0.9rem;
+      margin: 0.4rem 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -213,10 +213,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
 
       .book-price {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         font-weight: bold;
         color: vars.$primary-color;
         margin: 0;
@@ -225,14 +225,14 @@
       .book-rating {
         display: flex;
         align-items: center;
-        gap: 2px;
-        font-size: 0.8rem;
+        gap: 4px;
+        font-size: 0.9rem;
         font-weight: 500;
 
         mat-icon {
-          font-size: 14px;
-          width: 14px;
-          height: 14px;
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
         }
       }
     }
