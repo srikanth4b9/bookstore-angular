@@ -46,6 +46,12 @@
 
     h2 {
       margin: 0;
+      small {
+        font-size: 1rem;
+        font-weight: 400;
+        color: vars.$text-muted;
+        margin-left: 0.5rem;
+      }
     }
   }
 }

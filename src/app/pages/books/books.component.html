@@ -38,7 +38,7 @@
 
   <main class="book-list">
     <div class="header-row">
-      <h2>Books</h2>
+      <h2>Books <small>({{ pagination().total }} total)</small></h2>
     </div>
 
     @defer (on viewport; when !isLoading()) {
