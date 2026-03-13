@@ -3,13 +3,13 @@
     <h3>Filters</h3>
     <mat-form-field appearance="outline">
       <mat-label>Search</mat-label>
-      <input matInput [(ngModel)]="searchTerm" placeholder="Title, author, ISBN...">
+      <input matInput (input)="onSearchChange($event)" placeholder="Title, author, ISBN...">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
-      <mat-select [(ngModel)]="selectedCategory">
+      <mat-select [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event)">
         <mat-option value="">All Categories</mat-option>
         @for (cat of categories(); track cat.id) {
           <mat-option [value]="cat.name">{{ cat.name }}</mat-option>
@@ -19,7 +19,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Sort By</mat-label>
-      <mat-select [(ngModel)]="sortBy">
+      <mat-select [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)">
         <mat-option value="createdAt">Newest</mat-option>
         <mat-option value="price">Price</mat-option>
         <mat-option value="rating">Rating</mat-option>
@@ -29,7 +29,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Order</mat-label>
-      <mat-select [(ngModel)]="sortOrder">
+      <mat-select [ngModel]="sortOrder()" (ngModelChange)="sortOrder.set($event)">
         <mat-option value="desc">Descending</mat-option>
         <mat-option value="asc">Ascending</mat-option>
       </mat-select>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, OnDestroy, untracked } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe, SlicePipe } from '@angular/common';
@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MockDataService } from '../../services/mock-data.service';
 import { Book } from '../../models/models';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-books',
@@ -33,9 +34,11 @@ import { Book } from '../../models/models';
   templateUrl: './books.component.html',
   styleUrl: './books.component.scss'
 })
-export class BooksComponent {
+export class BooksComponent implements OnDestroy {
   private mockData = inject(MockDataService);
   private route = inject(ActivatedRoute);
+  private destroy$ = new Subject<void>();
+  private searchSubject = new Subject<string>();
 
   books = this.mockData.books;
   categories = this.mockData.categories;
@@ -49,23 +52,55 @@ export class BooksComponent {
   viewMode = signal<'grid' | 'list'>('grid');
 
   constructor() {
-    this.route.queryParams.subscribe(params => {
+    // Initial category from query params
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       if (params['category']) {
         this.selectedCategory.set(params['category']);
       }
     });
 
-    // Reactive fetch on state change
+    // Handle debounced search
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(term => {
+      this.searchTerm.set(term);
+    });
+
+    // Reactive fetch for category and sort changes
     effect(() => {
+      // Signals that trigger a refetch
+      this.selectedCategory();
+      this.sortBy();
+      this.sortOrder();
+      this.searchTerm();
+
+      // We use untracked to avoid subscribing to pagination()
+      // so updates to pagination don't trigger this effect recursively
+      const currentLimit = untracked(() => this.pagination().limit);
       this.mockData.fetchBooks(
-        this.pagination().page,
-        this.pagination().limit,
+        1,
+        currentLimit,
         this.searchTerm(),
         this.selectedCategory(),
         this.sortBy(),
         this.sortOrder()
       );
     }, { allowSignalWrites: true });
+  }
+
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
+  onFilterChange() {
+    this.resetAndFetch();
+  }
+
+  private resetAndFetch() {
+    // This is just a helper, the main logic is in the effect
   }
 
   onPageChange(event: PageEvent) {
@@ -81,5 +116,10 @@ export class BooksComponent {
 
   addToCart(book: Book) {
     this.mockData.addToCart(book);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
