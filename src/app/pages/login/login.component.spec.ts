@@ -1,13 +1,11 @@
-import { LoginComponent } from './login.component';
-import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
-import { MockDataService } from '../../services/mock-data.service';
-import { Router } from '@angular/router';
+import {LoginComponent} from './login.component';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockDataService} from '../../services/mock-data.service';
+import {Router} from '@angular/router';
 
 describe('LoginComponent', () => {
   beforeEach(() => {
-    return MockBuilder(LoginComponent)
-      .mock(MockDataService)
-      .mock(Router);
+    return MockBuilder(LoginComponent).mock(MockDataService).mock(Router);
   });
 
   it('should create', () => {
@@ -19,6 +17,7 @@ describe('LoginComponent', () => {
     const fixture = MockRender(LoginComponent);
     const component = fixture.point.componentInstance;
     const router = ngMocks.get(Router);
+    router.navigate = jest.fn();
     window.alert = jest.fn();
 
     component.login();

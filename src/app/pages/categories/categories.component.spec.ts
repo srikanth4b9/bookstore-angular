@@ -1,16 +1,15 @@
-import { CategoriesComponent } from './categories.component';
-import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
-import { MockDataService } from '../../services/mock-data.service';
-import { signal, WritableSignal } from '@angular/core';
-import { Category } from '../../models/models';
+import {CategoriesComponent} from './categories.component';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockDataService} from '../../services/mock-data.service';
+import {signal, WritableSignal} from '@angular/core';
+import {Category} from '../../models/models';
 
 describe('CategoriesComponent', () => {
   beforeEach(() => {
-    return MockBuilder(CategoriesComponent)
-      .mock(MockDataService, {
-        categories: signal([]),
-        isLoading: signal(false),
-      });
+    return MockBuilder(CategoriesComponent).mock(MockDataService, {
+      categories: signal([]),
+      isLoading: signal(false),
+    });
   });
 
   it('should create', () => {
@@ -19,7 +18,10 @@ describe('CategoriesComponent', () => {
   });
 
   it('should display categories from MockDataService', () => {
-    const mockCats = [{ id: '1', name: 'Cat 1' }, { id: '2', name: 'Cat 2' }];
+    const mockCats = [
+      {id: '1', name: 'Cat 1'},
+      {id: '2', name: 'Cat 2'},
+    ];
     const mockDataService = ngMocks.get(MockDataService);
     (mockDataService.categories as WritableSignal<Category[]>).set(mockCats);
 
