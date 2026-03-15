@@ -1,5 +1,7 @@
 # Architecture Overview
 
+This document describes the system architecture of the Bookstore Angular application.
+
 ## High-Level Architecture
 
 ```
