@@ -18,6 +18,10 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
       - name: Build Angular app
         run: npm run build
 
