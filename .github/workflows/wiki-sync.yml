@@ -1,0 +1,82 @@
+name: Sync Docs to Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    name: Sync docs/ to GitHub Wiki
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync to Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "Sreekanth Reddy"
+          git config --global user.email "sreekanth.yarram@gmail.com"
+
+          # Clone the wiki repo
+          git clone https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.wiki.git wiki
+
+          # Clear old wiki pages (except .git)
+          find wiki -maxdepth 1 -not -name '.git' -not -name '.' -not -name '..' -delete
+
+          # Copy docs and create wiki-friendly filenames
+          for file in docs/*.md; do
+            filename=$(basename "$file" .md)
+            # Convert kebab-case to Title Case for wiki page names
+            wiki_name=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g' | sed 's/ /-/g')
+            cp "$file" "wiki/${wiki_name}.md"
+          done
+
+          # Create Home page (wiki landing page)
+          cat > wiki/Home.md << 'HOMEEOF'
+          # Bookstore Angular — Documentation
+
+          Welcome to the project wiki. Browse the pages below or use the sidebar.
+
+          | Page | Description |
+          |------|-------------|
+          | [Architecture](Architecture) | Frontend/backend architecture, data flow, routing |
+          | [Api Documentation](Api-Documentation) | All REST endpoints, request/response formats |
+          | [Development Guide](Development-Guide) | Setup, scripts, code style, project structure |
+          | [Deployment Guide](Deployment-Guide) | Build, environment variables, production setup |
+          | [Contributing](Contributing) | Branch naming, commit conventions, PR process |
+          | [Database Schema](Database-Schema) | MongoDB collections, fields, indexes, seeding |
+          | [Testing Guide](Testing-Guide) | Jest, ng-mocks patterns, coverage, CI |
+          HOMEEOF
+          # Remove leading whitespace from heredoc
+          sed -i 's/^          //' wiki/Home.md
+
+          # Create sidebar for navigation
+          cat > wiki/_Sidebar.md << 'SIDEBAREOF'
+          ### Navigation
+
+          - [Home](Home)
+          - [Architecture](Architecture)
+          - [API Documentation](Api-Documentation)
+          - [Development Guide](Development-Guide)
+          - [Deployment Guide](Deployment-Guide)
+          - [Contributing](Contributing)
+          - [Database Schema](Database-Schema)
+          - [Testing Guide](Testing-Guide)
+          SIDEBAREOF
+          sed -i 's/^          //' wiki/_Sidebar.md
+
+          # Push to wiki
+          cd wiki
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No wiki changes to commit"
+          else
+            git commit -m "Sync docs from main branch"
+            git push
+          fi
