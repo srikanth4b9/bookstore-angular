@@ -1,5 +1,7 @@
 # Contributing Guide
 
+Thank you for your interest in contributing to the Bookstore Angular project.
+
 ## Branch Naming
 
 Use prefixed branch names:
