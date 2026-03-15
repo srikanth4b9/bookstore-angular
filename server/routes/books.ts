@@ -3,7 +3,7 @@ import {Router} from 'express';
 import {BookModel} from '../models/book.model.js';
 import {logger} from '../utils/logger.js';
 import {bookQuerySchema, bookCreateSchema} from '../validation/book.validation.js';
-import type { QueryFilter } from 'mongoose';
+import type {QueryFilter} from 'mongoose';
 import type {Book} from '../types/models.js';
 
 const router = Router();

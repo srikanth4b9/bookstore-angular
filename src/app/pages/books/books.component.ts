@@ -68,27 +68,25 @@ export class BooksComponent implements OnDestroy {
       });
 
     // Reactive fetch for category and sort changes
-    effect(
-      () => {
-        // Signals that trigger a refetch
-        this.selectedCategory();
-        this.sortBy();
-        this.sortOrder();
-        this.searchTerm();
+    effect(() => {
+      // Signals that trigger a refetch
+      this.selectedCategory();
+      this.sortBy();
+      this.sortOrder();
+      this.searchTerm();
 
-        // We use untracked to avoid subscribing to pagination()
-        // so updates to pagination don't trigger this effect recursively
-        const currentLimit = untracked(() => this.pagination().limit);
-        this.mockData.fetchBooks(
-          1,
-          currentLimit,
-          this.searchTerm(),
-          this.selectedCategory(),
-          this.sortBy(),
-          this.sortOrder(),
-        );
-      }
-    );
+      // We use untracked to avoid subscribing to pagination()
+      // so updates to pagination don't trigger this effect recursively
+      const currentLimit = untracked(() => this.pagination().limit);
+      this.mockData.fetchBooks(
+        1,
+        currentLimit,
+        this.searchTerm(),
+        this.selectedCategory(),
+        this.sortBy(),
+        this.sortOrder(),
+      );
+    });
   }
 
   onSearchChange(event: Event) {
@@ -117,14 +115,14 @@ export class BooksComponent implements OnDestroy {
 
   addToCart(book: Book) {
     this.mockData.addToCart(book);
-    this.addedBooks.update(set => {
+    this.addedBooks.update((set) => {
       const newSet = new Set(set);
       newSet.add(book.id);
       return newSet;
     });
 
     setTimeout(() => {
-      this.addedBooks.update(set => {
+      this.addedBooks.update((set) => {
         const newSet = new Set(set);
         newSet.delete(book.id);
         return newSet;
