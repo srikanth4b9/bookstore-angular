@@ -17,6 +17,7 @@ describe('LoginComponent', () => {
     const fixture = MockRender(LoginComponent);
     const component = fixture.point.componentInstance;
     const router = ngMocks.get(Router);
+    router.navigate = jest.fn();
     window.alert = jest.fn();
 
     component.login();

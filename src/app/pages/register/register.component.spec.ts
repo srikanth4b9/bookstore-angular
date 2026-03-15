@@ -27,6 +27,7 @@ describe('RegisterComponent', () => {
     const fixture = MockRender(RegisterComponent);
     const component = fixture.point.componentInstance;
     const router = ngMocks.get(Router);
+    router.navigate = jest.fn();
     window.alert = jest.fn();
 
     component.register();
