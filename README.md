@@ -141,24 +141,36 @@ Navigate to `http://localhost:4200` to see the app in action!
 
 ---
 
+## 📖 Documentation
+
+Detailed documentation is available in the [`docs/`](docs/) directory:
+
+| Document | Description |
+|----------|-------------|
+| [Architecture Overview](docs/architecture.md) | Frontend/backend architecture, data flow, routing |
+| [API Documentation](docs/api-documentation.md) | All REST endpoints, request/response formats |
+| [Development Guide](docs/development-guide.md) | Setup, scripts, code style, project structure |
+| [Deployment Guide](docs/deployment-guide.md) | Build, environment variables, production setup |
+| [Contributing Guide](docs/contributing.md) | Branch naming, commit conventions, PR process |
+| [Database Schema](docs/database-schema.md) | MongoDB collections, fields, indexes, seeding |
+| [Testing Guide](docs/testing-guide.md) | Jest, ng-mocks patterns, coverage, CI |
+
+---
+
 ## 🧪 Quality Assurance
 
-### Linting
+### Available Scripts
 
-Maintain clean code standards with unified linting:
-
-```bash
-# Run lint for everything (Frontend + Backend)
-npm run lint:all
-
-# Automatically fix lint issues
-npm run lint:fix:all
-```
-
-### Build
-
-Verify production readiness:
-
-```bash
-npm run build
-```
+| Script                  | Description                              |
+|-------------------------|------------------------------------------|
+| `npm start`             | Start Angular dev server                 |
+| `npm run build`         | Production build                         |
+| `npm test`              | Run unit tests                           |
+| `npm run test:coverage` | Run tests with coverage report           |
+| `npm run lint`          | Lint Angular app                         |
+| `npm run lint:server`   | Lint server code                         |
+| `npm run lint:all`      | Lint everything                          |
+| `npm run lint:fix`      | Auto-fix lint issues                     |
+| `npm run lint:fix:all`  | Auto-fix all lint and formatting issues  |
+| `npm run format`        | Format code with Prettier                |
+| `npm run format:check`  | Check formatting without modifying files |
