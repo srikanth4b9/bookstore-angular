@@ -1,10 +1,10 @@
-import { BooksComponent } from './books.component';
-import { MockBuilder, MockRender, ngMocks, MockInstance } from 'ng-mocks';
-import { MockDataService } from '../../services/mock-data.service';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
-import { signal } from '@angular/core';
-import { Book } from '../../models/models';
+import {BooksComponent} from './books.component';
+import {MockBuilder, MockRender, ngMocks, MockInstance} from 'ng-mocks';
+import {MockDataService} from '../../services/mock-data.service';
+import {ActivatedRoute} from '@angular/router';
+import {of} from 'rxjs';
+import {signal} from '@angular/core';
+import {Book} from '../../models/models';
 
 class BooksUI {
   constructor(private fixture: ReturnType<typeof MockRender<BooksComponent>>) {}
@@ -30,7 +30,7 @@ class BooksUI {
   }
 
   triggerSearch(value: string) {
-    ngMocks.trigger(this.searchInput, 'input', { target: { value } } as unknown as Event);
+    ngMocks.trigger(this.searchInput, 'input', {target: {value}} as unknown as Event);
     this.fixture.detectChanges();
   }
 
@@ -55,7 +55,7 @@ describe('BooksComponent', () => {
       .mock(MockDataService, {
         books: signal([]),
         categories: signal([]),
-        pagination: signal({ total: 0, page: 1, limit: 12, pages: 1 }),
+        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
         isLoading: signal(false),
         fetchBooks: jest.fn(),
         addToCart: jest.fn(),
@@ -85,7 +85,7 @@ describe('BooksComponent', () => {
     ui.triggerSearch('Angular');
 
     // Wait for debounceTime(400)
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
       1,
@@ -93,7 +93,7 @@ describe('BooksComponent', () => {
       'Angular',
       '',
       'createdAt',
-      'desc'
+      'desc',
     );
   });
 
@@ -113,12 +113,12 @@ describe('BooksComponent', () => {
       stock: 10,
       reviews: [],
       createdAt: new Date(),
-      isbn: '123'
+      isbn: '123',
     };
 
     MockInstance(MockDataService, () => ({
       books: signal([mockBook]),
-      pagination: signal({ total: 1, page: 1, limit: 12, pages: 1 }),
+      pagination: signal({total: 1, page: 1, limit: 12, pages: 1}),
       isLoading: signal(false),
       fetchBooks: jest.fn(),
       addToCart: jest.fn(),
@@ -144,14 +144,7 @@ describe('BooksComponent', () => {
     fixture.point.componentInstance.selectedCategory.set('Tech');
     fixture.detectChanges();
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
-      1,
-      12,
-      '',
-      'Tech',
-      'createdAt',
-      'desc'
-    );
+    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', 'Tech', 'createdAt', 'desc');
   });
 
   it('should call fetchBooks when sortBy changes', () => {
@@ -161,14 +154,7 @@ describe('BooksComponent', () => {
     fixture.point.componentInstance.sortBy.set('price');
     fixture.detectChanges();
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
-      1,
-      12,
-      '',
-      '',
-      'price',
-      'desc'
-    );
+    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', '', 'price', 'desc');
   });
 
   it('should call fetchBooks when sortOrder changes', () => {
@@ -178,14 +164,7 @@ describe('BooksComponent', () => {
     fixture.point.componentInstance.sortOrder.set('asc');
     fixture.detectChanges();
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
-      1,
-      12,
-      '',
-      '',
-      'createdAt',
-      'asc'
-    );
+    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', '', 'createdAt', 'asc');
   });
 
   it('should call fetchBooks when onPageChange is called', () => {
@@ -195,17 +174,10 @@ describe('BooksComponent', () => {
     fixture.point.componentInstance.onPageChange({
       pageIndex: 1,
       pageSize: 24,
-      length: 100
+      length: 100,
     });
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
-      2,
-      24,
-      '',
-      '',
-      'createdAt',
-      'desc'
-    );
+    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(2, 24, '', '', 'createdAt', 'desc');
   });
 
   it('should toggle view mode', async () => {
@@ -224,12 +196,12 @@ describe('BooksComponent', () => {
       stock: 10,
       reviews: [],
       createdAt: new Date(),
-      isbn: '123'
+      isbn: '123',
     };
 
     MockInstance(MockDataService, () => ({
       books: signal([mockBook]),
-      pagination: signal({ total: 1, page: 1, limit: 12, pages: 1 }),
+      pagination: signal({total: 1, page: 1, limit: 12, pages: 1}),
       isLoading: signal(false),
       fetchBooks: jest.fn(),
     }));
@@ -258,7 +230,7 @@ describe('BooksComponent', () => {
       .mock(MockDataService, {
         books: signal([]),
         categories: signal([]),
-        pagination: signal({ total: 0, page: 1, limit: 12, pages: 1 }),
+        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
         isLoading: signal(false),
         fetchBooks: jest.fn(),
         addToCart: jest.fn(),
@@ -266,7 +238,7 @@ describe('BooksComponent', () => {
       .provide({
         provide: ActivatedRoute,
         useValue: {
-          queryParams: of({ category: 'Tech' }),
+          queryParams: of({category: 'Tech'}),
         },
       });
 
@@ -274,13 +246,6 @@ describe('BooksComponent', () => {
     const mockDataService = ngMocks.get(MockDataService);
 
     expect(fixture.point.componentInstance.selectedCategory()).toBe('Tech');
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
-      1,
-      12,
-      '',
-      'Tech',
-      'createdAt',
-      'desc'
-    );
+    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', 'Tech', 'createdAt', 'desc');
   });
 });

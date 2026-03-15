@@ -1,10 +1,10 @@
 import 'jest-preset-angular/setup-env/zoneless';
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
-import { ngMocks } from 'ng-mocks';
+import {ngMocks} from 'ng-mocks';
 
 // IntersectionObserver Mock
 global.IntersectionObserver = class IntersectionObserver {
@@ -17,10 +17,7 @@ global.IntersectionObserver = class IntersectionObserver {
   }
 } as any;
 
-TestBed.initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
-);
+TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
 
 // Optional: Global config for ng-mocks
 ngMocks.config({
