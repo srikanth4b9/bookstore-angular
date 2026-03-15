@@ -60,11 +60,32 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
   - **Request Logger**: Monitoring incoming traffic for better observability.
 - **CORS & JSON Parsing**: Secure and efficient API communication.
 
+### Testing
+
+- **Jest 30**: Unit and component testing framework.
+- **jest-preset-angular**: Angular-specific Jest utilities for standalone components.
+- **ng-mocks**: Lightweight mocking for Angular services, components, and directives.
+- **@testing-library/dom**: DOM querying utilities for readable, user-centric assertions.
+- **Playwright**: End-to-end browser testing across Chromium, Firefox, and WebKit.
+- **Storybook**: Isolated component development, visual testing, and living documentation.
+
 ### Tools & Quality
 
-- **ESLint**: Strictly enforced code quality for both Frontend and Backend.
+- **ESLint**: Strictly enforced code quality for both Frontend (`angular-eslint`) and Backend (`eslint-plugin-n`, `eslint-plugin-promise`, `eslint-plugin-import`).
+- **Prettier**: Consistent formatting with `bracketSpacing: false`, single quotes, and 100-char print width.
 - **TypeScript Strict Mode**: Zero-tolerance policy for `any` type and implicit returns.
 - **REST API Design**: Professionally documented endpoints in `API_DESIGN.md`.
+
+### CI/CD
+
+GitHub Actions pipelines run on every pull request to `main`:
+
+| Workflow | Description |
+|----------|-------------|
+| **Lint** | ESLint checks for Angular app and server |
+| **Prettier** | Code formatting validation |
+| **Tests** | Jest unit tests with coverage reporting |
+| **Code Review** | Reviewdog posts ESLint findings as inline PR review comments |
 
 ---
 
@@ -143,22 +164,18 @@ Navigate to `http://localhost:4200` to see the app in action!
 
 ## 🧪 Quality Assurance
 
-### Linting
+### Available Scripts
 
-Maintain clean code standards with unified linting:
-
-```bash
-# Run lint for everything (Frontend + Backend)
-npm run lint:all
-
-# Automatically fix lint issues
-npm run lint:fix:all
-```
-
-### Build
-
-Verify production readiness:
-
-```bash
-npm run build
-```
+| Script                  | Description                              |
+|-------------------------|------------------------------------------|
+| `npm start`             | Start Angular dev server                 |
+| `npm run build`         | Production build                         |
+| `npm test`              | Run unit tests                           |
+| `npm run test:coverage` | Run tests with coverage report           |
+| `npm run lint`          | Lint Angular app                         |
+| `npm run lint:server`   | Lint server code                         |
+| `npm run lint:all`      | Lint everything                          |
+| `npm run lint:fix`      | Auto-fix lint issues                     |
+| `npm run lint:fix:all`  | Auto-fix all lint and formatting issues  |
+| `npm run format`        | Format code with Prettier                |
+| `npm run format:check`  | Check formatting without modifying files |
