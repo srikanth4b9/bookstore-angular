@@ -1,13 +1,11 @@
-import { LoginComponent } from './login.component';
-import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
-import { MockDataService } from '../../services/mock-data.service';
-import { Router } from '@angular/router';
+import {LoginComponent} from './login.component';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockDataService} from '../../services/mock-data.service';
+import {Router} from '@angular/router';
 
 describe('LoginComponent', () => {
   beforeEach(() => {
-    return MockBuilder(LoginComponent)
-      .mock(MockDataService)
-      .mock(Router);
+    return MockBuilder(LoginComponent).mock(MockDataService).mock(Router);
   });
 
   it('should create', () => {

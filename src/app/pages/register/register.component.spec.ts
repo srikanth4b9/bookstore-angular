@@ -1,13 +1,11 @@
-import { RegisterComponent } from './register.component';
-import { MockBuilder, MockRender, ngMocks } from 'ng-mocks';
-import { MockDataService } from '../../services/mock-data.service';
-import { Router } from '@angular/router';
+import {RegisterComponent} from './register.component';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockDataService} from '../../services/mock-data.service';
+import {Router} from '@angular/router';
 
 describe('RegisterComponent', () => {
   beforeEach(() => {
-    return MockBuilder(RegisterComponent)
-      .mock(MockDataService)
-      .mock(Router);
+    return MockBuilder(RegisterComponent).mock(MockDataService).mock(Router);
   });
 
   it('should create', () => {
