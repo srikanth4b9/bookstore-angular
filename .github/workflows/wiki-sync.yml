@@ -26,19 +26,20 @@ jobs:
           # Clone the wiki repo
           git clone https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.wiki.git wiki
 
-          # Clear old wiki pages (except .git)
-          find wiki -maxdepth 1 -not -name '.git' -not -name '.' -not -name '..' -delete
+          # Remove only .md files (preserve .git)
+          rm -f wiki/*.md
 
-          # Copy docs and create wiki-friendly filenames
-          for file in docs/*.md; do
-            filename=$(basename "$file" .md)
-            # Convert kebab-case to Title Case for wiki page names
-            wiki_name=$(echo "$filename" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g' | sed 's/ /-/g')
-            cp "$file" "wiki/${wiki_name}.md"
-          done
+          # Copy docs with wiki-friendly filenames
+          cp docs/architecture.md wiki/Architecture.md
+          cp docs/api-documentation.md wiki/Api-Documentation.md
+          cp docs/development-guide.md wiki/Development-Guide.md
+          cp docs/deployment-guide.md wiki/Deployment-Guide.md
+          cp docs/contributing.md wiki/Contributing.md
+          cp docs/database-schema.md wiki/Database-Schema.md
+          cp docs/testing-guide.md wiki/Testing-Guide.md
 
-          # Create Home page (wiki landing page)
-          cat > wiki/Home.md << 'HOMEEOF'
+          # Create Home page
+          cat > wiki/Home.md << 'EOF'
           # Bookstore Angular — Documentation
 
           Welcome to the project wiki. Browse the pages below or use the sidebar.
@@ -46,18 +47,16 @@ jobs:
           | Page | Description |
           |------|-------------|
           | [Architecture](Architecture) | Frontend/backend architecture, data flow, routing |
-          | [Api Documentation](Api-Documentation) | All REST endpoints, request/response formats |
+          | [API Documentation](Api-Documentation) | All REST endpoints, request/response formats |
           | [Development Guide](Development-Guide) | Setup, scripts, code style, project structure |
           | [Deployment Guide](Deployment-Guide) | Build, environment variables, production setup |
           | [Contributing](Contributing) | Branch naming, commit conventions, PR process |
           | [Database Schema](Database-Schema) | MongoDB collections, fields, indexes, seeding |
           | [Testing Guide](Testing-Guide) | Jest, ng-mocks patterns, coverage, CI |
-          HOMEEOF
-          # Remove leading whitespace from heredoc
-          sed -i 's/^          //' wiki/Home.md
+          EOF
 
-          # Create sidebar for navigation
-          cat > wiki/_Sidebar.md << 'SIDEBAREOF'
+          # Create sidebar
+          cat > wiki/_Sidebar.md << 'EOF'
           ### Navigation
 
           - [Home](Home)
@@ -68,8 +67,10 @@ jobs:
           - [Contributing](Contributing)
           - [Database Schema](Database-Schema)
           - [Testing Guide](Testing-Guide)
-          SIDEBAREOF
-          sed -i 's/^          //' wiki/_Sidebar.md
+          EOF
+
+          # Remove heredoc leading whitespace
+          sed -i 's/^          //' wiki/Home.md wiki/_Sidebar.md
 
           # Push to wiki
           cd wiki
