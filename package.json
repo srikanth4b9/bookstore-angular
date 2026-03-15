@@ -11,8 +11,10 @@
     "lint": "ng lint",
     "lint:server": "eslint server/**/*.ts",
     "lint:all": "npm run lint && npm run lint:server",
-    "lint:fix": "ng lint --fix",
-    "lint:fix:server": "eslint server/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.{ts,html}\" \"server/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html}\" \"server/**/*.ts\"",
+    "lint:fix": "ng lint --fix && npm run format",
+    "lint:fix:server": "eslint server/**/*.ts --fix && npm run format",
     "lint:fix:all": "npm run lint:fix && npm run lint:fix:server"
   },
   "private": true,
