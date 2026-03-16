@@ -85,15 +85,23 @@ GitHub Actions pipelines run on every pull request to `main`:
 | **Lint** | ESLint checks for Angular app and server |
 | **Prettier** | Code formatting validation |
 | **Tests** | Jest unit tests with coverage reporting |
+| **Build** | Production build verification (frontend + server) |
+| **Security Audit** | npm audit for known vulnerabilities |
+| **CodeQL** | GitHub code scanning for JS/TS |
 | **Code Review** | Reviewdog posts ESLint findings as inline PR review comments |
+| **Wiki Sync** | Auto-syncs `docs/` to GitHub Wiki on push to main |
 
 ---
 
 ## 📂 Project Structure
 
 ```text
+├── .storybook/             # Storybook configuration
+│   ├── main.ts             # Storybook framework & addon config
+│   └── preview.ts          # Global decorators & parameters
 ├── src/                    # Frontend (Angular 21)
 │   ├── app/
+│   │   ├── .storybook/     # Shared mock data & providers for stories
 │   │   ├── components/     # Reusable UI components (Navbar, etc.)
 │   │   ├── pages/          # Page-level components (Home, Books, Admin, etc.)
 │   │   ├── services/       # State management and API services (Signals)
@@ -110,6 +118,7 @@ GitHub Actions pipelines run on every pull request to `main`:
 │   ├── config/             # Database connection config
 │   ├── seed.ts             # Database seeding script (1000+ books)
 │   └── server.ts           # Server entry point
+├── docs/                   # Project documentation (synced to GitHub Wiki)
 └── API_DESIGN.md           # Backend API Documentation
 ```
 
@@ -195,3 +204,5 @@ Detailed documentation is available in the [`docs/`](docs/) directory:
 | `npm run lint:fix:all`  | Auto-fix all lint and formatting issues  |
 | `npm run format`        | Format code with Prettier                |
 | `npm run format:check`  | Check formatting without modifying files |
+| `npm run storybook`     | Launch Storybook dev server              |
+| `npm run build-storybook`| Build static Storybook for deployment   |
