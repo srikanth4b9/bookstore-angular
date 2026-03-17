@@ -8,7 +8,7 @@ const meta: Meta<NavbarComponent> = {
   title: 'Components/Navbar',
   component: NavbarComponent,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
     docs: {
       description: {
         component:

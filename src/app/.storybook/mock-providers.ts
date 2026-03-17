@@ -1,6 +1,6 @@
 import {signal, computed} from '@angular/core';
 import {MockDataService} from '../services/mock-data.service';
-import {MOCK_BOOKS, MOCK_CATEGORIES, MOCK_CART_ITEMS, MOCK_USER, MOCK_ORDERS} from './mock-data';
+import {MOCK_BOOKS, MOCK_CATEGORIES, MOCK_USER, MOCK_ORDERS} from './mock-data';
 import {Book, CartItem, User} from '../models/models';
 
 export function createMockDataService(overrides?: {

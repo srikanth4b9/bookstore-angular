@@ -1,13 +1,4 @@
-import {
-  Book,
-  Category,
-  CartItem,
-  User,
-  UserRole,
-  Order,
-  OrderStatus,
-  Address,
-} from '../models/models';
+import {Book, Category, CartItem, User, UserRole, Order, OrderStatus} from '../models/models';
 
 export const MOCK_BOOKS: Book[] = [
   {
