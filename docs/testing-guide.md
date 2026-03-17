@@ -35,7 +35,7 @@ npx jest --testPathPattern="login"
 - **Setup:** `src/test-setup.ts` (zoneless Angular environment)
 - **Environment:** jsdom
 - **Coverage directory:** `coverage/`
-- **Coverage reporters:** text, lcov, clover
+yes - **Coverage reporters:** text, lcov, clover, json-summary
 - **Coverage includes:** `src/app/**/*.ts`
 - **Coverage excludes:** `*.spec.ts`, `*.module.ts`, `src/app/models/**`
 
@@ -165,4 +165,4 @@ open coverage/lcov-report/index.html
 
 ### CI Coverage
 
-The Tests workflow in GitHub Actions runs `npm test -- --coverage` on every PR to ensure tests pass and coverage is reported.
+The Tests workflow in GitHub Actions runs `jest --coverage` on every PR. It posts a coverage summary table (statements, branches, functions, lines) as a PR comment with the full per-file report in a collapsible section. The comment is updated on subsequent pushes to avoid duplicates.
