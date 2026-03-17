@@ -15,7 +15,9 @@
     "format:check": "prettier --check \"src/**/*.{ts,html}\" \"server/**/*.ts\"",
     "lint:fix": "ng lint --fix && npm run format",
     "lint:fix:server": "eslint server/**/*.ts --fix && npm run format",
-    "lint:fix:all": "npm run lint:fix && npm run lint:fix:server"
+    "lint:fix:all": "npm run lint:fix && npm run lint:fix:server",
+    "storybook": "ng run dev:storybook",
+    "build-storybook": "ng run dev:build-storybook"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -53,6 +55,14 @@
     "ng-mocks": "^14.15.1",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
-    "typescript-eslint": "8.56.1"
+    "typescript-eslint": "8.56.1",
+    "storybook": "^10.2.19",
+    "@storybook/angular": "^10.2.19",
+    "@storybook/addon-a11y": "^10.2.19",
+    "@storybook/addon-docs": "^10.2.19",
+    "@storybook/addon-onboarding": "^10.2.19",
+    "@angular-devkit/architect": "^0.2102.0",
+    "@angular-devkit/core": "^21.2.0",
+    "eslint-plugin-storybook": "^10.2.19"
   }
 }

@@ -1,4 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 // @ts-check
+const storybook = require('eslint-plugin-storybook');
 const eslint = require('@eslint/js');
 const {defineConfig} = require('eslint/config');
 const tseslint = require('typescript-eslint');
@@ -41,6 +43,13 @@ module.exports = defineConfig([
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     rules: {},
+  },
+  {
+    // For files matching *.stories.ts
+    files: ['**/*.stories.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
   },
   {
     files: ['server/**/*.ts'],

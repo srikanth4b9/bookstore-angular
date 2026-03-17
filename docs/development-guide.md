@@ -67,6 +67,8 @@ Navigate to `http://localhost:4200`.
 | `npm run lint:fix` | Auto-fix lint issues |
 | `npm run format` | Format with Prettier |
 | `npm run format:check` | Check formatting (CI) |
+| `npm run storybook` | Launch Storybook dev server |
+| `npm run build-storybook` | Build static Storybook |
 
 ### Server
 
@@ -118,13 +120,16 @@ Configuration in `eslint.config.js`:
 ```
 src/
   app/
+    .storybook/       # Shared mock data & providers for stories
+      mock-data.ts    # Reusable mock books, users, orders, etc.
+      mock-providers.ts # createMockDataService() factory
     components/       # Shared UI components
       navbar/         # Top navigation bar
     config/           # Frontend configuration
       api.config.ts   # API base URL
     models/           # TypeScript interfaces and enums
       models.ts       # Book, User, Order, Cart, Category, etc.
-    pages/            # Route-level components
+    pages/            # Route-level components (each has *.stories.ts)
     services/         # Angular services (state + API calls)
       mock-data.service.ts
   styles.scss         # Global Material theme
