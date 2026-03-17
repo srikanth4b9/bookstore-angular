@@ -12,5 +12,5 @@ module.exports = {
     '!src/app/models/**',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'clover'],
+  coverageReporters: ['text', 'lcov', 'clover', 'json-summary'],
 };

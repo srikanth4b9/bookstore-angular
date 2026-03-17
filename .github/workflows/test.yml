@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   test:
     name: Unit Tests
@@ -18,5 +22,90 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
-      - name: Run tests
-        run: npm test -- --coverage
+      - name: Run tests with coverage
+        run: npx jest --coverage --coverageReporters=json-summary --coverageReporters=text | tee coverage-output.txt
+
+      - name: Post coverage comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read text output
+            let textReport = '';
+            try {
+              textReport = fs.readFileSync('coverage-output.txt', 'utf8');
+            } catch {
+              textReport = 'Could not read coverage text output.';
+            }
+
+            // Extract the coverage table (lines between dashes)
+            const lines = textReport.split('\n');
+            const tableStart = lines.findIndex(l => l.startsWith('-------'));
+            const tableEnd = lines.lastIndexOf(lines.filter(l => l.startsWith('-------')).pop());
+            const coverageTable = tableStart >= 0
+              ? lines.slice(tableStart, tableEnd + 1).join('\n')
+              : 'No coverage table found.';
+
+            // Read JSON summary for totals
+            let summary = { statements: 0, branches: 0, functions: 0, lines: 0 };
+            try {
+              const json = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              summary = {
+                statements: json.total.statements.pct,
+                branches: json.total.branches.pct,
+                functions: json.total.functions.pct,
+                lines: json.total.lines.pct,
+              };
+            } catch {
+              // JSON summary not available, use text output only
+            }
+
+            const getEmoji = (pct) => pct >= 80 ? '🟢' : pct >= 60 ? '🟡' : '🔴';
+
+            const body = [
+              '## 📊 Test Coverage Report',
+              '',
+              '| Metric | Coverage |',
+              '|--------|----------|',
+              `| ${getEmoji(summary.statements)} Statements | **${summary.statements}%** |`,
+              `| ${getEmoji(summary.branches)} Branches | **${summary.branches}%** |`,
+              `| ${getEmoji(summary.functions)} Functions | **${summary.functions}%** |`,
+              `| ${getEmoji(summary.lines)} Lines | **${summary.lines}%** |`,
+              '',
+              '<details>',
+              '<summary>Full coverage report</summary>',
+              '',
+              '```',
+              coverageTable,
+              '```',
+              '',
+              '</details>',
+            ].join('\n');
+
+            // Find existing coverage comment to update (avoid duplicates)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('📊 Test Coverage Report')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
