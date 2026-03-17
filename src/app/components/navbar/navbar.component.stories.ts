@@ -40,7 +40,7 @@ export const LoggedOut: Story = {
 };
 
 export const WithFullCart: Story = {
-  name: 'With Full Cart (3 items)',
+  name: 'With Full Cart (6 qty)',
   decorators: [
     applicationConfig({
       providers: [
