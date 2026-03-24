@@ -34,7 +34,9 @@ describe('CheckoutComponent', () => {
     return MockBuilder(CheckoutComponent)
       .mock(MockDataService, {
         cartItems: signal(mockCartItems),
-        cartSubtotal: computed(() => mockCartItems.reduce((s, i) => s + i.bookPrice * i.quantity, 0)),
+        cartSubtotal: computed(() =>
+          mockCartItems.reduce((s, i) => s + i.bookPrice * i.quantity, 0),
+        ),
         isLoading: signal(false),
         currentUser: signal(mockUser),
         placeOrder: jest.fn().mockResolvedValue({

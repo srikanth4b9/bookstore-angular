@@ -19,7 +19,9 @@ describe('CartComponent', () => {
     return MockBuilder(CartComponent)
       .mock(MockDataService, {
         cartItems: signal(mockCartItems),
-        cartSubtotal: computed(() => mockCartItems.reduce((s, i) => s + i.bookPrice * i.quantity, 0)),
+        cartSubtotal: computed(() =>
+          mockCartItems.reduce((s, i) => s + i.bookPrice * i.quantity, 0),
+        ),
         updateQuantity: jest.fn(),
         removeFromCart: jest.fn(),
       })
