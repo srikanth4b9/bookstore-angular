@@ -1,9 +1,10 @@
-import {CheckoutComponent} from './checkout.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
-import {Router} from '@angular/router';
 import {signal, computed} from '@angular/core';
+import {Router} from '@angular/router';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+
 import {CartItem, User, UserRole, Order, OrderStatus} from '../../models/models';
+import {MockDataService} from '../../services/mock-data.service';
+import {CheckoutComponent} from './checkout.component';
 
 describe('CheckoutComponent', () => {
   const mockCartItems: CartItem[] = [

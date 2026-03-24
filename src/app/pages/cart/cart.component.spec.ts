@@ -1,9 +1,10 @@
-import {CartComponent} from './cart.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {signal, computed} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+
 import {CartItem} from '../../models/models';
+import {MockDataService} from '../../services/mock-data.service';
+import {CartComponent} from './cart.component';
 
 describe('CartComponent', () => {
   const mockCartItems: CartItem[] = [

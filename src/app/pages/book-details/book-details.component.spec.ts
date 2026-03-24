@@ -1,10 +1,11 @@
-import {BookDetailsComponent} from './book-details.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
-import {ActivatedRoute} from '@angular/router';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {ActivatedRoute} from '@angular/router';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
 import {of} from 'rxjs';
+
 import {Book} from '../../models/models';
+import {MockDataService} from '../../services/mock-data.service';
+import {BookDetailsComponent} from './book-details.component';
 
 describe('BookDetailsComponent', () => {
   beforeEach(() => {

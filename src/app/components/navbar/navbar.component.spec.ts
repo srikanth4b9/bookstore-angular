@@ -1,8 +1,9 @@
-import {NavbarComponent} from './navbar.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
 import {signal, WritableSignal} from '@angular/core';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+
 import {CartItem, User, UserRole} from '../../models/models';
+import {MockDataService} from '../../services/mock-data.service';
+import {NavbarComponent} from './navbar.component';
 
 describe('NavbarComponent', () => {
   beforeEach(() => {

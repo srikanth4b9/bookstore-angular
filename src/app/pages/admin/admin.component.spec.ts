@@ -1,8 +1,9 @@
-import {AdminComponent} from './admin.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
 import {signal, WritableSignal} from '@angular/core';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+
 import {Book, Order, OrderStatus} from '../../models/models';
+import {MockDataService} from '../../services/mock-data.service';
+import {AdminComponent} from './admin.component';
 
 describe('AdminComponent', () => {
   beforeEach(() => {

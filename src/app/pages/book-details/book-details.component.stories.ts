@@ -1,8 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
-import {BookDetailsComponent} from './book-details.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+
 import {MOCK_BOOKS} from '../../.storybook/mock-data';
+import {createMockDataService} from '../../.storybook/mock-providers';
+import {BookDetailsComponent} from './book-details.component';
 
 const meta: Meta<BookDetailsComponent> = {
   title: 'Pages/BookDetails',
