@@ -2,14 +2,14 @@
 
 ## Overview
 
-| Tool | Purpose |
-|------|---------|
-| **Jest 30** | Test runner and assertion library |
-| **jest-preset-angular** | Angular-specific Jest setup (zoneless) |
-| **ng-mocks** | Mocking Angular components, services, directives |
-| **@testing-library/dom** | DOM querying utilities |
-| **Playwright** | End-to-end browser testing |
-| **Storybook** | Isolated component development and visual testing |
+| Tool                     | Purpose                                           |
+| ------------------------ | ------------------------------------------------- |
+| **Jest 30**              | Test runner and assertion library                 |
+| **jest-preset-angular**  | Angular-specific Jest setup (zoneless)            |
+| **ng-mocks**             | Mocking Angular components, services, directives  |
+| **@testing-library/dom** | DOM querying utilities                            |
+| **Cypress**              | End-to-end browser testing                        |
+| **Storybook**            | Isolated component development and visual testing |
 
 ## Running Tests
 
@@ -35,13 +35,14 @@ npx jest --testPathPattern="login"
 - **Setup:** `src/test-setup.ts` (zoneless Angular environment)
 - **Environment:** jsdom
 - **Coverage directory:** `coverage/`
-yes - **Coverage reporters:** text, lcov, clover, json-summary
+  yes - **Coverage reporters:** text, lcov, clover, json-summary
 - **Coverage includes:** `src/app/**/*.ts`
 - **Coverage excludes:** `*.spec.ts`, `*.module.ts`, `src/app/models/**`
 
 ### Test Setup (`src/test-setup.ts`)
 
 The setup file:
+
 1. Imports `jest-preset-angular/setup-env/zoneless` for zone-free testing
 2. Initializes `TestBed` with `BrowserDynamicTestingModule`
 3. Mocks `IntersectionObserver` globally
@@ -85,25 +86,31 @@ describe('MyComponent', () => {
 ### Key Patterns
 
 **MockBuilder** — Declares which component to test and what to mock:
+
 ```typescript
 MockBuilder(ComponentUnderTest)
-  .mock(ServiceToMock, { /* mock implementation */ })
+  .mock(ServiceToMock, {
+    /* mock implementation */
+  })
   .mock(Router);
 ```
 
 **MockRender** — Renders the component and returns a fixture:
+
 ```typescript
 const fixture = MockRender(MyComponent);
 const component = fixture.point.componentInstance;
 ```
 
 **ngMocks.get** — Retrieves a mocked dependency:
+
 ```typescript
 const service = ngMocks.get(MockDataService);
 const router = ngMocks.get(Router);
 ```
 
 **DOM interactions with ngMocks:**
+
 ```typescript
 // Trigger events
 ngMocks.trigger(element, 'input', {target: {value: 'search'}});
@@ -114,6 +121,7 @@ ngMocks.change(element, 'new value');
 ```
 
 **Mocking signals:**
+
 ```typescript
 import {signal, WritableSignal} from '@angular/core';
 
@@ -130,6 +138,7 @@ fixture.detectChanges();
 ```
 
 **Spying on Router.navigate:**
+
 ```typescript
 const router = ngMocks.get(Router);
 router.navigate = jest.fn();
@@ -162,6 +171,45 @@ Coverage reports are generated in the `coverage/` directory. View the HTML repor
 npm run test:coverage
 open coverage/lcov-report/index.html
 ```
+
+## E2E Testing (Cypress)
+
+### Running E2E Tests
+
+```bash
+# Run E2E tests headless
+npm run e2e
+
+# Open Cypress interactive runner
+npm run e2e:open
+```
+
+> **Note:** The Angular dev server (`npm start`) must be running on port 4200 before running E2E tests.
+
+### Configuration
+
+- **Config file:** `cypress.config.ts`
+- **Spec pattern:** `e2e/specs/**/*.cy.ts`
+- **Base URL:** `http://localhost:4200`
+- **Support file:** `e2e/support/e2e.ts`
+- **Viewport:** 1280x720
+
+### E2E Test Specs
+
+| Spec                 | Description                                                        |
+| -------------------- | ------------------------------------------------------------------ |
+| `home.cy.ts`         | Hero section, CTA navigation, featured books, category links       |
+| `navbar.cy.ts`       | Navigation links, cart icon, login/account link, brand link        |
+| `books.cy.ts`        | Search, grid/list toggle, category filter, pagination, add to cart |
+| `categories.cy.ts`   | Category cards display and navigation                              |
+| `login.cy.ts`        | Form fields, login flow, password visibility, register link        |
+| `register.cy.ts`     | Registration form, submit flow, login link                         |
+| `cart.cy.ts`         | Empty cart, add items, quantity controls, promo codes, checkout    |
+| `checkout.cy.ts`     | Stepper flow, address form, payment selection, order placement     |
+| `account.cy.ts`      | User profile, order history, addresses                             |
+| `admin.cy.ts`        | Dashboard, books table, add book form                              |
+| `book-details.cy.ts` | Book info display, add to cart, back navigation                    |
+| `full-flow.cy.ts`    | End-to-end shopping flow: browse → cart → checkout → order         |
 
 ### CI Coverage
 

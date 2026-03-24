@@ -54,3 +54,7 @@ Thumbs.db
 
 *storybook.log
 storybook-static
+
+# Cypress
+e2e/videos
+e2e/screenshots
