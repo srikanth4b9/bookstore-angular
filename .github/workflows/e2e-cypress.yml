@@ -53,7 +53,7 @@ jobs:
 
       - name: Start frontend and run Cypress
         run: |
-          npx angular-http-server --path dist/dev/browser --port 4200 &
+          npx http-server dist/dev/browser -p 4200 --proxy http://localhost:4200? -s &
           npx wait-on http://localhost:4200 http://localhost:3000/api/books --timeout 60000
           npx cypress run 2>&1 | tee cypress-output.txt
         env:
