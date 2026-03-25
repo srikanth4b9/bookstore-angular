@@ -81,17 +81,18 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 
 GitHub Actions pipelines run on every pull request to `main`:
 
-| Workflow           | Description                                                              |
-| ------------------ | ------------------------------------------------------------------------ |
-| **Lint**           | ESLint checks for Angular app and server                                 |
-| **Prettier**       | Code formatting validation                                               |
-| **Tests**          | Jest unit tests with coverage reporting                                  |
-| **Build**          | Production build verification (frontend + server)                        |
-| **Security Audit** | npm audit for known vulnerabilities                                      |
-| **CodeQL**         | GitHub code scanning for JS/TS                                           |
-| **E2E Tests**      | Cypress + Playwright regression tests (parallel) with PR summary comment |
-| **Code Review**    | Reviewdog posts ESLint findings as inline PR review comments             |
-| **Wiki Sync**      | Auto-syncs `docs/` to GitHub Wiki on push to main                        |
+| Workflow           | Description                                                    |
+| ------------------ | -------------------------------------------------------------- |
+| **Lint**           | ESLint checks for Angular app and server                       |
+| **Prettier**       | Code formatting validation                                     |
+| **Tests**          | Jest unit tests with coverage reporting                        |
+| **Build**          | Production build verification (frontend + server)              |
+| **Security Audit** | npm audit for known vulnerabilities                            |
+| **CodeQL**         | GitHub code scanning for JS/TS                                 |
+| **Cypress E2E**    | Cypress end-to-end regression tests with PR summary comment    |
+| **Playwright E2E** | Playwright end-to-end regression tests with PR summary comment |
+| **Code Review**    | Reviewdog posts ESLint findings as inline PR review comments   |
+| **Wiki Sync**      | Auto-syncs `docs/` to GitHub Wiki on push to main              |
 
 ---
 

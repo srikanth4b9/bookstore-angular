@@ -1,0 +1,105 @@
+name: Cypress E2E
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  cypress:
+    name: Cypress E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Build Angular app
+        run: npm run build
+
+      - name: Start server and run Cypress
+        run: |
+          npx angular-http-server --path dist/dev/browser --port 4200 &
+          npx wait-on http://localhost:4200 --timeout 60000
+          npx cypress run 2>&1 | tee cypress-output.txt
+        env:
+          CI: true
+
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-results
+          path: |
+            cypress-output.txt
+            e2e/screenshots/
+            e2e/videos/
+          retention-days: 7
+
+      - name: Post Cypress result comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const status = '${{ job.status }}';
+            const icon = status === 'success' ? '✅' : '❌';
+
+            let details = 'No output available.';
+            try {
+              const raw = fs.readFileSync('cypress-output.txt', 'utf8');
+              const lines = raw.split('\n');
+              const summaryLines = lines.filter(l =>
+                l.includes('passing') || l.includes('failing') ||
+                l.includes('Tests:') || l.includes('Specs:')
+              );
+              details = summaryLines.length > 0
+                ? summaryLines.join('\n')
+                : lines.slice(-20).join('\n');
+            } catch {}
+
+            const body = [
+              `## ${icon} Cypress E2E — ${status}`,
+              '',
+              '<details>',
+              '<summary>Test output</summary>',
+              '',
+              '```',
+              details,
+              '```',
+              '',
+              '</details>',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Cypress E2E')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
