@@ -211,6 +211,64 @@ npm run e2e:open
 | `book-details.cy.ts` | Book info display, add to cart, back navigation                    |
 | `full-flow.cy.ts`    | End-to-end shopping flow: browse → cart → checkout → order         |
 
+## E2E Testing (Playwright)
+
+### Running E2E Tests
+
+```bash
+# Run all Playwright tests (headless)
+npm run e2e:pw
+
+# Open interactive UI mode
+npm run e2e:pw:ui
+
+# Run in headed browser
+npm run e2e:pw:headed
+
+# View HTML report
+npm run e2e:pw:report
+```
+
+> **Note:** Playwright auto-starts the dev server via `webServer` config. No need to run `npm start` manually.
+
+### Configuration
+
+- **Config file:** `playwright.config.ts`
+- **Test directory:** `playwright/specs/`
+- **Base URL:** `http://localhost:4200`
+- **Browsers:** Chromium (expandable to Firefox, WebKit)
+- **Retries:** 2 in CI, 0 locally
+- **Traces:** Captured on first retry
+- **Screenshots:** On failure only
+
+### Playwright Test Specs
+
+| Spec                   | Description                                                        |
+| ---------------------- | ------------------------------------------------------------------ |
+| `home.spec.ts`         | Hero section, CTA, featured books, categories, View All link       |
+| `navbar.spec.ts`       | Nav links, cart icon, login/account, brand routing                 |
+| `books.spec.ts`        | Search, grid/list toggle, category filter, pagination, add to cart |
+| `categories.spec.ts`   | Category cards display and navigation                              |
+| `login.spec.ts`        | Form fields, login flow, password visibility, register link        |
+| `register.spec.ts`     | Registration form, submit flow, login link                         |
+| `cart.spec.ts`         | Empty cart, add items, quantity controls, promo codes, checkout    |
+| `checkout.spec.ts`     | Stepper flow, address form, payment selection, order placement     |
+| `account.spec.ts`      | User profile, email, tab navigation, addresses                     |
+| `admin.spec.ts`        | Dashboard, books/orders tabs, table display, add book form         |
+| `book-details.spec.ts` | Book info display, add to cart, back navigation                    |
+| `full-flow.spec.ts`    | Full shopping flow: browse → cart → checkout → order               |
+
+### Cypress vs Playwright
+
+| Feature             | Cypress (`e2e/`)        | Playwright (`playwright/`) |
+| ------------------- | ----------------------- | -------------------------- |
+| Config              | `cypress.config.ts`     | `playwright.config.ts`     |
+| Run command         | `npm run e2e`           | `npm run e2e:pw`           |
+| Interactive mode    | `npm run e2e:open`      | `npm run e2e:pw:ui`        |
+| Dev server          | Manual (`npm start`)    | Auto-start via `webServer` |
+| Cross-browser       | Chromium, Firefox, Edge | Chromium, Firefox, WebKit  |
+| Spec file extension | `.cy.ts`                | `.spec.ts`                 |
+
 ### CI Coverage
 
 The Tests workflow in GitHub Actions runs `jest --coverage` on every PR. It posts a coverage summary table (statements, branches, functions, lines) as a PR comment with the full per-file report in a collapsible section. The comment is updated on subsequent pushes to avoid duplicates.

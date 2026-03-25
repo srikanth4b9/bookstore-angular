@@ -67,6 +67,7 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **ng-mocks**: Lightweight mocking for Angular services, components, and directives.
 - **@testing-library/dom**: DOM querying utilities for readable, user-centric assertions.
 - **Cypress**: End-to-end browser testing with Angular-native syntax and full user flow coverage.
+- **Playwright**: Cross-browser E2E testing across Chromium, Firefox, and WebKit with auto-retry and tracing.
 - **Storybook**: Isolated component development, visual testing, and living documentation.
 
 ### Tools & Quality
@@ -119,9 +120,12 @@ GitHub Actions pipelines run on every pull request to `main`:
 │   ├── seed.ts             # Database seeding script (1000+ books)
 │   └── server.ts           # Server entry point
 ├── e2e/                    # Cypress E2E tests
-│   ├── specs/              # E2E test specs (home, books, cart, checkout, etc.)
+│   ├── specs/              # Cypress test specs (home, books, cart, checkout, etc.)
 │   ├── support/            # Cypress support files and custom commands
 │   └── fixtures/           # Test fixtures
+├── playwright/             # Playwright E2E tests
+│   ├── specs/              # Playwright test specs (12 spec files)
+│   └── fixtures/           # Shared test data (users, addresses, promo codes)
 ├── docs/                   # Project documentation (synced to GitHub Wiki)
 └── API_DESIGN.md           # Backend API Documentation
 ```
@@ -212,3 +216,7 @@ Detailed documentation is available in the [`docs/`](docs/) directory:
 | `npm run build-storybook` | Build static Storybook for deployment    |
 | `npm run e2e`             | Run Cypress E2E tests (headless)         |
 | `npm run e2e:open`        | Open Cypress interactive test runner     |
+| `npm run e2e:pw`          | Run Playwright E2E tests (headless)      |
+| `npm run e2e:pw:ui`       | Open Playwright interactive UI mode      |
+| `npm run e2e:pw:headed`   | Run Playwright tests in headed browser   |
+| `npm run e2e:pw:report`   | View Playwright HTML test report         |
