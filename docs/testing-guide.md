@@ -272,3 +272,13 @@ npm run e2e:pw:report
 ### CI Coverage
 
 The Tests workflow in GitHub Actions runs `jest --coverage` on every PR. It posts a coverage summary table (statements, branches, functions, lines) as a PR comment with the full per-file report in a collapsible section. The comment is updated on subsequent pushes to avoid duplicates.
+
+### CI E2E Regression (`.github/workflows/e2e.yml`)
+
+The E2E workflow runs on every pull request to `main` with three jobs:
+
+1. **Cypress E2E** — Builds the Angular app, serves it via `angular-http-server`, runs `cypress run`
+2. **Playwright E2E** — Builds the Angular app, installs Chromium, runs `playwright test`
+3. **E2E Summary** — Posts a combined regression report as a PR comment showing pass/fail status for both frameworks with expandable output details
+
+Both Cypress and Playwright jobs run **in parallel** for faster feedback. Artifacts (screenshots, videos, reports) are uploaded and retained for 7 days.
