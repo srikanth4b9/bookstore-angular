@@ -3,6 +3,8 @@ describe('Book Details Page', () => {
     // Navigate to a book detail page via the books listing
     cy.visit('/books');
     cy.get('.book-card').first().click();
+    // Wait for deferred content to load (500ms timer + API call)
+    cy.get('.details-card', {timeout: 15000}).should('be.visible');
   });
 
   it('should display book details', () => {
@@ -10,27 +12,25 @@ describe('Book Details Page', () => {
   });
 
   it('should display book title and author', () => {
-    cy.get('mat-card').should('be.visible');
-    // Book info should be rendered
-    cy.get('mat-card-title, h1, h2').should('have.length.greaterThan', 0);
+    cy.get('mat-card-title').should('be.visible');
+    cy.get('mat-card-subtitle').should('contain.text', 'by');
   });
 
   it('should display book price', () => {
-    cy.contains('$').should('be.visible');
+    cy.get('.price-row').should('contain.text', '$');
   });
 
   it('should have an add to cart button', () => {
-    cy.contains('Add to Cart').should('be.visible');
+    cy.contains('ADD TO CART').should('be.visible');
   });
 
   it('should add book to cart', () => {
-    cy.contains('Add to Cart').click();
-    // Cart badge should show count
+    cy.contains('ADD TO CART').click();
     cy.get('a[href="/cart"]').should('be.visible');
   });
 
   it('should navigate back to books listing', () => {
-    cy.contains('Back').click();
+    cy.contains('BACK').click();
     cy.url().should('include', '/books');
   });
 });
