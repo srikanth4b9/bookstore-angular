@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: security-audit-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   audit:
     name: npm audit

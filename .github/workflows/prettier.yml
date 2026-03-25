@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: prettier-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   format-check:
     name: Prettier Check
