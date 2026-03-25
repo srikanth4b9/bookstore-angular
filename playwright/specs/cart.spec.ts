@@ -20,7 +20,8 @@ test.describe('Cart Page', () => {
       await page.goto('/books');
       const addBtn = page.locator('.book-grid .book-card .add-btn').first();
       await expect(addBtn).toBeVisible({timeout: 15000});
-      await addBtn.click();
+      await addBtn.click({force: true});
+      await expect(addBtn).toHaveClass(/added/, {timeout: 5000});
       await page.goto('/cart');
     });
 

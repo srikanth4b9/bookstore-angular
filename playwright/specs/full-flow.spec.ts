@@ -67,8 +67,10 @@ test.describe('Full Shopping Flow', () => {
     // Add first book
     const addBtns = page.locator('.book-grid .book-card .add-btn');
     await expect(addBtns.first()).toBeVisible({timeout: 15000});
-    await addBtns.nth(0).click();
-    await addBtns.nth(1).click();
+    await addBtns.nth(0).click({force: true});
+    await expect(addBtns.nth(0)).toHaveClass(/added/, {timeout: 5000});
+    await addBtns.nth(1).click({force: true});
+    await expect(addBtns.nth(1)).toHaveClass(/added/, {timeout: 5000});
 
     // Navigate to cart
     await page.goto('/cart');
