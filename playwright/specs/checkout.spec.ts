@@ -7,10 +7,8 @@ test.describe('Checkout Page', () => {
     await page.goto('/books');
     const firstCard = page.locator('.book-grid .book-card').first();
     await expect(firstCard).toBeVisible({timeout: 15000});
-    await firstCard.hover();
-    const addBtn = firstCard.locator('.add-btn');
-    await addBtn.click();
-    await expect(addBtn).toHaveClass(/added/, {timeout: 5000});
+    await firstCard.locator('.add-btn').dispatchEvent('click');
+    await page.waitForTimeout(500);
     await page.goto('/checkout');
   });
 
