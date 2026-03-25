@@ -18,9 +18,11 @@ test.describe('Cart Page', () => {
     test.beforeEach(async ({page}) => {
       // Add an item to cart first
       await page.goto('/books');
-      const addBtn = page.locator('.book-grid .book-card .add-btn').first();
-      await expect(addBtn).toBeVisible({timeout: 15000});
-      await addBtn.click({force: true});
+      const firstCard = page.locator('.book-grid .book-card').first();
+      await expect(firstCard).toBeVisible({timeout: 15000});
+      await firstCard.hover();
+      const addBtn = firstCard.locator('.add-btn');
+      await addBtn.click();
       await expect(addBtn).toHaveClass(/added/, {timeout: 5000});
       await page.goto('/cart');
     });

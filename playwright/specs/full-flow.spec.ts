@@ -64,13 +64,15 @@ test.describe('Full Shopping Flow', () => {
   test('should add multiple items and verify cart count', async ({page}) => {
     await page.goto('/books');
 
-    // Add first book
-    const addBtns = page.locator('.book-grid .book-card .add-btn');
-    await expect(addBtns.first()).toBeVisible({timeout: 15000});
-    await addBtns.nth(0).click({force: true});
-    await expect(addBtns.nth(0)).toHaveClass(/added/, {timeout: 5000});
-    await addBtns.nth(1).click({force: true});
-    await expect(addBtns.nth(1)).toHaveClass(/added/, {timeout: 5000});
+    // Add books to cart
+    const cards = page.locator('.book-grid .book-card');
+    await expect(cards.first()).toBeVisible({timeout: 15000});
+    await cards.nth(0).hover();
+    await cards.nth(0).locator('.add-btn').click();
+    await expect(cards.nth(0).locator('.add-btn')).toHaveClass(/added/, {timeout: 5000});
+    await cards.nth(1).hover();
+    await cards.nth(1).locator('.add-btn').click();
+    await expect(cards.nth(1).locator('.add-btn')).toHaveClass(/added/, {timeout: 5000});
 
     // Navigate to cart
     await page.goto('/cart');

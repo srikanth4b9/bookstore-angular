@@ -62,10 +62,12 @@ test.describe('Books Page', () => {
   });
 
   test('should add a book to cart from the grid view', async ({page}) => {
-    const addBtn = page.locator('.book-grid .book-card .add-btn').first();
-    await expect(addBtn).toBeVisible({timeout: 15000});
-    // Use force click to bypass stopPropagation overlay issues
-    await addBtn.click({force: true});
+    const firstCard = page.locator('.book-grid .book-card').first();
+    await expect(firstCard).toBeVisible({timeout: 15000});
+    // Hover to reveal the overlay button
+    await firstCard.hover();
+    const addBtn = firstCard.locator('.add-btn');
+    await addBtn.click();
     // The button gets 'added' class and icon changes to 'check' for 2s
     await expect(addBtn).toHaveClass(/added/, {timeout: 5000});
   });
