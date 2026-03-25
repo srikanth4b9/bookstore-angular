@@ -12,16 +12,17 @@ describe('Admin Page', () => {
   });
 
   it('should display books table', () => {
-    cy.get('mat-table').should('be.visible');
+    cy.get('.table-container table').should('be.visible');
   });
 
-  it('should display total sales summary', () => {
-    cy.contains('Total Sales').should('be.visible');
+  it('should display total revenue in Sales Analytics tab', () => {
+    cy.contains('.mat-mdc-tab', 'Sales Analytics').click();
+    cy.contains('Total Revenue').should('be.visible');
   });
 
   it('should toggle add book form', () => {
-    cy.contains('Add Book').click();
-    cy.get('input[placeholder="Title"]').should('be.visible');
-    cy.get('input[placeholder="Author"]').should('be.visible');
+    cy.contains('ADD NEW BOOK').click();
+    cy.get('input[placeholder="e.g. The Great Gatsby"]').should('be.visible');
+    cy.get('input[placeholder="e.g. F. Scott Fitzgerald"]').should('be.visible');
   });
 });

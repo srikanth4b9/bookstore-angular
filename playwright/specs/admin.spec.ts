@@ -15,16 +15,17 @@ test.describe('Admin Page', () => {
   });
 
   test('should display books table', async ({page}) => {
-    await expect(page.locator('mat-table')).toBeVisible({timeout: 10000});
+    await expect(page.locator('.table-container table')).toBeVisible({timeout: 10000});
   });
 
-  test('should display total sales information', async ({page}) => {
-    await expect(page.locator('body')).toContainText('Total Sales');
+  test('should display total revenue in Sales Analytics tab', async ({page}) => {
+    await page.locator('.mat-mdc-tab', {hasText: 'Sales Analytics'}).click();
+    await expect(page.locator('body')).toContainText('Total Revenue');
   });
 
   test('should toggle add book form', async ({page}) => {
-    await page.getByText('Add Book').click();
-    await expect(page.getByPlaceholder('Title')).toBeVisible();
-    await expect(page.getByPlaceholder('Author')).toBeVisible();
+    await page.getByText('ADD NEW BOOK').click();
+    await expect(page.getByPlaceholder('e.g. The Great Gatsby')).toBeVisible();
+    await expect(page.getByPlaceholder('e.g. F. Scott Fitzgerald')).toBeVisible();
   });
 });
