@@ -106,6 +106,6 @@ test.describe('Checkout Page', () => {
     await inputs.nth(4).fill(shippingAddress.country);
     await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
 
-    await expect(page.locator('button').filter({hasText: 'BACK'})).toBeVisible();
+    await expect(page.locator('button').filter({hasText: 'BACK'}).first()).toBeVisible();
   });
 });
