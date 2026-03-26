@@ -14,6 +14,10 @@ describe('Checkout Page', () => {
   const getInputByLabel = (label: string) =>
     cy.contains('mat-form-field mat-label', label).parents('mat-form-field').find('input');
 
+  // Click the visible CONTINUE button (each stepper step has its own)
+  const clickContinue = () =>
+    cy.get('.stepper-actions:visible button').contains('CONTINUE').click();
+
   it('should display the checkout page', () => {
     cy.get('.checkout-page').should('be.visible');
   });
@@ -34,7 +38,7 @@ describe('Checkout Page', () => {
     getInputByLabel('Zip Code').clear().type('10001');
     getInputByLabel('Country').clear().type('USA');
 
-    cy.contains('CONTINUE').click();
+    clickContinue();
     cy.contains('Payment').should('be.visible');
   });
 
@@ -44,11 +48,11 @@ describe('Checkout Page', () => {
     getInputByLabel('City').clear().type('New York');
     getInputByLabel('Zip Code').clear().type('10001');
 
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     // Select payment method
     cy.get('mat-radio-button').contains('PayPal').click();
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     // Should be on review step
     cy.contains('Review').should('be.visible');
@@ -64,11 +68,11 @@ describe('Checkout Page', () => {
     getInputByLabel('Street Address').clear().type('456 Oak Ave');
     getInputByLabel('City').clear().type('New York');
     getInputByLabel('Zip Code').clear().type('10001');
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     // Step 2: Payment
     cy.get('mat-radio-button').contains('Credit Card').click();
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     // Step 3: Review & Place Order
     cy.get('.place-order').click();
@@ -83,10 +87,10 @@ describe('Checkout Page', () => {
     getInputByLabel('Street Address').clear().type('456 Oak Ave');
     getInputByLabel('City').clear().type('New York');
     getInputByLabel('Zip Code').clear().type('10001');
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     cy.get('mat-radio-button').contains('Credit Card').click();
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     cy.get('.place-order').click();
     cy.get('.success-container').should('be.visible');
