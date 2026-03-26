@@ -17,7 +17,9 @@ describe('Cart Page', () => {
       cy.visit('/books');
       cy.get('.book-list').scrollIntoView();
       cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
-      cy.visit('/cart');
+      // Navigate via app link (cy.visit would reload and lose in-memory cart state)
+      cy.get('a[href="/cart"]').click();
+      cy.url().should('include', '/cart');
     });
 
     it('should display cart items', () => {
@@ -59,7 +61,9 @@ describe('Cart Page', () => {
       cy.visit('/books');
       cy.get('.book-list').scrollIntoView();
       cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
-      cy.visit('/cart');
+      // Navigate via app link (cy.visit would reload and lose in-memory cart state)
+      cy.get('a[href="/cart"]').click();
+      cy.url().should('include', '/cart');
     });
 
     it('should apply SAVE10 promo code', () => {

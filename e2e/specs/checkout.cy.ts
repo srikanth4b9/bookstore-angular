@@ -4,7 +4,10 @@ describe('Checkout Page', () => {
     cy.visit('/books');
     cy.get('.book-list').scrollIntoView();
     cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
-    cy.visit('/checkout');
+    // Navigate via app link then to checkout (cy.visit would reload and lose in-memory cart state)
+    cy.get('a[href="/cart"]').click();
+    cy.get('.checkout-btn').click();
+    cy.url().should('include', '/checkout');
   });
 
   it('should display the checkout page', () => {
