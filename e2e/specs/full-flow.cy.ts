@@ -1,4 +1,12 @@
 describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
+  // Helper to get a Material input by its mat-label text
+  const getInputByLabel = (label: string) =>
+    cy.contains('mat-form-field mat-label', label).parents('mat-form-field').find('input');
+
+  // Click the visible CONTINUE button (each stepper step has its own)
+  const clickContinue = () =>
+    cy.get('.stepper-actions:visible button').contains('CONTINUE').click();
+
   it('should complete a full shopping flow from home to order placement', () => {
     // 1. Start at home page
     cy.visit('/');
@@ -29,19 +37,19 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     cy.url().should('include', '/checkout');
 
     // 8. Fill shipping address
-    cy.get('input[placeholder="Street Address"]').clear().type('789 Pine St');
-    cy.get('input[placeholder="City"]').clear().type('San Francisco');
-    cy.get('input[placeholder="State"]').clear().type('CA');
-    cy.get('input[placeholder="ZIP Code"]').clear().type('94102');
-    cy.get('input[placeholder="Country"]').clear().type('USA');
-    cy.contains('CONTINUE').click();
+    getInputByLabel('Street Address').clear().type('789 Pine St');
+    getInputByLabel('City').clear().type('San Francisco');
+    getInputByLabel('State').clear().type('CA');
+    getInputByLabel('Zip Code').clear().type('94102');
+    getInputByLabel('Country').clear().type('USA');
+    clickContinue();
 
     // 9. Select payment method
     cy.get('mat-radio-button').contains('Credit Card').click();
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
     // 10. Place the order
-    cy.get('.place-order').click();
+    cy.contains('button', 'PLACE ORDER').click();
 
     // 11. Verify success
     cy.get('.success-container').should('be.visible');
@@ -85,15 +93,15 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     cy.get('.checkout-btn').click();
 
     // 6. Complete checkout
-    cy.get('input[placeholder="Street Address"]').clear().type('100 Market St');
-    cy.get('input[placeholder="City"]').clear().type('Boston');
-    cy.get('input[placeholder="ZIP Code"]').clear().type('02101');
-    cy.contains('CONTINUE').click();
+    getInputByLabel('Street Address').clear().type('100 Market St');
+    getInputByLabel('City').clear().type('Boston');
+    getInputByLabel('Zip Code').clear().type('02101');
+    clickContinue();
 
     cy.get('mat-radio-button').contains('PayPal').click();
-    cy.contains('CONTINUE').click();
+    clickContinue();
 
-    cy.get('.place-order').click();
+    cy.contains('button', 'PLACE ORDER').click();
     cy.get('.success-container').should('be.visible');
 
     // 7. View orders
