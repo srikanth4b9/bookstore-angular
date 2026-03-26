@@ -10,6 +10,10 @@ describe('Checkout Page', () => {
     cy.url().should('include', '/checkout');
   });
 
+  // Helper to get a Material input by its mat-label text
+  const getInputByLabel = (label: string) =>
+    cy.contains('mat-form-field mat-label', label).parents('mat-form-field').find('input');
+
   it('should display the checkout page', () => {
     cy.get('.checkout-page').should('be.visible');
   });
@@ -20,15 +24,15 @@ describe('Checkout Page', () => {
   });
 
   it('should pre-populate address fields from user profile', () => {
-    cy.get('input[placeholder="Street Address"]').should('not.have.value', '');
+    getInputByLabel('Street Address').should('not.have.value', '');
   });
 
   it('should fill in shipping address and proceed to payment', () => {
-    cy.get('input[placeholder="Street Address"]').clear().type('456 Oak Ave');
-    cy.get('input[placeholder="City"]').clear().type('New York');
-    cy.get('input[placeholder="State"]').clear().type('NY');
-    cy.get('input[placeholder="ZIP Code"]').clear().type('10001');
-    cy.get('input[placeholder="Country"]').clear().type('USA');
+    getInputByLabel('Street Address').clear().type('456 Oak Ave');
+    getInputByLabel('City').clear().type('New York');
+    getInputByLabel('State').clear().type('NY');
+    getInputByLabel('Zip Code').clear().type('10001');
+    getInputByLabel('Country').clear().type('USA');
 
     cy.contains('CONTINUE').click();
     cy.contains('Payment').should('be.visible');
@@ -36,9 +40,9 @@ describe('Checkout Page', () => {
 
   it('should select payment method and proceed to review', () => {
     // Fill shipping address
-    cy.get('input[placeholder="Street Address"]').clear().type('456 Oak Ave');
-    cy.get('input[placeholder="City"]').clear().type('New York');
-    cy.get('input[placeholder="ZIP Code"]').clear().type('10001');
+    getInputByLabel('Street Address').clear().type('456 Oak Ave');
+    getInputByLabel('City').clear().type('New York');
+    getInputByLabel('Zip Code').clear().type('10001');
 
     cy.contains('CONTINUE').click();
 
@@ -57,9 +61,9 @@ describe('Checkout Page', () => {
 
   it('should complete full checkout flow', () => {
     // Step 1: Shipping address
-    cy.get('input[placeholder="Street Address"]').clear().type('456 Oak Ave');
-    cy.get('input[placeholder="City"]').clear().type('New York');
-    cy.get('input[placeholder="ZIP Code"]').clear().type('10001');
+    getInputByLabel('Street Address').clear().type('456 Oak Ave');
+    getInputByLabel('City').clear().type('New York');
+    getInputByLabel('Zip Code').clear().type('10001');
     cy.contains('CONTINUE').click();
 
     // Step 2: Payment
@@ -76,9 +80,9 @@ describe('Checkout Page', () => {
   });
 
   it('should navigate to account after placing order', () => {
-    cy.get('input[placeholder="Street Address"]').clear().type('456 Oak Ave');
-    cy.get('input[placeholder="City"]').clear().type('New York');
-    cy.get('input[placeholder="ZIP Code"]').clear().type('10001');
+    getInputByLabel('Street Address').clear().type('456 Oak Ave');
+    getInputByLabel('City').clear().type('New York');
+    getInputByLabel('Zip Code').clear().type('10001');
     cy.contains('CONTINUE').click();
 
     cy.get('mat-radio-button').contains('Credit Card').click();
