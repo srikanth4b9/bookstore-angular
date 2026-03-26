@@ -46,7 +46,7 @@ test.describe('Full Shopping Flow', () => {
     // 9. Select payment method
     await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'Credit Card'}).click();
-    await page.locator('mat-step:nth-child(2) button[matsteppernext]').click();
+    await page.locator('button').filter({hasText: 'CONTINUE'}).nth(1).click({force: true});
 
     // 10. Verify review step shows correct details
     await expect(page.locator('.review-details')).toContainText(shippingAddress.street);
