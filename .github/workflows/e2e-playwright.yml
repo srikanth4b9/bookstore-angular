@@ -91,7 +91,9 @@ jobs:
             let details = 'No output available.';
             try {
               const raw = fs.readFileSync('playwright-output.txt', 'utf8');
-              const lines = raw.split('\n');
+              // Strip ANSI escape codes to avoid junk characters in the comment
+              const clean = raw.replace(/\u001b\[[0-9;]*m/g, '').replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
+              const lines = clean.split('\n');
               const summaryLines = lines.filter(l =>
                 l.includes('passed') || l.includes('failed') || l.includes('skipped')
               );
