@@ -85,33 +85,64 @@ jobs:
             const status = '${{ job.status }}';
             const icon = status === 'success' ? '✅' : '❌';
 
-            let details = 'No output available.';
+            let summary = '';
+            let specDetails = '';
             try {
               const raw = fs.readFileSync('cypress-output.txt', 'utf8');
-              // Strip ANSI escape codes to avoid junk characters in the comment
-              const clean = raw.replace(/\u001b\[[0-9;]*m/g, '').replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
-              const lines = clean.split('\n');
-              const summaryLines = lines.filter(l =>
-                l.includes('passing') || l.includes('failing') ||
-                l.includes('Tests:') || l.includes('Specs:')
-              );
-              details = summaryLines.length > 0
-                ? summaryLines.join('\n')
-                : lines.slice(-20).join('\n');
-            } catch {}
+              // Strip ANSI codes and box-drawing characters
+              const clean = raw
+                .replace(/[\u001b\x1b]\[[0-9;]*[a-zA-Z]/g, '')
+                .replace(/[│┌┐└┘├┤┬┴┼─]+/g, '')
+                .replace(/\r/g, '');
+              const lines = clean.split('\n').map(l => l.trim()).filter(Boolean);
+
+              // Extract per-spec results (e.g. "Running: books.cy.ts" followed by "X passing", "Y failing")
+              const specs = [];
+              let currentSpec = null;
+              for (const line of lines) {
+                const specMatch = line.match(/Running:\s+(\S+\.cy\.ts)/);
+                if (specMatch) {
+                  currentSpec = { name: specMatch[1], passing: 0, failing: 0 };
+                  specs.push(currentSpec);
+                }
+                if (currentSpec) {
+                  const passMatch = line.match(/(\d+)\s+passing/);
+                  const failMatch = line.match(/(\d+)\s+failing/);
+                  if (passMatch) currentSpec.passing = parseInt(passMatch[1]);
+                  if (failMatch) currentSpec.failing = parseInt(failMatch[1]);
+                }
+              }
+
+              // Build totals
+              const totalPass = specs.reduce((s, sp) => s + sp.passing, 0);
+              const totalFail = specs.reduce((s, sp) => s + sp.failing, 0);
+              const totalSpecs = specs.length;
+
+              summary = `**${totalSpecs} specs** — **${totalPass} passing**, **${totalFail} failing**`;
+
+              // Build per-spec table
+              if (specs.length > 0) {
+                const rows = specs.map(sp => {
+                  const statusIcon = sp.failing > 0 ? '❌' : '✅';
+                  return `| ${statusIcon} | ${sp.name} | ${sp.passing} | ${sp.failing} |`;
+                });
+                specDetails = [
+                  '| | Spec | Passed | Failed |',
+                  '|---|------|--------|--------|',
+                  ...rows,
+                ].join('\n');
+              }
+            } catch {
+              summary = 'No output available.';
+            }
 
             const body = [
               `## ${icon} Cypress E2E — ${status}`,
               '',
-              '<details>',
-              '<summary>Test output</summary>',
+              summary,
               '',
-              '```',
-              details,
-              '```',
-              '',
-              '</details>',
-            ].join('\n');
+              specDetails,
+            ].filter(Boolean).join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

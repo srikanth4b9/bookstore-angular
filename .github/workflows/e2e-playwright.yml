@@ -88,32 +88,62 @@ jobs:
             const status = '${{ job.status }}';
             const icon = status === 'success' ? '✅' : '❌';
 
-            let details = 'No output available.';
+            let summary = '';
+            let specDetails = '';
             try {
               const raw = fs.readFileSync('playwright-output.txt', 'utf8');
-              // Strip ANSI escape codes to avoid junk characters in the comment
-              const clean = raw.replace(/\u001b\[[0-9;]*m/g, '').replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
-              const lines = clean.split('\n');
-              const summaryLines = lines.filter(l =>
-                l.includes('passed') || l.includes('failed') || l.includes('skipped')
-              );
-              details = summaryLines.length > 0
-                ? summaryLines.join('\n')
-                : lines.slice(-20).join('\n');
-            } catch {}
+              // Strip ANSI codes
+              const clean = raw
+                .replace(/[\u001b\x1b]\[[0-9;]*[a-zA-Z]/g, '')
+                .replace(/\r/g, '');
+              const lines = clean.split('\n').map(l => l.trim()).filter(Boolean);
+
+              // Playwright list reporter: lines like "✓ [chromium] › specs/home.spec.ts:4:3 › ..."
+              // or "✘ [chromium] › specs/home.spec.ts:4:3 › ..."
+              // Summary line: "X passed", "Y failed", "Z skipped"
+              const specs = {};
+              for (const line of lines) {
+                const testMatch = line.match(/([✓✘×·])\s+.*?›\s+(\S+\.spec\.ts)/);
+                if (testMatch) {
+                  const [, result, specFile] = testMatch;
+                  const name = specFile.replace(/^specs\//, '');
+                  if (!specs[name]) specs[name] = { name, passing: 0, failing: 0 };
+                  if (result === '✓') specs[name].passing++;
+                  else if (result === '✘' || result === '×') specs[name].failing++;
+                }
+              }
+
+              // Also parse the final summary line (e.g. "10 passed (30s)")
+              const summaryLine = lines.find(l => /\d+\s+passed/.test(l));
+              const passTotal = summaryLine?.match(/(\d+)\s+passed/)?.[1] || '0';
+              const failTotal = summaryLine?.match(/(\d+)\s+failed/)?.[1] || '0';
+              const specList = Object.values(specs);
+              const totalSpecs = specList.length;
+
+              summary = `**${totalSpecs} specs** — **${passTotal} passing**, **${failTotal} failing**`;
+
+              if (specList.length > 0) {
+                const rows = specList.map(sp => {
+                  const statusIcon = sp.failing > 0 ? '❌' : '✅';
+                  return `| ${statusIcon} | ${sp.name} | ${sp.passing} | ${sp.failing} |`;
+                });
+                specDetails = [
+                  '| | Spec | Passed | Failed |',
+                  '|---|------|--------|--------|',
+                  ...rows,
+                ].join('\n');
+              }
+            } catch {
+              summary = 'No output available.';
+            }
 
             const body = [
               `## ${icon} Playwright E2E — ${status}`,
               '',
-              '<details>',
-              '<summary>Test output</summary>',
+              summary,
               '',
-              '```',
-              details,
-              '```',
-              '',
-              '</details>',
-            ].join('\n');
+              specDetails,
+            ].filter(Boolean).join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
