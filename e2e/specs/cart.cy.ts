@@ -1,3 +1,5 @@
+import {addItemAndGoToCart} from '../support/utils';
+
 describe('Cart Page', () => {
   it('should display empty cart when no items added', () => {
     cy.visit('/cart');
@@ -13,13 +15,7 @@ describe('Cart Page', () => {
 
   describe('with items in cart', () => {
     beforeEach(() => {
-      // Add an item to cart via the books page
-      cy.visit('/books');
-      cy.get('.book-list').scrollIntoView();
-      cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
-      // Navigate via app link (cy.visit would reload and lose in-memory cart state)
-      cy.get('a[href="/cart"]').click();
-      cy.url().should('include', '/cart');
+      addItemAndGoToCart();
     });
 
     it('should display cart items', () => {
@@ -58,12 +54,7 @@ describe('Cart Page', () => {
 
   describe('promo code', () => {
     beforeEach(() => {
-      cy.visit('/books');
-      cy.get('.book-list').scrollIntoView();
-      cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
-      // Navigate via app link (cy.visit would reload and lose in-memory cart state)
-      cy.get('a[href="/cart"]').click();
-      cy.url().should('include', '/cart');
+      addItemAndGoToCart();
     });
 
     it('should apply SAVE10 promo code', () => {

@@ -1,12 +1,12 @@
+import {
+  addBookToCart,
+  clickContinue,
+  clickPlaceOrder,
+  fillShippingAddress,
+  goToCheckout,
+} from '../support/utils';
+
 describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
-  // Helper to get a Material input by its mat-label text
-  const getInputByLabel = (label: string) =>
-    cy.contains('mat-form-field mat-label', label).parents('mat-form-field').find('input');
-
-  // Click the visible CONTINUE button (each stepper step has its own)
-  const clickContinue = () =>
-    cy.get('.stepper-actions:visible button').contains('CONTINUE').click();
-
   it('should complete a full shopping flow from home to order placement', () => {
     // 1. Start at home page
     cy.visit('/');
@@ -18,43 +18,42 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     cy.get('.book-list').scrollIntoView();
     cy.get('.book-card', {timeout: 15000}).should('have.length.greaterThan', 0);
 
-    // 3. Add first book to cart
-    cy.get('.add-btn').first().scrollIntoView().click({force: true});
+    // 3. Add two books to cart
+    addBookToCart(0);
+    addBookToCart(1);
 
-    // 4. Add second book to cart
-    cy.get('.add-btn').eq(1).scrollIntoView().click({force: true});
-
-    // 5. Navigate to cart
+    // 4. Navigate to cart
     cy.get('a[href="/cart"]').click();
     cy.url().should('include', '/cart');
     cy.get('.cart-item-row').should('have.length', 2);
 
-    // 6. Verify subtotal is displayed
+    // 5. Verify subtotal is displayed
     cy.contains('Subtotal').should('be.visible');
 
-    // 7. Proceed to checkout
-    cy.get('.checkout-btn').click();
-    cy.url().should('include', '/checkout');
+    // 6. Proceed to checkout
+    goToCheckout();
 
-    // 8. Fill shipping address
-    getInputByLabel('Street Address').clear().type('789 Pine St');
-    getInputByLabel('City').clear().type('San Francisco');
-    getInputByLabel('State').clear().type('CA');
-    getInputByLabel('Zip Code').clear().type('94102');
-    getInputByLabel('Country').clear().type('USA');
+    // 7. Fill shipping address
+    fillShippingAddress({
+      street: '789 Pine St',
+      city: 'San Francisco',
+      state: 'CA',
+      zipCode: '94102',
+      country: 'USA',
+    });
     clickContinue();
 
-    // 9. Select payment method
+    // 8. Select payment method
     cy.get('mat-radio-button').contains('Credit Card').click();
     clickContinue();
 
-    // 10. Place the order
-    cy.contains('button', 'PLACE ORDER').click();
+    // 9. Place the order
+    clickPlaceOrder();
 
-    // 11. Verify success
+    // 10. Verify success
     cy.get('.success-container').should('be.visible');
 
-    // 12. Continue shopping
+    // 11. Continue shopping
     cy.contains('CONTINUE SHOPPING').click();
     cy.url().should('include', '/books');
   });
@@ -85,23 +84,20 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     cy.url().should('include', '/books');
 
     // 4. Add book to cart
-    cy.get('.book-list').scrollIntoView();
-    cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
+    addBookToCart();
 
     // 5. Go to cart and checkout
     cy.get('a[href="/cart"]').click();
-    cy.get('.checkout-btn').click();
+    goToCheckout();
 
     // 6. Complete checkout
-    getInputByLabel('Street Address').clear().type('100 Market St');
-    getInputByLabel('City').clear().type('Boston');
-    getInputByLabel('Zip Code').clear().type('02101');
+    fillShippingAddress({street: '100 Market St', city: 'Boston', zipCode: '02101'});
     clickContinue();
 
     cy.get('mat-radio-button').contains('PayPal').click();
     clickContinue();
 
-    cy.contains('button', 'PLACE ORDER').click();
+    clickPlaceOrder();
     cy.get('.success-container').should('be.visible');
 
     // 7. View orders

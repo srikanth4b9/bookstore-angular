@@ -1,3 +1,5 @@
+import {addBookToCart} from '../support/utils';
+
 describe('Books Page', () => {
   beforeEach(() => {
     cy.visit('/books');
@@ -47,8 +49,7 @@ describe('Books Page', () => {
   });
 
   it('should add a book to cart', () => {
-    cy.get('.add-btn').first().scrollIntoView().click({force: true});
-    // Cart badge should update
+    addBookToCart();
     cy.get('a[href="/cart"]').should('be.visible');
   });
 
