@@ -44,8 +44,9 @@ test.describe('Full Shopping Flow', () => {
     await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
 
     // 9. Select payment method
+    await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'Credit Card'}).click();
-    await page.locator('button').filter({hasText: 'CONTINUE'}).click();
+    await page.getByRole('button', {name: 'CONTINUE'}).nth(1).click();
 
     // 10. Verify review step shows correct details
     await expect(page.locator('.review-details')).toContainText(shippingAddress.street);
@@ -72,8 +73,9 @@ test.describe('Full Shopping Flow', () => {
     await cards.nth(1).locator('.add-btn').dispatchEvent('click');
     await page.waitForTimeout(300);
 
-    // Navigate to cart
-    await page.goto('/cart');
+    // Navigate to cart via in-app link to preserve cart state
+    await page.locator('a[href="/cart"]').click();
+    await expect(page).toHaveURL(/\/cart/);
 
     // Should have 2 items
     const cartItems = page.locator('.cart-item-row');
