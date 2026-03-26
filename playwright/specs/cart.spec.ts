@@ -51,19 +51,17 @@ test.describe('Cart Page', () => {
     });
 
     test('should increase item quantity', async ({page}) => {
-      const qtyBefore = await page.locator('.qty').first().textContent();
+      await expect(page.locator('.qty').first()).toHaveText('1');
       await page.locator('.quantity-controls button').filter({hasText: 'add'}).first().click();
-      const qtyAfter = await page.locator('.qty').first().textContent();
-      expect(Number(qtyAfter?.trim())).toBe(Number(qtyBefore?.trim()) + 1);
+      await expect(page.locator('.qty').first()).toHaveText('2');
     });
 
     test('should decrease item quantity', async ({page}) => {
       // First increase to 2
       await page.locator('.quantity-controls button').filter({hasText: 'add'}).first().click();
-      const qtyBefore = await page.locator('.qty').first().textContent();
+      await expect(page.locator('.qty').first()).toHaveText('2');
       await page.locator('.quantity-controls button').filter({hasText: 'remove'}).first().click();
-      const qtyAfter = await page.locator('.qty').first().textContent();
-      expect(Number(qtyAfter?.trim())).toBe(Number(qtyBefore?.trim()) - 1);
+      await expect(page.locator('.qty').first()).toHaveText('1');
     });
 
     test('should remove an item from the cart', async ({page}) => {

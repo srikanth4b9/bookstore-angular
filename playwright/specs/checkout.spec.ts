@@ -9,7 +9,10 @@ test.describe('Checkout Page', () => {
     await expect(firstCard).toBeVisible({timeout: 15000});
     await firstCard.locator('.add-btn').dispatchEvent('click');
     await page.waitForTimeout(500);
-    await page.goto('/checkout');
+    // Navigate via in-app links to preserve cart state (goto would reload and wipe it)
+    await page.locator('a[href="/cart"]').click();
+    await page.locator('.checkout-btn').click();
+    await expect(page).toHaveURL(/\/checkout/);
   });
 
   test('should display the checkout page title', async ({page}) => {
@@ -54,8 +57,9 @@ test.describe('Checkout Page', () => {
     await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
 
     // Step 2: Select Credit Card
+    await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'Credit Card'}).click();
-    await page.locator('button').filter({hasText: 'CONTINUE'}).click();
+    await page.getByRole('button', {name: 'CONTINUE'}).nth(1).click();
 
     // Step 3: Review should show address and payment info
     await expect(page.locator('.review-details')).toBeVisible({timeout: 5000});
@@ -84,8 +88,9 @@ test.describe('Checkout Page', () => {
     await inputs.nth(4).fill(shippingAddress.country);
     await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
 
+    await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'PayPal'}).click();
-    await page.locator('button').filter({hasText: 'CONTINUE'}).click();
+    await page.getByRole('button', {name: 'CONTINUE'}).nth(1).click();
 
     await expect(page.locator('button').filter({hasText: 'PLACE ORDER'})).toBeVisible({
       timeout: 5000,
