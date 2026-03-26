@@ -23,7 +23,9 @@ test.describe('Cart Page', () => {
       // JS click bypasses overlay visibility issues in headless mode
       await firstCard.locator('.add-btn').dispatchEvent('click');
       await page.waitForTimeout(500);
-      await page.goto('/cart');
+      // Navigate via in-app link to preserve cart state (goto would reload and wipe it)
+      await page.locator('a[href="/cart"]').click();
+      await expect(page).toHaveURL(/\/cart/);
     });
 
     test('should display cart items', async ({page}) => {
