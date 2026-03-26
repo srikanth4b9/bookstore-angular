@@ -75,7 +75,7 @@ describe('Checkout Page', () => {
     clickContinue();
 
     // Step 3: Review & Place Order
-    cy.get('.place-order').click();
+    cy.contains('button', 'PLACE ORDER').click();
 
     // Should show success
     cy.get('.success-container').should('be.visible');
@@ -92,7 +92,7 @@ describe('Checkout Page', () => {
     cy.get('mat-radio-button').contains('Credit Card').click();
     clickContinue();
 
-    cy.get('.place-order').click();
+    cy.contains('button', 'PLACE ORDER').click();
     cy.get('.success-container').should('be.visible');
 
     cy.contains('VIEW MY ORDERS').click();
