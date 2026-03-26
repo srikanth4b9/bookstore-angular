@@ -37,7 +37,7 @@ describe('Cart Page', () => {
     });
 
     it('should increase item quantity', () => {
-      cy.get('.quantity-controls button').contains('+').first().click();
+      cy.get('.quantity-controls button').contains('add').first().click();
       cy.get('.quantity-controls').first().should('contain.text', '2');
     });
 
@@ -67,19 +67,19 @@ describe('Cart Page', () => {
     });
 
     it('should apply SAVE10 promo code', () => {
-      cy.get('input[matInput]').last().type('SAVE10');
+      cy.get('input[matInput]').last().click({force: true}).type('SAVE10');
       cy.get('.apply-btn').click();
       cy.contains('SAVE10').should('be.visible');
     });
 
     it('should apply WELCOME promo code', () => {
-      cy.get('input[matInput]').last().type('WELCOME');
+      cy.get('input[matInput]').last().click({force: true}).type('WELCOME');
       cy.get('.apply-btn').click();
       cy.contains('WELCOME').should('be.visible');
     });
 
     it('should show error for invalid promo code', () => {
-      cy.get('input[matInput]').last().type('INVALID');
+      cy.get('input[matInput]').last().click({force: true}).type('INVALID');
       cy.get('.apply-btn').click();
       cy.get('.mat-mdc-snack-bar-container').should('contain.text', 'Invalid promo code');
     });
