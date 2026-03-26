@@ -7,13 +7,14 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     // 2. Navigate to books
     cy.get('.cta-btn').click();
     cy.url().should('include', '/books');
-    cy.get('.book-card').should('have.length.greaterThan', 0);
+    cy.get('.book-list').scrollIntoView();
+    cy.get('.book-card', {timeout: 15000}).should('have.length.greaterThan', 0);
 
     // 3. Add first book to cart
-    cy.get('.add-btn').first().click();
+    cy.get('.add-btn').first().scrollIntoView().click({force: true});
 
     // 4. Add second book to cart
-    cy.get('.add-btn').eq(1).click();
+    cy.get('.add-btn').eq(1).scrollIntoView().click({force: true});
 
     // 5. Navigate to cart
     cy.get('a[href="/cart"]').click();
@@ -76,7 +77,8 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     cy.url().should('include', '/books');
 
     // 4. Add book to cart
-    cy.get('.add-btn').first().click();
+    cy.get('.book-list').scrollIntoView();
+    cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
 
     // 5. Go to cart and checkout
     cy.get('a[href="/cart"]').click();

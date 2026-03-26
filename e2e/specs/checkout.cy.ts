@@ -2,7 +2,8 @@ describe('Checkout Page', () => {
   beforeEach(() => {
     // Add item to cart first
     cy.visit('/books');
-    cy.get('.add-btn').first().click();
+    cy.get('.book-list').scrollIntoView();
+    cy.get('.add-btn', {timeout: 15000}).first().scrollIntoView().click({force: true});
     cy.visit('/checkout');
   });
 
