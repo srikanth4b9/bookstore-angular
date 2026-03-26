@@ -59,7 +59,7 @@ test.describe('Checkout Page', () => {
     // Step 2: Select Credit Card
     await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'Credit Card'}).click();
-    await page.getByRole('button', {name: 'CONTINUE'}).nth(1).click();
+    await page.locator('mat-step:nth-child(2) button[matsteppernext]').click();
 
     // Step 3: Review should show address and payment info
     await expect(page.locator('.review-details')).toBeVisible({timeout: 5000});
@@ -90,7 +90,7 @@ test.describe('Checkout Page', () => {
 
     await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'PayPal'}).click();
-    await page.getByRole('button', {name: 'CONTINUE'}).nth(1).click();
+    await page.locator('mat-step:nth-child(2) button[matsteppernext]').click();
 
     await expect(page.locator('button').filter({hasText: 'PLACE ORDER'})).toBeVisible({
       timeout: 5000,
