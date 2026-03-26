@@ -36,7 +36,7 @@ describe('Navbar', () => {
   });
 
   it('should show Login link when not logged in', () => {
-    cy.get('a[href="/login"]').should('be.visible');
+    cy.contains('a', 'Login').should('be.visible');
   });
 
   it('should navigate home when clicking brand name', () => {
