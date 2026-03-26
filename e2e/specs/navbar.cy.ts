@@ -35,8 +35,8 @@ describe('Navbar', () => {
     cy.url().should('include', '/cart');
   });
 
-  it('should show Login link when not logged in', () => {
-    cy.contains('a', 'Login').should('be.visible');
+  it('should show account icon when logged in', () => {
+    cy.get('a[href="/account"]').should('be.visible');
   });
 
   it('should navigate home when clicking brand name', () => {
