@@ -1,4 +1,5 @@
 import {test, expect} from '@playwright/test';
+import {addItemAndGoToCart} from '../support/utils';
 
 test.describe('Cart Page', () => {
   test('should show empty cart message when no items', async ({page}) => {
@@ -16,16 +17,7 @@ test.describe('Cart Page', () => {
 
   test.describe('with items in cart', () => {
     test.beforeEach(async ({page}) => {
-      // Add an item to cart first
-      await page.goto('/books');
-      const firstCard = page.locator('.book-grid .book-card').first();
-      await expect(firstCard).toBeVisible({timeout: 15000});
-      // JS click bypasses overlay visibility issues in headless mode
-      await firstCard.locator('.add-btn').dispatchEvent('click');
-      await page.waitForTimeout(500);
-      // Navigate via in-app link to preserve cart state (goto would reload and wipe it)
-      await page.locator('a[href="/cart"]').click();
-      await expect(page).toHaveURL(/\/cart/);
+      await addItemAndGoToCart(page);
     });
 
     test('should display cart items', async ({page}) => {

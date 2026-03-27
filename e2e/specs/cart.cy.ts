@@ -1,4 +1,5 @@
 import {addItemAndGoToCart} from '../support/utils';
+import {promoCodes} from '../fixtures/test-data';
 
 describe('Cart Page', () => {
   it('should display empty cart when no items added', () => {
@@ -47,7 +48,7 @@ describe('Cart Page', () => {
     });
 
     it('should remove item from cart', () => {
-      cy.get('button[color="warn"]').first().click();
+      cy.get('button[aria-label="Remove item"]').first().click();
       cy.get('.empty-cart').should('be.visible');
     });
   });
@@ -58,19 +59,19 @@ describe('Cart Page', () => {
     });
 
     it('should apply SAVE10 promo code', () => {
-      cy.get('input[matInput]').last().click({force: true}).type('SAVE10');
+      cy.get('.promo-field input').click({force: true}).type(promoCodes.save10);
       cy.get('.apply-btn').click();
-      cy.contains('SAVE10').should('be.visible');
+      cy.contains(promoCodes.save10).should('be.visible');
     });
 
     it('should apply WELCOME promo code', () => {
-      cy.get('input[matInput]').last().click({force: true}).type('WELCOME');
+      cy.get('.promo-field input').click({force: true}).type(promoCodes.welcome);
       cy.get('.apply-btn').click();
-      cy.contains('WELCOME').should('be.visible');
+      cy.contains(promoCodes.welcome).should('be.visible');
     });
 
     it('should show error for invalid promo code', () => {
-      cy.get('input[matInput]').last().click({force: true}).type('INVALID');
+      cy.get('.promo-field input').click({force: true}).type(promoCodes.invalid);
       cy.get('.apply-btn').click();
       cy.get('.mat-mdc-snack-bar-container').should('contain.text', 'Invalid promo code');
     });

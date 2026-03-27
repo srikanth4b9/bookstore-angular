@@ -6,6 +6,7 @@ import {
   getInputByLabel,
   goToCheckout,
 } from '../support/utils';
+import {shippingAddress} from '../fixtures/test-data';
 
 describe('Checkout Page', () => {
   beforeEach(() => {
@@ -27,20 +28,14 @@ describe('Checkout Page', () => {
   });
 
   it('should fill in shipping address and proceed to payment', () => {
-    fillShippingAddress({
-      street: '456 Oak Ave',
-      city: 'New York',
-      state: 'NY',
-      zipCode: '10001',
-      country: 'USA',
-    });
+    fillShippingAddress(shippingAddress);
 
     clickContinue();
     cy.contains('Payment').should('be.visible');
   });
 
   it('should select payment method and proceed to review', () => {
-    fillShippingAddress({street: '456 Oak Ave', city: 'New York', zipCode: '10001'});
+    fillShippingAddress(shippingAddress);
     clickContinue();
 
     cy.get('mat-radio-button').contains('PayPal').click();
@@ -55,7 +50,7 @@ describe('Checkout Page', () => {
   });
 
   it('should complete full checkout flow', () => {
-    fillShippingAddress({street: '456 Oak Ave', city: 'New York', zipCode: '10001'});
+    fillShippingAddress(shippingAddress);
     clickContinue();
 
     cy.get('mat-radio-button').contains('Credit Card').click();
@@ -69,7 +64,7 @@ describe('Checkout Page', () => {
   });
 
   it('should navigate to account after placing order', () => {
-    fillShippingAddress({street: '456 Oak Ave', city: 'New York', zipCode: '10001'});
+    fillShippingAddress(shippingAddress);
     clickContinue();
 
     cy.get('mat-radio-button').contains('Credit Card').click();

@@ -6,6 +6,9 @@
 export const getInputByLabel = (label: string) =>
   cy.contains('mat-form-field mat-label', label).parents('mat-form-field').find('input');
 
+/** Get the search input on the books page. */
+export const getSearchInput = () => cy.get('.books-page input[matInput]');
+
 /** Click the visible CONTINUE button in the active stepper step. */
 export const clickContinue = () =>
   cy.get('.stepper-actions:visible button').contains('CONTINUE').click();

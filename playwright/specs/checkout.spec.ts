@@ -1,18 +1,17 @@
 import {test, expect} from '@playwright/test';
 import {shippingAddress} from '../fixtures/test-data';
+import {
+  addItemAndGoToCart,
+  clickContinueStep1,
+  clickContinueStep2,
+  fillShippingAddress,
+  goToCheckout,
+} from '../support/utils';
 
 test.describe('Checkout Page', () => {
   test.beforeEach(async ({page}) => {
-    // Add an item to cart first
-    await page.goto('/books');
-    const firstCard = page.locator('.book-grid .book-card').first();
-    await expect(firstCard).toBeVisible({timeout: 15000});
-    await firstCard.locator('.add-btn').dispatchEvent('click');
-    await page.waitForTimeout(500);
-    // Navigate via in-app links to preserve cart state (goto would reload and wipe it)
-    await page.locator('a[href="/cart"]').click();
-    await page.locator('.checkout-btn').click();
-    await expect(page).toHaveURL(/\/checkout/);
+    await addItemAndGoToCart(page);
+    await goToCheckout(page);
   });
 
   test('should display the checkout page title', async ({page}) => {
@@ -31,35 +30,20 @@ test.describe('Checkout Page', () => {
   });
 
   test('should fill in shipping address and proceed to step 2', async ({page}) => {
-    // Fill the address form fields
-    const inputs = page.locator('.step-content input[matInput]');
-    await inputs.nth(0).fill(shippingAddress.street);
-    await inputs.nth(1).fill(shippingAddress.city);
-    await inputs.nth(2).fill(shippingAddress.state);
-    await inputs.nth(3).fill(shippingAddress.zipCode);
-    await inputs.nth(4).fill(shippingAddress.country);
-
-    // Click Continue button
-    await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
+    await fillShippingAddress(page, shippingAddress);
+    await clickContinueStep1(page);
 
     // Step 2 should be visible — Payment Options
     await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
   });
 
   test('should select a payment method and proceed to step 3', async ({page}) => {
-    // Fill step 1
-    const inputs = page.locator('.step-content input[matInput]');
-    await inputs.nth(0).fill(shippingAddress.street);
-    await inputs.nth(1).fill(shippingAddress.city);
-    await inputs.nth(2).fill(shippingAddress.state);
-    await inputs.nth(3).fill(shippingAddress.zipCode);
-    await inputs.nth(4).fill(shippingAddress.country);
-    await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
+    await fillShippingAddress(page, shippingAddress);
+    await clickContinueStep1(page);
 
     // Step 2: Select Credit Card
-    await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'Credit Card'}).click();
-    await page.locator('button').filter({hasText: 'CONTINUE'}).nth(1).click({force: true});
+    await clickContinueStep2(page);
 
     // Step 3: Review should show address and payment info
     await expect(page.locator('.review-details')).toBeVisible({timeout: 5000});
@@ -79,18 +63,11 @@ test.describe('Checkout Page', () => {
   });
 
   test('should have a Place Order button on step 3', async ({page}) => {
-    // Navigate to step 3
-    const inputs = page.locator('.step-content input[matInput]');
-    await inputs.nth(0).fill(shippingAddress.street);
-    await inputs.nth(1).fill(shippingAddress.city);
-    await inputs.nth(2).fill(shippingAddress.state);
-    await inputs.nth(3).fill(shippingAddress.zipCode);
-    await inputs.nth(4).fill(shippingAddress.country);
-    await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
+    await fillShippingAddress(page, shippingAddress);
+    await clickContinueStep1(page);
 
-    await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'PayPal'}).click();
-    await page.locator('button').filter({hasText: 'CONTINUE'}).nth(1).click({force: true});
+    await clickContinueStep2(page);
 
     await expect(page.locator('button').filter({hasText: 'PLACE ORDER'})).toBeVisible({
       timeout: 5000,
@@ -98,13 +75,8 @@ test.describe('Checkout Page', () => {
   });
 
   test('should have a Back button on step 2', async ({page}) => {
-    const inputs = page.locator('.step-content input[matInput]');
-    await inputs.nth(0).fill(shippingAddress.street);
-    await inputs.nth(1).fill(shippingAddress.city);
-    await inputs.nth(2).fill(shippingAddress.state);
-    await inputs.nth(3).fill(shippingAddress.zipCode);
-    await inputs.nth(4).fill(shippingAddress.country);
-    await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
+    await fillShippingAddress(page, shippingAddress);
+    await clickContinueStep1(page);
 
     await expect(page.locator('button').filter({hasText: 'BACK'}).first()).toBeVisible();
   });

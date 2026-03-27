@@ -1,5 +1,13 @@
 import {test, expect} from '@playwright/test';
 import {shippingAddress} from '../fixtures/test-data';
+import {
+  addBookToCart,
+  addItemAndGoToCart,
+  clickContinueStep1,
+  clickContinueStep2,
+  fillShippingAddress,
+  goToCheckout,
+} from '../support/utils';
 
 test.describe('Full Shopping Flow', () => {
   test('should complete the full browse-to-checkout flow', async ({page}) => {
@@ -27,26 +35,18 @@ test.describe('Full Shopping Flow', () => {
     await expect(page).toHaveURL(/\/cart/);
 
     // 6. Verify item is in cart
-    const cartItems = page.locator('.cart-item-row');
-    expect(await cartItems.count()).toBeGreaterThan(0);
+    await expect(page.locator('.cart-item-row')).toHaveCount(1);
 
     // 7. Proceed to checkout
-    await page.locator('.checkout-btn').click();
-    await expect(page).toHaveURL(/\/checkout/);
+    await goToCheckout(page);
 
     // 8. Fill in shipping address
-    const inputs = page.locator('.step-content input[matInput]');
-    await inputs.nth(0).fill(shippingAddress.street);
-    await inputs.nth(1).fill(shippingAddress.city);
-    await inputs.nth(2).fill(shippingAddress.state);
-    await inputs.nth(3).fill(shippingAddress.zipCode);
-    await inputs.nth(4).fill(shippingAddress.country);
-    await page.locator('button').filter({hasText: 'CONTINUE'}).first().click();
+    await fillShippingAddress(page, shippingAddress);
+    await clickContinueStep1(page);
 
     // 9. Select payment method
-    await expect(page.locator('mat-radio-group')).toBeVisible({timeout: 5000});
     await page.locator('mat-radio-button').filter({hasText: 'Credit Card'}).click();
-    await page.locator('button').filter({hasText: 'CONTINUE'}).nth(1).click({force: true});
+    await clickContinueStep2(page);
 
     // 10. Verify review step shows correct details
     await expect(page.locator('.review-details')).toContainText(shippingAddress.street);
@@ -63,23 +63,10 @@ test.describe('Full Shopping Flow', () => {
   });
 
   test('should add multiple items and verify cart count', async ({page}) => {
-    await page.goto('/books');
-
-    // Add books to cart
-    const cards = page.locator('.book-grid .book-card');
-    await expect(cards.first()).toBeVisible({timeout: 15000});
-    await cards.nth(0).locator('.add-btn').dispatchEvent('click');
-    await page.waitForTimeout(300);
-    await cards.nth(1).locator('.add-btn').dispatchEvent('click');
-    await page.waitForTimeout(300);
-
-    // Navigate to cart via in-app link to preserve cart state
-    await page.locator('a[href="/cart"]').click();
-    await expect(page).toHaveURL(/\/cart/);
+    await addItemAndGoToCart(page, 2);
 
     // Should have 2 items
-    const cartItems = page.locator('.cart-item-row');
-    await expect(cartItems).toHaveCount(2);
+    await expect(page.locator('.cart-item-row')).toHaveCount(2);
   });
 
   test('should navigate between auth pages', async ({page}) => {

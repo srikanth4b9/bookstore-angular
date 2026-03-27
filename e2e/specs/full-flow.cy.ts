@@ -5,6 +5,7 @@ import {
   fillShippingAddress,
   goToCheckout,
 } from '../support/utils';
+import {altShippingAddress, shippingAddress, testUser} from '../fixtures/test-data';
 
 describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
   it('should complete a full shopping flow from home to order placement', () => {
@@ -34,13 +35,7 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     goToCheckout();
 
     // 7. Fill shipping address
-    fillShippingAddress({
-      street: '789 Pine St',
-      city: 'San Francisco',
-      state: 'CA',
-      zipCode: '94102',
-      country: 'USA',
-    });
+    fillShippingAddress(altShippingAddress);
     clickContinue();
 
     // 8. Select payment method
@@ -61,17 +56,17 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
   it('should complete registration → login → browse → purchase flow', () => {
     // 1. Register
     cy.visit('/register');
-    cy.get('#nameInput').type('Test User');
-    cy.get('#emailInput').type('test@example.com');
-    cy.get('#passwordInput').type('password123');
+    cy.get('#nameInput').type(testUser.name);
+    cy.get('#emailInput').type(testUser.email);
+    cy.get('#passwordInput').type(testUser.password);
 
     cy.on('window:alert', () => true);
     cy.get('.auth-btn').click();
     cy.url().should('include', '/login');
 
     // 2. Login
-    cy.get('#emailInput').type('test@example.com');
-    cy.get('#passwordInput').type('password123');
+    cy.get('#emailInput').type(testUser.email);
+    cy.get('#passwordInput').type(testUser.password);
 
     cy.on('window:alert', () => true);
     cy.get('.auth-btn').click();
@@ -91,7 +86,7 @@ describe('Full User Flow: Browse → Add to Cart → Checkout', () => {
     goToCheckout();
 
     // 6. Complete checkout
-    fillShippingAddress({street: '100 Market St', city: 'Boston', zipCode: '02101'});
+    fillShippingAddress(shippingAddress);
     clickContinue();
 
     cy.get('mat-radio-button').contains('PayPal').click();
