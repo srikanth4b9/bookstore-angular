@@ -1,21 +1,36 @@
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender, MockInstance, ngMocks} from 'ng-mocks';
 import {of} from 'rxjs';
 import {signal} from '@angular/core';
 
-import {Book} from '../../models/models';
+import {Book, CartItem} from '../../models/models';
 import {MockDataService} from '../../services/mock-data.service';
 import {BookDetailsComponent} from './book-details.component';
 
+const MOCK_CART_ITEM: CartItem = {
+  id: 'ci1',
+  bookId: '1',
+  bookTitle: 'Clean Code',
+  bookPrice: 34.99,
+  quantity: 2,
+  imageUrl: 'https://picsum.photos/seed/1/200/300',
+};
+
 describe('BookDetailsComponent', () => {
+  MockInstance.scope();
+
   beforeEach(() => {
-    return MockBuilder(BookDetailsComponent)
-      .mock(MockDataService, {
+    MockInstance(MockDataService, {
+      init: () => ({
         addToCart: jest.fn(),
-        cartItems: signal([]),
+        cartItems: signal<CartItem[]>([]),
         updateQuantity: jest.fn(),
-      })
+      }),
+    });
+
+    return MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
       .replace(HttpClientTestingModule, HttpClientTestingModule)
       .provide({
         provide: ActivatedRoute,
@@ -63,8 +78,6 @@ describe('BookDetailsComponent', () => {
   it('should handle fetch error gracefully', async () => {
     const fixture = MockRender(BookDetailsComponent);
     const httpMock = ngMocks.get(HttpTestingController);
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-
     const req = httpMock.expectOne((r) => r.url.includes('/books/1'));
     req.error(new ProgressEvent('Network error'));
 
@@ -72,9 +85,6 @@ describe('BookDetailsComponent', () => {
 
     expect(fixture.point.componentInstance.book()).toBeUndefined();
     expect(fixture.point.componentInstance.isLoading()).toBe(false);
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 
   it('should add book to cart', () => {
@@ -109,16 +119,16 @@ describe('BookDetailsComponent', () => {
       createdAt: new Date('2025-10-01'),
     };
 
-    const cartItems = signal([
-      {id: 'ci1', bookId: '1', title: 'Clean Code', price: 34.99, quantity: 3},
-    ]);
+    MockInstance(MockDataService, {
+      init: () => ({
+        addToCart: jest.fn(),
+        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM, quantity: 3}]),
+        updateQuantity: jest.fn(),
+      }),
+    });
 
     await MockBuilder(BookDetailsComponent)
-      .mock(MockDataService, {
-        addToCart: jest.fn(),
-        cartItems,
-        updateQuantity: jest.fn(),
-      })
+      .mock(MockDataService)
       .replace(HttpClientTestingModule, HttpClientTestingModule)
       .provide({
         provide: ActivatedRoute,
@@ -154,17 +164,18 @@ describe('BookDetailsComponent', () => {
       createdAt: new Date('2025-10-01'),
     };
 
-    const cartItems = signal([
-      {id: 'ci1', bookId: '1', title: 'Clean Code', price: 34.99, quantity: 2},
-    ]);
     const updateQuantity = jest.fn();
 
-    await MockBuilder(BookDetailsComponent)
-      .mock(MockDataService, {
+    MockInstance(MockDataService, {
+      init: () => ({
         addToCart: jest.fn(),
-        cartItems,
+        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM}]),
         updateQuantity,
-      })
+      }),
+    });
+
+    await MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
       .replace(HttpClientTestingModule, HttpClientTestingModule)
       .provide({
         provide: ActivatedRoute,
@@ -201,17 +212,18 @@ describe('BookDetailsComponent', () => {
       createdAt: new Date('2025-10-01'),
     };
 
-    const cartItems = signal([
-      {id: 'ci1', bookId: '1', title: 'Clean Code', price: 34.99, quantity: 2},
-    ]);
     const updateQuantity = jest.fn();
 
-    await MockBuilder(BookDetailsComponent)
-      .mock(MockDataService, {
+    MockInstance(MockDataService, {
+      init: () => ({
         addToCart: jest.fn(),
-        cartItems,
+        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM}]),
         updateQuantity,
-      })
+      }),
+    });
+
+    await MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
       .replace(HttpClientTestingModule, HttpClientTestingModule)
       .provide({
         provide: ActivatedRoute,

@@ -7,7 +7,7 @@ const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 const eslintPluginN = require('eslint-plugin-n');
 const eslintPluginPromise = require('eslint-plugin-promise');
-const eslintPluginImport = require('eslint-plugin-import');
+const eslintPluginImport = require('eslint-plugin-import-x');
 
 module.exports = defineConfig([
   {
