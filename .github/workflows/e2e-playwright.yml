@@ -19,12 +19,6 @@ jobs:
     name: Playwright E2E
     runs-on: ubuntu-latest
 
-    services:
-      mongodb:
-        image: ghcr.io/mongodb-js/mongodb-runner/mongodb-enterprise-server:7.0
-        ports:
-          - 27017:27017
-
     steps:
       - uses: actions/checkout@v4
 
@@ -32,6 +26,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: '7.0'
 
       - name: Install frontend dependencies
         run: npm ci --legacy-peer-deps
