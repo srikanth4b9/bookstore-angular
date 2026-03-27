@@ -1,0 +1,171 @@
+name: Playwright E2E
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: playwright-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  playwright:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Seed database
+        run: npx tsx seed.ts
+        working-directory: server
+        env:
+          MONGODB_URI: mongodb://localhost:27017/bookstore
+
+      - name: Start backend server
+        run: npx tsx server.ts &
+        working-directory: server
+        env:
+          MONGODB_URI: mongodb://localhost:27017/bookstore
+          PORT: 3000
+          NODE_ENV: test
+
+      - name: Build Angular app
+        run: npm run build
+
+      - name: Start frontend and run Playwright
+        shell: bash
+        run: |
+          set -o pipefail
+          npx http-server dist/dev/browser -p 4200 --proxy http://localhost:4200? -s &
+          npx wait-on http://localhost:4200 http://localhost:3000/api/books --timeout 60000
+          npx playwright test --reporter=list 2>&1 | tee playwright-output.txt
+        env:
+          CI: true
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            playwright-output.txt
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      - name: Post Playwright result comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const status = '${{ job.status }}';
+            const icon = status === 'success' ? '✅' : '❌';
+
+            let summary = '';
+            let specDetails = '';
+            try {
+              const raw = fs.readFileSync('playwright-output.txt', 'utf8');
+              // Strip ANSI codes
+              const clean = raw
+                .replace(/[\u001b\x1b]\[[0-9;]*[a-zA-Z]/g, '')
+                .replace(/\r/g, '');
+              const lines = clean.split('\n').map(l => l.trim()).filter(Boolean);
+
+              // Playwright list reporter: lines like "✓ [chromium] › specs/home.spec.ts:4:3 › ..."
+              // or "✘ [chromium] › specs/home.spec.ts:4:3 › ..."
+              // Summary line: "X passed", "Y failed", "Z skipped"
+              const specs = {};
+              for (const line of lines) {
+                const testMatch = line.match(/([✓✘×·])\s+.*?›\s+(\S+\.spec\.ts)/);
+                if (testMatch) {
+                  const [, result, specFile] = testMatch;
+                  const name = specFile.replace(/^specs\//, '');
+                  if (!specs[name]) specs[name] = { name, passing: 0, failing: 0 };
+                  if (result === '✓') specs[name].passing++;
+                  else if (result === '✘' || result === '×') specs[name].failing++;
+                }
+              }
+
+              // Also parse the final summary line (e.g. "10 passed (30s)")
+              const summaryLine = lines.find(l => /\d+\s+passed/.test(l));
+              const passTotal = summaryLine?.match(/(\d+)\s+passed/)?.[1] || '0';
+              const failTotal = summaryLine?.match(/(\d+)\s+failed/)?.[1] || '0';
+              const specList = Object.values(specs);
+              const totalSpecs = specList.length;
+
+              summary = `**${totalSpecs} specs** — **${passTotal} passing**, **${failTotal} failing**`;
+
+              if (specList.length > 0) {
+                const rows = specList.map(sp => {
+                  const statusIcon = sp.failing > 0 ? '❌' : '✅';
+                  return `| ${statusIcon} | ${sp.name} | ${sp.passing} | ${sp.failing} |`;
+                });
+                specDetails = [
+                  '| | Spec | Passed | Failed |',
+                  '|---|------|--------|--------|',
+                  ...rows,
+                ].join('\n');
+              }
+            } catch {
+              summary = 'No output available.';
+            }
+
+            const body = [
+              `## ${icon} Playwright E2E — ${status}`,
+              '',
+              summary,
+              '',
+              specDetails,
+            ].filter(Boolean).join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Playwright E2E')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

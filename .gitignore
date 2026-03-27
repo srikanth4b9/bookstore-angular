@@ -54,3 +54,13 @@ Thumbs.db
 
 *storybook.log
 storybook-static
+
+# Cypress
+e2e/videos
+e2e/screenshots
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

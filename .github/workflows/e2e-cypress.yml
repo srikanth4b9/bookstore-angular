@@ -1,0 +1,170 @@
+name: Cypress E2E
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: cypress-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  cypress:
+    name: Cypress E2E
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Seed database
+        run: npx tsx seed.ts
+        working-directory: server
+        env:
+          MONGODB_URI: mongodb://localhost:27017/bookstore
+
+      - name: Start backend server
+        run: npx tsx server.ts &
+        working-directory: server
+        env:
+          MONGODB_URI: mongodb://localhost:27017/bookstore
+          PORT: 3000
+          NODE_ENV: test
+
+      - name: Build Angular app
+        run: npm run build
+
+      - name: Start frontend and run Cypress
+        shell: bash
+        run: |
+          set -o pipefail
+          npx http-server dist/dev/browser -p 4200 --proxy http://localhost:4200? -s &
+          npx wait-on http://localhost:4200 http://localhost:3000/api/books --timeout 60000
+          npx cypress run 2>&1 | tee cypress-output.txt
+        env:
+          CI: true
+
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-results
+          path: |
+            cypress-output.txt
+            e2e/screenshots/
+            e2e/videos/
+          retention-days: 7
+
+      - name: Post Cypress result comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const status = '${{ job.status }}';
+            const icon = status === 'success' ? '✅' : '❌';
+
+            let summary = '';
+            let specDetails = '';
+            try {
+              const raw = fs.readFileSync('cypress-output.txt', 'utf8');
+              // Strip ANSI codes and box-drawing characters
+              const clean = raw
+                .replace(/[\u001b\x1b]\[[0-9;]*[a-zA-Z]/g, '')
+                .replace(/[│┌┐└┘├┤┬┴┼─]+/g, '')
+                .replace(/\r/g, '');
+              const lines = clean.split('\n').map(l => l.trim()).filter(Boolean);
+
+              // Extract per-spec results (e.g. "Running: books.cy.ts" followed by "X passing", "Y failing")
+              const specs = [];
+              let currentSpec = null;
+              for (const line of lines) {
+                const specMatch = line.match(/Running:\s+(\S+\.cy\.ts)/);
+                if (specMatch) {
+                  currentSpec = { name: specMatch[1], passing: 0, failing: 0 };
+                  specs.push(currentSpec);
+                }
+                if (currentSpec) {
+                  const passMatch = line.match(/(\d+)\s+passing/);
+                  const failMatch = line.match(/(\d+)\s+failing/);
+                  if (passMatch) currentSpec.passing = parseInt(passMatch[1]);
+                  if (failMatch) currentSpec.failing = parseInt(failMatch[1]);
+                }
+              }
+
+              // Build totals
+              const totalPass = specs.reduce((s, sp) => s + sp.passing, 0);
+              const totalFail = specs.reduce((s, sp) => s + sp.failing, 0);
+              const totalSpecs = specs.length;
+
+              summary = `**${totalSpecs} specs** — **${totalPass} passing**, **${totalFail} failing**`;
+
+              // Build per-spec table
+              if (specs.length > 0) {
+                const rows = specs.map(sp => {
+                  const statusIcon = sp.failing > 0 ? '❌' : '✅';
+                  return `| ${statusIcon} | ${sp.name} | ${sp.passing} | ${sp.failing} |`;
+                });
+                specDetails = [
+                  '| | Spec | Passed | Failed |',
+                  '|---|------|--------|--------|',
+                  ...rows,
+                ].join('\n');
+              }
+            } catch {
+              summary = 'No output available.';
+            }
+
+            const body = [
+              `## ${icon} Cypress E2E — ${status}`,
+              '',
+              summary,
+              '',
+              specDetails,
+            ].filter(Boolean).join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Cypress E2E')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

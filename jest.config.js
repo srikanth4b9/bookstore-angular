@@ -4,6 +4,7 @@ module.exports = {
   moduleNameMapper: {
     '^styles/(.*)$': '<rootDir>/src/styles/$1',
   },
+  testPathIgnorePatterns: ['/node_modules/', '/playwright/', '/e2e/'],
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
   collectCoverageFrom: [
     'src/app/**/*.ts',

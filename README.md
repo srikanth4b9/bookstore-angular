@@ -66,7 +66,8 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **jest-preset-angular**: Angular-specific Jest utilities for standalone components.
 - **ng-mocks**: Lightweight mocking for Angular services, components, and directives.
 - **@testing-library/dom**: DOM querying utilities for readable, user-centric assertions.
-- **Playwright**: End-to-end browser testing across Chromium, Firefox, and WebKit.
+- **Cypress**: End-to-end browser testing with Angular-native syntax and full user flow coverage.
+- **Playwright**: Cross-browser E2E testing across Chromium, Firefox, and WebKit with auto-retry and tracing.
 - **Storybook**: Isolated component development, visual testing, and living documentation.
 
 ### Tools & Quality
@@ -80,16 +81,18 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 
 GitHub Actions pipelines run on every pull request to `main`:
 
-| Workflow | Description |
-|----------|-------------|
-| **Lint** | ESLint checks for Angular app and server |
-| **Prettier** | Code formatting validation |
-| **Tests** | Jest unit tests with coverage reporting |
-| **Build** | Production build verification (frontend + server) |
-| **Security Audit** | npm audit for known vulnerabilities |
-| **CodeQL** | GitHub code scanning for JS/TS |
-| **Code Review** | Reviewdog posts ESLint findings as inline PR review comments |
-| **Wiki Sync** | Auto-syncs `docs/` to GitHub Wiki on push to main |
+| Workflow           | Description                                                    |
+| ------------------ | -------------------------------------------------------------- |
+| **Lint**           | ESLint checks for Angular app and server                       |
+| **Prettier**       | Code formatting validation                                     |
+| **Tests**          | Jest unit tests with coverage reporting                        |
+| **Build**          | Production build verification (frontend + server)              |
+| **Security Audit** | npm audit for known vulnerabilities                            |
+| **CodeQL**         | GitHub code scanning for JS/TS                                 |
+| **Cypress E2E**    | Cypress end-to-end regression tests with PR summary comment    |
+| **Playwright E2E** | Playwright end-to-end regression tests with PR summary comment |
+| **Code Review**    | Reviewdog posts ESLint findings as inline PR review comments   |
+| **Wiki Sync**      | Auto-syncs `docs/` to GitHub Wiki on push to main              |
 
 ---
 
@@ -118,6 +121,13 @@ GitHub Actions pipelines run on every pull request to `main`:
 │   ├── config/             # Database connection config
 │   ├── seed.ts             # Database seeding script (1000+ books)
 │   └── server.ts           # Server entry point
+├── e2e/                    # Cypress E2E tests
+│   ├── specs/              # Cypress test specs (home, books, cart, checkout, etc.)
+│   ├── support/            # Cypress support files and custom commands
+│   └── fixtures/           # Test fixtures
+├── playwright/             # Playwright E2E tests
+│   ├── specs/              # Playwright test specs (12 spec files)
+│   └── fixtures/           # Shared test data (users, addresses, promo codes)
 ├── docs/                   # Project documentation (synced to GitHub Wiki)
 └── API_DESIGN.md           # Backend API Documentation
 ```
@@ -175,15 +185,15 @@ Navigate to `http://localhost:4200` to see the app in action!
 
 Detailed documentation is available in the [`docs/`](docs/) directory:
 
-| Document | Description |
-|----------|-------------|
-| [Architecture Overview](docs/architecture.md) | Frontend/backend architecture, data flow, routing |
-| [API Documentation](docs/api-documentation.md) | All REST endpoints, request/response formats |
-| [Development Guide](docs/development-guide.md) | Setup, scripts, code style, project structure |
-| [Deployment Guide](docs/deployment-guide.md) | Build, environment variables, production setup |
-| [Contributing Guide](docs/contributing.md) | Branch naming, commit conventions, PR process |
-| [Database Schema](docs/database-schema.md) | MongoDB collections, fields, indexes, seeding |
-| [Testing Guide](docs/testing-guide.md) | Jest, ng-mocks patterns, coverage, CI |
+| Document                                       | Description                                       |
+| ---------------------------------------------- | ------------------------------------------------- |
+| [Architecture Overview](docs/architecture.md)  | Frontend/backend architecture, data flow, routing |
+| [API Documentation](docs/api-documentation.md) | All REST endpoints, request/response formats      |
+| [Development Guide](docs/development-guide.md) | Setup, scripts, code style, project structure     |
+| [Deployment Guide](docs/deployment-guide.md)   | Build, environment variables, production setup    |
+| [Contributing Guide](docs/contributing.md)     | Branch naming, commit conventions, PR process     |
+| [Database Schema](docs/database-schema.md)     | MongoDB collections, fields, indexes, seeding     |
+| [Testing Guide](docs/testing-guide.md)         | Jest, ng-mocks patterns, coverage, CI             |
 
 ---
 
@@ -191,18 +201,24 @@ Detailed documentation is available in the [`docs/`](docs/) directory:
 
 ### Available Scripts
 
-| Script                  | Description                              |
-|-------------------------|------------------------------------------|
-| `npm start`             | Start Angular dev server                 |
-| `npm run build`         | Production build                         |
-| `npm test`              | Run unit tests                           |
-| `npm run test:coverage` | Run tests with coverage report           |
-| `npm run lint`          | Lint Angular app                         |
-| `npm run lint:server`   | Lint server code                         |
-| `npm run lint:all`      | Lint everything                          |
-| `npm run lint:fix`      | Auto-fix lint issues                     |
-| `npm run lint:fix:all`  | Auto-fix all lint and formatting issues  |
-| `npm run format`        | Format code with Prettier                |
-| `npm run format:check`  | Check formatting without modifying files |
-| `npm run storybook`     | Launch Storybook dev server              |
-| `npm run build-storybook`| Build static Storybook for deployment   |
+| Script                    | Description                              |
+| ------------------------- | ---------------------------------------- |
+| `npm start`               | Start Angular dev server                 |
+| `npm run build`           | Production build                         |
+| `npm test`                | Run unit tests                           |
+| `npm run test:coverage`   | Run tests with coverage report           |
+| `npm run lint`            | Lint Angular app                         |
+| `npm run lint:server`     | Lint server code                         |
+| `npm run lint:all`        | Lint everything                          |
+| `npm run lint:fix`        | Auto-fix lint issues                     |
+| `npm run lint:fix:all`    | Auto-fix all lint and formatting issues  |
+| `npm run format`          | Format code with Prettier                |
+| `npm run format:check`    | Check formatting without modifying files |
+| `npm run storybook`       | Launch Storybook dev server              |
+| `npm run build-storybook` | Build static Storybook for deployment    |
+| `npm run e2e`             | Run Cypress E2E tests (headless)         |
+| `npm run e2e:open`        | Open Cypress interactive test runner     |
+| `npm run e2e:pw`          | Run Playwright E2E tests (headless)      |
+| `npm run e2e:pw:ui`       | Open Playwright interactive UI mode      |
+| `npm run e2e:pw:headed`   | Run Playwright tests in headed browser   |
+| `npm run e2e:pw:report`   | View Playwright HTML test report         |
