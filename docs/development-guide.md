@@ -57,32 +57,32 @@ Navigate to `http://localhost:4200`.
 
 ### Frontend
 
-| Script | Description |
-|--------|-------------|
-| `npm start` | Start Angular dev server |
-| `npm run build` | Production build |
-| `npm test` | Run Jest unit tests |
-| `npm run test:coverage` | Tests with coverage report |
-| `npm run lint` | ESLint check on Angular app |
-| `npm run lint:fix` | Auto-fix lint issues |
-| `npm run format` | Format with Prettier |
-| `npm run format:check` | Check formatting (CI) |
-| `npm run storybook` | Launch Storybook dev server |
-| `npm run build-storybook` | Build static Storybook |
+| Script                    | Description                 |
+| ------------------------- | --------------------------- |
+| `npm start`               | Start Angular dev server    |
+| `npm run build`           | Production build            |
+| `npm test`                | Run Jest unit tests         |
+| `npm run test:coverage`   | Tests with coverage report  |
+| `npm run lint`            | ESLint check on Angular app |
+| `npm run lint:fix`        | Auto-fix lint issues        |
+| `npm run format`          | Format with Prettier        |
+| `npm run format:check`    | Check formatting (CI)       |
+| `npm run storybook`       | Launch Storybook dev server |
+| `npm run build-storybook` | Build static Storybook      |
 
 ### Server
 
-| Script | Description |
-|--------|-------------|
-| `npm start` | Start with tsx watch (auto-reload) |
-| `npm run seed` | Seed database with sample data |
-| `npm run build` | Compile TypeScript |
+| Script          | Description                        |
+| --------------- | ---------------------------------- |
+| `npm start`     | Start with tsx watch (auto-reload) |
+| `npm run seed`  | Seed database with sample data     |
+| `npm run build` | Compile TypeScript                 |
 
 ### Combined
 
-| Script | Description |
-|--------|-------------|
-| `npm run lint:all` | Lint frontend + server |
+| Script                 | Description                      |
+| ---------------------- | -------------------------------- |
+| `npm run lint:all`     | Lint frontend + server           |
 | `npm run lint:fix:all` | Fix all lint + formatting issues |
 
 ## Code Style
@@ -90,6 +90,7 @@ Navigate to `http://localhost:4200`.
 ### Prettier
 
 Configuration in `.prettierrc`:
+
 - Print width: 100
 - Single quotes
 - No bracket spacing (`{foo}` not `{ foo }`)
@@ -100,11 +101,13 @@ Configuration in `.prettierrc`:
 Configuration in `eslint.config.js`:
 
 **Angular code:**
+
 - Component selectors: `app-` prefix, kebab-case
 - Directive selectors: `app` prefix, camelCase
 - Uses `angular-eslint` recommended rules
 
 **Server code:**
+
 - `no-console` warning (info/error/warn/debug allowed)
 - Promise handling enforcement
 - Unused vars with `_` prefix ignored

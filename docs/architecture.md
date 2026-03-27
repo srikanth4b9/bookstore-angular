@@ -45,32 +45,32 @@ All components use Angular's standalone component pattern (no NgModules).
 
 State is managed via Angular Signals in `MockDataService` (singleton, `providedIn: 'root'`):
 
-| Signal | Type | Description |
-|--------|------|-------------|
-| `books` | `Signal<Book[]>` | Current page of books |
-| `pagination` | `Signal<Pagination>` | Pagination metadata |
-| `categories` | `Signal<Category[]>` | All categories |
-| `currentUser` | `Signal<User>` | Logged-in user |
-| `cartItems` | `Signal<CartItem[]>` | Shopping cart items |
-| `cartSubtotal` | `computed<number>` | Derived cart total |
-| `orders` | `Signal<Order[]>` | User's orders |
-| `isLoading` | `Signal<boolean>` | Loading state |
+| Signal         | Type                 | Description           |
+| -------------- | -------------------- | --------------------- |
+| `books`        | `Signal<Book[]>`     | Current page of books |
+| `pagination`   | `Signal<Pagination>` | Pagination metadata   |
+| `categories`   | `Signal<Category[]>` | All categories        |
+| `currentUser`  | `Signal<User>`       | Logged-in user        |
+| `cartItems`    | `Signal<CartItem[]>` | Shopping cart items   |
+| `cartSubtotal` | `computed<number>`   | Derived cart total    |
+| `orders`       | `Signal<Order[]>`    | User's orders         |
+| `isLoading`    | `Signal<boolean>`    | Loading state         |
 
 ### Routing
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | HomeComponent | Landing page |
-| `/categories` | CategoriesComponent | Browse categories |
-| `/books` | BooksComponent | Book listing with search, filter, sort |
-| `/books/:id` | BookDetailsComponent | Book detail view |
-| `/cart` | CartComponent | Shopping cart |
-| `/checkout` | CheckoutComponent | Multi-step checkout |
-| `/account` | AccountComponent | User profile |
-| `/login` | LoginComponent | Authentication |
-| `/register` | RegisterComponent | New user signup |
-| `/admin` | AdminComponent | Admin dashboard |
-| `**` | Redirect → `/` | Fallback |
+| Route         | Component            | Description                            |
+| ------------- | -------------------- | -------------------------------------- |
+| `/`           | HomeComponent        | Landing page                           |
+| `/categories` | CategoriesComponent  | Browse categories                      |
+| `/books`      | BooksComponent       | Book listing with search, filter, sort |
+| `/books/:id`  | BookDetailsComponent | Book detail view                       |
+| `/cart`       | CartComponent        | Shopping cart                          |
+| `/checkout`   | CheckoutComponent    | Multi-step checkout                    |
+| `/account`    | AccountComponent     | User profile                           |
+| `/login`      | LoginComponent       | Authentication                         |
+| `/register`   | RegisterComponent    | New user signup                        |
+| `/admin`      | AdminComponent       | Admin dashboard                        |
+| `**`          | Redirect → `/`       | Fallback                               |
 
 ## Backend Architecture
 

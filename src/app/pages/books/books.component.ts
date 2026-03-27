@@ -52,9 +52,9 @@ export class BooksComponent implements OnDestroy {
   viewMode = signal<'grid' | 'list'>('grid');
   addedBooks = signal<Set<string>>(new Set());
   cartBookMap = computed(() => {
-    const map = new Map<string, { cartItemId: string; quantity: number }>();
+    const map = new Map<string, {cartItemId: string; quantity: number}>();
     for (const item of this.mockData.cartItems()) {
-      map.set(item.bookId, { cartItemId: item.id, quantity: item.quantity });
+      map.set(item.bookId, {cartItemId: item.id, quantity: item.quantity});
     }
     return map;
   });

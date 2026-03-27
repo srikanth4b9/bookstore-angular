@@ -12,19 +12,20 @@ GET /api/books
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `page` | number | 1 | Page number (min: 1) |
-| `limit` | number | 12 | Items per page (min: 1, max: 100) |
-| `search` | string | — | Search by title, author, or ISBN (case-insensitive regex) |
-| `category` | string | — | Filter by category name |
-| `minPrice` | number | — | Minimum price filter |
-| `maxPrice` | number | — | Maximum price filter |
-| `minRating` | number | — | Minimum rating filter (0–5) |
-| `sortBy` | string | `createdAt` | Sort field: `createdAt`, `price`, `rating`, `title` |
-| `sortOrder` | string | `desc` | Sort direction: `asc`, `desc` |
+| Parameter   | Type   | Default     | Description                                               |
+| ----------- | ------ | ----------- | --------------------------------------------------------- |
+| `page`      | number | 1           | Page number (min: 1)                                      |
+| `limit`     | number | 12          | Items per page (min: 1, max: 100)                         |
+| `search`    | string | —           | Search by title, author, or ISBN (case-insensitive regex) |
+| `category`  | string | —           | Filter by category name                                   |
+| `minPrice`  | number | —           | Minimum price filter                                      |
+| `maxPrice`  | number | —           | Maximum price filter                                      |
+| `minRating` | number | —           | Minimum rating filter (0–5)                               |
+| `sortBy`    | string | `createdAt` | Sort field: `createdAt`, `price`, `rating`, `title`       |
+| `sortOrder` | string | `desc`      | Sort direction: `asc`, `desc`                             |
 
 **Response: 200 OK**
+
 ```json
 {
   "books": [
@@ -63,6 +64,7 @@ GET /api/books/:id
 **Response: 200 OK** — Single Book object
 
 **Response: 404 Not Found**
+
 ```json
 {
   "message": "Book not found"
@@ -77,26 +79,25 @@ POST /api/books
 
 **Request Body:**
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `title` | string | Yes | Book title |
-| `author` | string | Yes | Author name |
-| `description` | string | Yes | Book description |
-| `price` | number | Yes | Price (min: 0) |
-| `stock` | number | Yes | Stock count (integer, min: 0) |
-| `category` | string | Yes | Category name |
-| `genre` | string[] | No | List of genres |
-| `isbn` | string | Yes | ISBN (unique) |
-| `imageUrl` | string | Yes | Valid URI for cover image |
+| Field         | Type     | Required | Description                   |
+| ------------- | -------- | -------- | ----------------------------- |
+| `title`       | string   | Yes      | Book title                    |
+| `author`      | string   | Yes      | Author name                   |
+| `description` | string   | Yes      | Book description              |
+| `price`       | number   | Yes      | Price (min: 0)                |
+| `stock`       | number   | Yes      | Stock count (integer, min: 0) |
+| `category`    | string   | Yes      | Category name                 |
+| `genre`       | string[] | No       | List of genres                |
+| `isbn`        | string   | Yes      | ISBN (unique)                 |
+| `imageUrl`    | string   | Yes      | Valid URI for cover image     |
 
 **Response: 201 Created** — Newly created Book object
 
 **Response: 400 Bad Request** — Validation errors
+
 ```json
 {
-  "errors": [
-    { "message": "\"title\" is required", "path": ["title"] }
-  ]
+  "errors": [{"message": "\"title\" is required", "path": ["title"]}]
 }
 ```
 
@@ -133,6 +134,7 @@ GET /api/categories
 ```
 
 **Response: 200 OK**
+
 ```json
 [
   {
@@ -166,15 +168,16 @@ POST /api/orders
 
 **Request Body:**
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `userId` | string | Yes | User placing the order |
-| `items` | CartItem[] | Yes | Array of cart items |
-| `total` | number | Yes | Order total |
-| `shippingAddress` | Address | Yes | Shipping address object |
-| `paymentMethod` | string | Yes | Payment method |
+| Field             | Type       | Required | Description             |
+| ----------------- | ---------- | -------- | ----------------------- |
+| `userId`          | string     | Yes      | User placing the order  |
+| `items`           | CartItem[] | Yes      | Array of cart items     |
+| `total`           | number     | Yes      | Order total             |
+| `shippingAddress` | Address    | Yes      | Shipping address object |
+| `paymentMethod`   | string     | Yes      | Payment method          |
 
 **Auto-generated fields:**
+
 - `id` — Format: `ORD-XXXXXXXX` (random alphanumeric)
 - `orderDate` — Current timestamp
 - `status` — `pending`
@@ -194,8 +197,8 @@ All errors follow this format:
 }
 ```
 
-| Status | Description |
-|--------|-------------|
-| 400 | Validation error |
-| 404 | Resource not found |
-| 500 | Internal server error |
+| Status | Description           |
+| ------ | --------------------- |
+| 400    | Validation error      |
+| 404    | Resource not found    |
+| 500    | Internal server error |

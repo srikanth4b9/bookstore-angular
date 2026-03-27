@@ -11,6 +11,7 @@ npm run build
 Output is generated at `dist/dev/`. This contains the production-optimized Angular bundle.
 
 **Budget Limits** (configured in `angular.json`):
+
 - Initial bundle: 2 MB warning, 5 MB error
 - Per-component: 300 kB warning, 500 kB error
 
@@ -24,17 +25,18 @@ Compiles TypeScript to JavaScript.
 
 ## Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `3000` | Server port |
-| `MONGODB_URI` | `mongodb://localhost:27017/bookstore` | MongoDB connection string |
-| `NODE_ENV` | — | Set to `production` to hide error stack traces |
+| Variable      | Default                               | Description                                    |
+| ------------- | ------------------------------------- | ---------------------------------------------- |
+| `PORT`        | `3000`                                | Server port                                    |
+| `MONGODB_URI` | `mongodb://localhost:27017/bookstore` | MongoDB connection string                      |
+| `NODE_ENV`    | —                                     | Set to `production` to hide error stack traces |
 
 ## Production Considerations
 
 ### Security
 
 The server includes production-ready security middleware:
+
 - **Helmet** — Sets security headers (CSP, HSTS, X-Frame-Options, etc.)
 - **CORS** — Configured for cross-origin requests
 - **Joi validation** — All request inputs are validated and unknown fields stripped

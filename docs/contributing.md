@@ -6,14 +6,14 @@ Thank you for your interest in contributing to the Bookstore Angular project.
 
 Use prefixed branch names:
 
-| Prefix | Use case | Example |
-|--------|----------|---------|
-| `feat/` | New feature | `feat/wishlist-page` |
-| `fix/` | Bug fix | `fix/cart-quantity-bug` |
-| `docs/` | Documentation | `docs/update-readme` |
-| `ci/` | CI/CD changes | `ci/pr-pipelines` |
+| Prefix      | Use case         | Example                     |
+| ----------- | ---------------- | --------------------------- |
+| `feat/`     | New feature      | `feat/wishlist-page`        |
+| `fix/`      | Bug fix          | `fix/cart-quantity-bug`     |
+| `docs/`     | Documentation    | `docs/update-readme`        |
+| `ci/`       | CI/CD changes    | `ci/pr-pipelines`           |
 | `refactor/` | Code refactoring | `refactor/signal-migration` |
-| `test/` | Test additions | `test/order-service-specs` |
+| `test/`     | Test additions   | `test/order-service-specs`  |
 
 ## Commit Messages
 
@@ -28,6 +28,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 **Types:** `feat`, `fix`, `docs`, `ci`, `test`, `refactor`, `style`, `chore`
 
 **Examples:**
+
 ```
 feat(books): add price range filter to book listing
 fix(cart): correct quantity update when item already exists
@@ -61,21 +62,25 @@ docs: update API documentation
 ## Code Guidelines
 
 ### Components
+
 - Use standalone components (no NgModules)
 - Prefix selectors with `app-` (elements: kebab-case, attributes: camelCase)
 - Use Angular Signals for state, not BehaviorSubjects
 
 ### Services
+
 - Use `providedIn: 'root'` for singleton services
 - Expose state as readonly signals
 - Use private writable signals internally
 
 ### Testing
+
 - Use `ng-mocks` with `MockBuilder` for component tests
 - Mock services with signals and `jest.fn()` methods
 - Test user interactions, not implementation details
 
 ### Server
+
 - Validate all inputs with Joi schemas
 - Use the structured logger (`logger.info/warn/error/debug`)
 - Handle errors through the centralized error handler

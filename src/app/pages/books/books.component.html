@@ -65,13 +65,25 @@
       <div [class]="viewMode() === 'grid' ? 'book-grid' : 'book-list-view'">
         @for (book of books(); track book.id) {
           @if (viewMode() === 'grid') {
-            <mat-card class="book-card shadow" [class.in-cart]="cartBookMap().has(book.id)" [routerLink]="['/books', book.id]">
+            <mat-card
+              class="book-card shadow"
+              [class.in-cart]="cartBookMap().has(book.id)"
+              [routerLink]="['/books', book.id]"
+            >
               <img [src]="book.imageUrl" [alt]="book.title" class="book-image" />
               <div class="book-actions-overlay" [class.in-cart]="cartBookMap().has(book.id)">
                 @if (cartBookMap().has(book.id)) {
-                  <div class="qty-stepper" role="group" aria-label="Cart quantity" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                  <div
+                    class="qty-stepper"
+                    role="group"
+                    aria-label="Cart quantity"
+                    (click)="$event.stopPropagation()"
+                    (keydown)="$event.stopPropagation()"
+                  >
                     <button mat-icon-button class="qty-btn" (click)="decrementQuantity(book.id)">
-                      <mat-icon>{{ cartBookMap().get(book.id)!.quantity === 1 ? 'delete_outline' : 'remove' }}</mat-icon>
+                      <mat-icon>{{
+                        cartBookMap().get(book.id)!.quantity === 1 ? 'delete_outline' : 'remove'
+                      }}</mat-icon>
                     </button>
                     <span class="qty-count">{{ cartBookMap().get(book.id)!.quantity }}</span>
                     <button mat-icon-button class="qty-btn" (click)="incrementQuantity(book.id)">
@@ -86,7 +98,9 @@
                     (click)="$event.stopPropagation(); addToCart(book)"
                     title="Add to Cart"
                   >
-                    <mat-icon>{{ addedBooks().has(book.id) ? 'check' : 'add_shopping_cart' }}</mat-icon>
+                    <mat-icon>{{
+                      addedBooks().has(book.id) ? 'check' : 'add_shopping_cart'
+                    }}</mat-icon>
                   </button>
                 }
               </div>
@@ -118,7 +132,9 @@
                   @if (cartBookMap().has(book.id)) {
                     <div class="qty-stepper">
                       <button mat-icon-button class="qty-btn" (click)="decrementQuantity(book.id)">
-                        <mat-icon>{{ cartBookMap().get(book.id)!.quantity === 1 ? 'delete_outline' : 'remove' }}</mat-icon>
+                        <mat-icon>{{
+                          cartBookMap().get(book.id)!.quantity === 1 ? 'delete_outline' : 'remove'
+                        }}</mat-icon>
                       </button>
                       <span class="qty-count">{{ cartBookMap().get(book.id)!.quantity }}</span>
                       <button mat-icon-button class="qty-btn" (click)="incrementQuantity(book.id)">
@@ -132,7 +148,9 @@
                       (click)="addToCart(book)"
                       [class.added]="addedBooks().has(book.id)"
                     >
-                      <mat-icon>{{ addedBooks().has(book.id) ? 'check' : 'add_shopping_cart' }}</mat-icon>
+                      <mat-icon>{{
+                        addedBooks().has(book.id) ? 'check' : 'add_shopping_cart'
+                      }}</mat-icon>
                       {{ addedBooks().has(book.id) ? 'ADDED' : 'ADD' }}
                     </button>
                   }
