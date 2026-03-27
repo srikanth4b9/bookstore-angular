@@ -51,6 +51,26 @@ describe('Books Page', () => {
     cy.get('a[href="/cart"]').should('be.visible');
   });
 
+  it('should show quantity stepper after adding to cart', () => {
+    addBookToCart();
+    cy.get('.qty-stepper', {timeout: 5000}).first().should('be.visible');
+    cy.get('.qty-count').first().should('contain.text', '1');
+  });
+
+  it('should increment quantity via grid stepper', () => {
+    addBookToCart();
+    cy.get('.qty-stepper', {timeout: 5000}).first().should('be.visible');
+    cy.get('.qty-stepper .qty-btn').last().click({force: true});
+    cy.get('.qty-count').first().should('contain.text', '2');
+  });
+
+  it('should remove item when decrementing quantity to zero', () => {
+    addBookToCart();
+    cy.get('.qty-stepper', {timeout: 5000}).first().should('be.visible');
+    cy.get('.qty-stepper .qty-btn').first().click({force: true});
+    cy.get('.add-btn', {timeout: 5000}).first().should('be.visible');
+  });
+
   it('should display pagination', () => {
     cy.get('mat-paginator').should('be.visible');
   });

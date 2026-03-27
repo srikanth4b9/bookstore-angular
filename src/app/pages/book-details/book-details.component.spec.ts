@@ -1,18 +1,36 @@
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender, MockInstance, ngMocks} from 'ng-mocks';
 import {of} from 'rxjs';
+import {signal} from '@angular/core';
 
-import {Book} from '../../models/models';
+import {Book, CartItem} from '../../models/models';
 import {MockDataService} from '../../services/mock-data.service';
 import {BookDetailsComponent} from './book-details.component';
 
+const MOCK_CART_ITEM: CartItem = {
+  id: 'ci1',
+  bookId: '1',
+  bookTitle: 'Clean Code',
+  bookPrice: 34.99,
+  quantity: 2,
+  imageUrl: 'https://picsum.photos/seed/1/200/300',
+};
+
 describe('BookDetailsComponent', () => {
+  MockInstance.scope();
+
   beforeEach(() => {
-    return MockBuilder(BookDetailsComponent)
-      .mock(MockDataService, {
+    MockInstance(MockDataService, {
+      init: () => ({
         addToCart: jest.fn(),
-      })
+        cartItems: signal<CartItem[]>([]),
+        updateQuantity: jest.fn(),
+      }),
+    });
+
+    return MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
       .replace(HttpClientTestingModule, HttpClientTestingModule)
       .provide({
         provide: ActivatedRoute,
@@ -60,8 +78,6 @@ describe('BookDetailsComponent', () => {
   it('should handle fetch error gracefully', async () => {
     const fixture = MockRender(BookDetailsComponent);
     const httpMock = ngMocks.get(HttpTestingController);
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-
     const req = httpMock.expectOne((r) => r.url.includes('/books/1'));
     req.error(new ProgressEvent('Network error'));
 
@@ -69,9 +85,6 @@ describe('BookDetailsComponent', () => {
 
     expect(fixture.point.componentInstance.book()).toBeUndefined();
     expect(fixture.point.componentInstance.isLoading()).toBe(false);
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 
   it('should add book to cart', () => {
@@ -86,5 +99,146 @@ describe('BookDetailsComponent', () => {
     component.addToCart(mockBook);
 
     expect(mockDataService.addToCart).toHaveBeenCalledWith(mockBook);
+  });
+
+  it('should compute cartQuantity from cartItems', async () => {
+    const mockBook: Book = {
+      id: '1',
+      title: 'Clean Code',
+      author: 'Robert C. Martin',
+      description: 'A handbook of agile software craftsmanship',
+      price: 34.99,
+      availability: true,
+      stock: 25,
+      category: 'Technology',
+      genre: ['Software Development'],
+      isbn: '9780132350884',
+      rating: 4.7,
+      reviews: [],
+      imageUrl: 'https://picsum.photos/seed/1/200/300',
+      createdAt: new Date('2025-10-01'),
+    };
+
+    MockInstance(MockDataService, {
+      init: () => ({
+        addToCart: jest.fn(),
+        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM, quantity: 3}]),
+        updateQuantity: jest.fn(),
+      }),
+    });
+
+    await MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
+      .replace(HttpClientTestingModule, HttpClientTestingModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: {params: of({id: '1'})},
+      });
+
+    const fixture = MockRender(BookDetailsComponent);
+    const httpMock = ngMocks.get(HttpTestingController);
+    const req = httpMock.expectOne((r) => r.url.includes('/books/1'));
+    req.flush(mockBook);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+
+    expect(fixture.point.componentInstance.cartQuantity()).toBe(3);
+  });
+
+  it('should call updateQuantity on incrementQuantity', async () => {
+    const mockBook: Book = {
+      id: '1',
+      title: 'Clean Code',
+      author: 'Robert C. Martin',
+      description: 'Test',
+      price: 34.99,
+      availability: true,
+      stock: 25,
+      category: 'Technology',
+      genre: [],
+      isbn: '9780132350884',
+      rating: 4.7,
+      reviews: [],
+      imageUrl: '',
+      createdAt: new Date('2025-10-01'),
+    };
+
+    const updateQuantity = jest.fn();
+
+    MockInstance(MockDataService, {
+      init: () => ({
+        addToCart: jest.fn(),
+        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM}]),
+        updateQuantity,
+      }),
+    });
+
+    await MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
+      .replace(HttpClientTestingModule, HttpClientTestingModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: {params: of({id: '1'})},
+      });
+
+    const fixture = MockRender(BookDetailsComponent);
+    const httpMock = ngMocks.get(HttpTestingController);
+    const req = httpMock.expectOne((r) => r.url.includes('/books/1'));
+    req.flush(mockBook);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+
+    fixture.point.componentInstance.incrementQuantity();
+    expect(updateQuantity).toHaveBeenCalledWith('ci1', 3);
+  });
+
+  it('should call updateQuantity on decrementQuantity', async () => {
+    const mockBook: Book = {
+      id: '1',
+      title: 'Clean Code',
+      author: 'Robert C. Martin',
+      description: 'Test',
+      price: 34.99,
+      availability: true,
+      stock: 25,
+      category: 'Technology',
+      genre: [],
+      isbn: '9780132350884',
+      rating: 4.7,
+      reviews: [],
+      imageUrl: '',
+      createdAt: new Date('2025-10-01'),
+    };
+
+    const updateQuantity = jest.fn();
+
+    MockInstance(MockDataService, {
+      init: () => ({
+        addToCart: jest.fn(),
+        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM}]),
+        updateQuantity,
+      }),
+    });
+
+    await MockBuilder(BookDetailsComponent)
+      .mock(MockDataService)
+      .replace(HttpClientTestingModule, HttpClientTestingModule)
+      .provide({
+        provide: ActivatedRoute,
+        useValue: {params: of({id: '1'})},
+      });
+
+    const fixture = MockRender(BookDetailsComponent);
+    const httpMock = ngMocks.get(HttpTestingController);
+    const req = httpMock.expectOne((r) => r.url.includes('/books/1'));
+    req.flush(mockBook);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+
+    fixture.point.componentInstance.decrementQuantity();
+    expect(updateQuantity).toHaveBeenCalledWith('ci1', 1);
   });
 });

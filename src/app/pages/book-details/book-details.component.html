@@ -51,14 +51,26 @@
               <a mat-button color="primary" routerLink="/books">
                 <mat-icon>arrow_back</mat-icon> BACK
               </a>
-              <button
-                mat-raised-button
-                color="primary"
-                [disabled]="!b.availability"
-                (click)="addToCart(b)"
-              >
-                <mat-icon>shopping_cart</mat-icon> ADD TO CART
-              </button>
+              @if (cartQuantity() > 0) {
+                <div class="qty-stepper">
+                  <button mat-icon-button class="qty-btn" (click)="decrementQuantity()">
+                    <mat-icon>{{ cartQuantity() === 1 ? 'delete_outline' : 'remove' }}</mat-icon>
+                  </button>
+                  <span class="qty-count">{{ cartQuantity() }}</span>
+                  <button mat-icon-button class="qty-btn" (click)="incrementQuantity()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              } @else {
+                <button
+                  mat-raised-button
+                  color="primary"
+                  [disabled]="!b.availability"
+                  (click)="addToCart(b)"
+                >
+                  <mat-icon>add_shopping_cart</mat-icon> ADD TO CART
+                </button>
+              }
             </mat-card-actions>
           </div>
         </div>

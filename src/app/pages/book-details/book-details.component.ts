@@ -1,4 +1,4 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import {Component, inject, signal, computed, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {MatCardModule} from '@angular/material/card';
@@ -38,6 +38,12 @@ export class BookDetailsComponent implements OnInit {
 
   book = signal<Book | undefined>(undefined);
   isLoading = signal(false);
+  private cartItem = computed(() => {
+    const b = this.book();
+    if (!b) return undefined;
+    return this.mockData.cartItems().find((i) => i.bookId === b.id);
+  });
+  cartQuantity = computed(() => this.cartItem()?.quantity ?? 0);
 
   async ngOnInit() {
     this.route.params.subscribe(async (params) => {
@@ -56,5 +62,19 @@ export class BookDetailsComponent implements OnInit {
 
   addToCart(book: Book) {
     this.mockData.addToCart(book);
+  }
+
+  incrementQuantity() {
+    const item = this.cartItem();
+    if (item) {
+      this.mockData.updateQuantity(item.id, item.quantity + 1);
+    }
+  }
+
+  decrementQuantity() {
+    const item = this.cartItem();
+    if (item) {
+      this.mockData.updateQuantity(item.id, item.quantity - 1);
+    }
   }
 }

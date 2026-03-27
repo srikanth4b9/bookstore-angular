@@ -66,6 +66,32 @@ test.describe('Books Page', () => {
     await expect(firstCard).toBeVisible({timeout: 15000});
     // JS click bypasses overlay visibility issues in headless mode
     await firstCard.locator('.add-btn').dispatchEvent('click');
-    await expect(firstCard.locator('.add-btn')).toHaveClass(/added/, {timeout: 5000});
+    await expect(firstCard.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+  });
+
+  test('should show quantity stepper after adding to cart', async ({page}) => {
+    const firstCard = page.locator('.book-grid .book-card').first();
+    await expect(firstCard).toBeVisible({timeout: 15000});
+    await firstCard.locator('.add-btn').dispatchEvent('click');
+    await expect(firstCard.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+    await expect(firstCard.locator('.qty-count')).toHaveText('1');
+  });
+
+  test('should increment quantity via grid stepper', async ({page}) => {
+    const firstCard = page.locator('.book-grid .book-card').first();
+    await expect(firstCard).toBeVisible({timeout: 15000});
+    await firstCard.locator('.add-btn').dispatchEvent('click');
+    await expect(firstCard.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+    await firstCard.locator('.qty-stepper .qty-btn').last().click();
+    await expect(firstCard.locator('.qty-count')).toHaveText('2');
+  });
+
+  test('should remove item when decrementing quantity to zero', async ({page}) => {
+    const firstCard = page.locator('.book-grid .book-card').first();
+    await expect(firstCard).toBeVisible({timeout: 15000});
+    await firstCard.locator('.add-btn').dispatchEvent('click');
+    await expect(firstCard.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+    await firstCard.locator('.qty-stepper .qty-btn').first().click();
+    await expect(firstCard.locator('.add-btn')).toBeVisible({timeout: 5000});
   });
 });

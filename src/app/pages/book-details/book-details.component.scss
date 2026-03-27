@@ -156,11 +156,43 @@
       padding: 1rem 0 0;
       gap: 1rem;
 
-      button,
-      a {
+      > button,
+      > a {
         min-width: 150px;
         height: 48px;
         font-size: 1rem;
+      }
+
+      .qty-stepper {
+        display: inline-flex;
+        align-items: center;
+        background: vars.$success-color;
+        color: white;
+        border-radius: 28px;
+        height: 48px;
+
+        .qty-btn {
+          color: white !important;
+          --mdc-icon-button-state-layer-size: 44px;
+          --mdc-icon-button-icon-size: 22px;
+          width: 44px;
+          height: 44px;
+          min-width: unset;
+          padding: 0;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+          }
+        }
+
+        .qty-count {
+          min-width: 40px;
+          text-align: center;
+          font-weight: 700;
+          font-size: 1.2rem;
+          user-select: none;
+        }
       }
     }
   }
