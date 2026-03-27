@@ -70,6 +70,10 @@
   margin-bottom: 2rem;
 
   .book-list-card {
+    &.in-cart {
+      border-left: 4px solid vars.$success-color;
+    }
+
     .list-item-content {
       display: flex;
       gap: 2rem;
@@ -123,6 +127,7 @@
         width: 200px;
         display: flex;
         flex-direction: column;
+        align-items: center;
         justify-content: center;
         gap: 1rem;
         border-left: 1px solid rgba(0, 0, 0, 0.05);
@@ -143,14 +148,46 @@
           margin: 0;
         }
 
-        button,
-        a {
+        > button,
+        > a {
           width: 100%;
         }
       }
     }
   }
 }
+
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  background: vars.$success-color;
+  color: white;
+  border-radius: 24px;
+  width: fit-content;
+
+  .qty-btn {
+    color: white !important;
+    --mdc-icon-button-state-layer-size: 36px;
+    --mdc-icon-button-icon-size: 20px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+    }
+  }
+
+  .qty-count {
+    min-width: 28px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+    user-select: none;
+  }
+}
+
 
 .book-card {
   display: flex;
@@ -162,6 +199,11 @@
     box-shadow 0.2s;
   overflow: hidden;
   position: relative;
+
+  &.in-cart {
+    border: 2px solid vars.$success-color;
+    box-shadow: 0 0 0 1px vars.$success-color;
+  }
 
   &:hover {
     transform: translateY(-4px);
@@ -254,21 +296,21 @@
     transition: transform 0.3s ease;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent);
 
-    button,
-    a {
-      background: white !important;
-      color: vars.$primary-color !important;
-      &.add-btn {
-        background: vars.$primary-color !important;
-        color: white !important;
-        transition: all 0.3s ease;
+    &.in-cart {
+      transform: translateY(0);
+      background: transparent;
+    }
 
-        &.added {
-          background: vars.$success-color !important;
-          transform: scale(1.1);
-          mat-icon {
-            animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          }
+    .add-btn {
+      background: vars.$primary-color !important;
+      color: white !important;
+      transition: all 0.3s ease;
+
+      &.added {
+        background: vars.$success-color !important;
+        transform: scale(1.1);
+        mat-icon {
+          animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
       }
     }
@@ -282,6 +324,11 @@
     mat-icon {
       animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+  }
+
+  button.in-cart:not(.added) {
+    background-color: vars.$success-color !important;
+    color: white !important;
   }
 }
 

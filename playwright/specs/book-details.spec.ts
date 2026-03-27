@@ -58,6 +58,32 @@ test.describe('Book Details Page', () => {
     await expect(addToCartBtn).toBeVisible({timeout: 10000});
   });
 
+  test('should show quantity stepper after adding to cart', async ({page}) => {
+    const addToCartBtn = page.locator('mat-card-actions button').filter({hasText: 'ADD TO CART'});
+    await expect(addToCartBtn).toBeVisible({timeout: 10000});
+    await addToCartBtn.click();
+    await expect(page.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+    await expect(page.locator('.qty-count')).toHaveText('1');
+  });
+
+  test('should increment quantity via stepper', async ({page}) => {
+    const addToCartBtn = page.locator('mat-card-actions button').filter({hasText: 'ADD TO CART'});
+    await addToCartBtn.click();
+    await expect(page.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+    await page.locator('.qty-stepper .qty-btn').last().click();
+    await expect(page.locator('.qty-count')).toHaveText('2');
+  });
+
+  test('should decrement quantity and show add to cart button when removed', async ({page}) => {
+    const addToCartBtn = page.locator('mat-card-actions button').filter({hasText: 'ADD TO CART'});
+    await addToCartBtn.click();
+    await expect(page.locator('.qty-stepper')).toBeVisible({timeout: 5000});
+    await page.locator('.qty-stepper .qty-btn').first().click();
+    await expect(
+      page.locator('mat-card-actions button').filter({hasText: 'ADD TO CART'}),
+    ).toBeVisible({timeout: 5000});
+  });
+
   test('should display the reviews section', async ({page}) => {
     await expect(page.locator('.reviews-section h2')).toHaveText('Customer Reviews');
   });

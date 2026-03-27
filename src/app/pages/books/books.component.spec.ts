@@ -59,6 +59,8 @@ describe('BooksComponent', () => {
         isLoading: signal(false),
         fetchBooks: jest.fn(),
         addToCart: jest.fn(),
+        cartItems: signal([]),
+        updateQuantity: jest.fn(),
       })
       .provide({
         provide: ActivatedRoute,
@@ -122,6 +124,8 @@ describe('BooksComponent', () => {
       isLoading: signal(false),
       fetchBooks: jest.fn(),
       addToCart: jest.fn(),
+      cartItems: signal([]),
+      updateQuantity: jest.fn(),
     }));
 
     const fixture = MockRender(BooksComponent);
@@ -204,6 +208,8 @@ describe('BooksComponent', () => {
       pagination: signal({total: 1, page: 1, limit: 12, pages: 1}),
       isLoading: signal(false),
       fetchBooks: jest.fn(),
+      cartItems: signal([]),
+      updateQuantity: jest.fn(),
     }));
 
     const fixture = MockRender(BooksComponent);
@@ -234,6 +240,8 @@ describe('BooksComponent', () => {
         isLoading: signal(false),
         fetchBooks: jest.fn(),
         addToCart: jest.fn(),
+        cartItems: signal([]),
+        updateQuantity: jest.fn(),
       })
       .provide({
         provide: ActivatedRoute,
@@ -247,5 +255,63 @@ describe('BooksComponent', () => {
 
     expect(fixture.point.componentInstance.selectedCategory()).toBe('Tech');
     expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', 'Tech', 'createdAt', 'desc');
+  });
+
+  it('should build cartBookMap from cartItems', () => {
+    MockInstance(MockDataService, () => ({
+      books: signal([]),
+      pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
+      isLoading: signal(false),
+      fetchBooks: jest.fn(),
+      addToCart: jest.fn(),
+      cartItems: signal([{id: 'ci1', bookId: 'b1', title: 'Test', price: 10, quantity: 2}]),
+      updateQuantity: jest.fn(),
+    }));
+
+    const fixture = MockRender(BooksComponent);
+    fixture.detectChanges();
+
+    const map = fixture.point.componentInstance.cartBookMap();
+    expect(map.get('b1')).toEqual({cartItemId: 'ci1', quantity: 2});
+  });
+
+  it('should call updateQuantity when incrementQuantity is called', () => {
+    const updateQuantity = jest.fn();
+
+    MockInstance(MockDataService, () => ({
+      books: signal([]),
+      pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
+      isLoading: signal(false),
+      fetchBooks: jest.fn(),
+      addToCart: jest.fn(),
+      cartItems: signal([{id: 'ci1', bookId: 'b1', title: 'Test', price: 10, quantity: 2}]),
+      updateQuantity,
+    }));
+
+    const fixture = MockRender(BooksComponent);
+    fixture.detectChanges();
+
+    fixture.point.componentInstance.incrementQuantity('b1');
+    expect(updateQuantity).toHaveBeenCalledWith('ci1', 3);
+  });
+
+  it('should call updateQuantity when decrementQuantity is called', () => {
+    const updateQuantity = jest.fn();
+
+    MockInstance(MockDataService, () => ({
+      books: signal([]),
+      pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
+      isLoading: signal(false),
+      fetchBooks: jest.fn(),
+      addToCart: jest.fn(),
+      cartItems: signal([{id: 'ci1', bookId: 'b1', title: 'Test', price: 10, quantity: 3}]),
+      updateQuantity,
+    }));
+
+    const fixture = MockRender(BooksComponent);
+    fixture.detectChanges();
+
+    fixture.point.componentInstance.decrementQuantity('b1');
+    expect(updateQuantity).toHaveBeenCalledWith('ci1', 2);
   });
 });

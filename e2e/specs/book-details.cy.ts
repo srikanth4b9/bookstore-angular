@@ -29,6 +29,26 @@ describe('Book Details Page', () => {
     cy.get('a[href="/cart"]').should('be.visible');
   });
 
+  it('should show quantity stepper after adding to cart', () => {
+    cy.contains('ADD TO CART').click();
+    cy.get('.qty-stepper').should('be.visible');
+    cy.get('.qty-count').should('contain.text', '1');
+  });
+
+  it('should increment quantity via stepper', () => {
+    cy.contains('ADD TO CART').click();
+    cy.get('.qty-stepper').should('be.visible');
+    cy.get('.qty-stepper .qty-btn').last().click();
+    cy.get('.qty-count').should('contain.text', '2');
+  });
+
+  it('should decrement quantity and remove from cart when quantity reaches zero', () => {
+    cy.contains('ADD TO CART').click();
+    cy.get('.qty-stepper').should('be.visible');
+    cy.get('.qty-stepper .qty-btn').first().click();
+    cy.contains('ADD TO CART').should('be.visible');
+  });
+
   it('should navigate back to books listing', () => {
     cy.contains('BACK').click();
     cy.url().should('include', '/books');

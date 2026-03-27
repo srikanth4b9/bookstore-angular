@@ -1,4 +1,4 @@
-import {Component, inject, signal, effect, OnDestroy, untracked} from '@angular/core';
+import {Component, inject, signal, computed, effect, OnDestroy, untracked} from '@angular/core';
 import {RouterLink, ActivatedRoute} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {CurrencyPipe, SlicePipe} from '@angular/common';
@@ -51,6 +51,13 @@ export class BooksComponent implements OnDestroy {
   sortOrder = signal<'asc' | 'desc'>('desc');
   viewMode = signal<'grid' | 'list'>('grid');
   addedBooks = signal<Set<string>>(new Set());
+  cartBookMap = computed(() => {
+    const map = new Map<string, { cartItemId: string; quantity: number }>();
+    for (const item of this.mockData.cartItems()) {
+      map.set(item.bookId, { cartItemId: item.id, quantity: item.quantity });
+    }
+    return map;
+  });
 
   constructor() {
     // Initial category from query params
@@ -128,6 +135,20 @@ export class BooksComponent implements OnDestroy {
         return newSet;
       });
     }, 2000);
+  }
+
+  incrementQuantity(bookId: string) {
+    const entry = this.cartBookMap().get(bookId);
+    if (entry) {
+      this.mockData.updateQuantity(entry.cartItemId, entry.quantity + 1);
+    }
+  }
+
+  decrementQuantity(bookId: string) {
+    const entry = this.cartBookMap().get(bookId);
+    if (entry) {
+      this.mockData.updateQuantity(entry.cartItemId, entry.quantity - 1);
+    }
   }
 
   ngOnDestroy() {
