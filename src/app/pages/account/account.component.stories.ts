@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 import {AccountComponent} from './account.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 import {MOCK_USER} from '../../.storybook/mock-data';
 
 const meta: Meta<AccountComponent> = {
@@ -18,7 +18,7 @@ const meta: Meta<AccountComponent> = {
   },
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({user: MOCK_USER})],
+      providers: [...createMockStoreProviders({user: MOCK_USER})],
     }),
   ],
 };

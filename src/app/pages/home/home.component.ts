@@ -4,7 +4,10 @@ import {CurrencyPipe} from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
+
+import {selectAllBooks} from '../../store/books/books.selectors';
+import {selectAllCategories} from '../../store/categories/categories.selectors';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +17,8 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  private mockData = inject(MockDataService);
-  featuredBooks = this.mockData.books; // Simplified: just show all books as featured for now
-  categories = this.mockData.categories;
+  private store = inject(Store);
+
+  featuredBooks = this.store.selectSignal(selectAllBooks);
+  categories = this.store.selectSignal(selectAllCategories);
 }

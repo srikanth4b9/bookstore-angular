@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 
 import {MOCK_BOOKS} from '../../.storybook/mock-data';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 import {BookDetailsComponent} from './book-details.component';
 
 const meta: Meta<BookDetailsComponent> = {
@@ -26,7 +26,7 @@ export const Default: Story = {
   name: 'With Book',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({books: MOCK_BOOKS})],
+      providers: [...createMockStoreProviders({books: MOCK_BOOKS})],
     }),
   ],
 };
@@ -35,7 +35,7 @@ export const Loading: Story = {
   name: 'Loading State',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({books: [], isLoading: true})],
+      providers: [...createMockStoreProviders({books: [], isLoading: true})],
     }),
   ],
 };

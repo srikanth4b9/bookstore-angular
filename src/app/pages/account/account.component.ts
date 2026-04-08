@@ -6,7 +6,10 @@ import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
+
+import {selectCurrentUser} from '../../store/auth/auth.selectors';
+import {selectAllOrders} from '../../store/orders/orders.selectors';
 
 @Component({
   selector: 'app-account',
@@ -26,7 +29,8 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './account.component.scss',
 })
 export class AccountComponent {
-  private mockData = inject(MockDataService);
-  user = this.mockData.currentUser;
-  orders = this.mockData.orders;
+  private store = inject(Store);
+
+  user = this.store.selectSignal(selectCurrentUser);
+  orders = this.store.selectSignal(selectAllOrders);
 }

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 import {LoginComponent} from './login.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 
 const meta: Meta<LoginComponent> = {
   title: 'Pages/Login',
@@ -17,7 +17,7 @@ const meta: Meta<LoginComponent> = {
   },
   decorators: [
     applicationConfig({
-      providers: [createMockDataService()],
+      providers: [...createMockStoreProviders()],
     }),
   ],
 };

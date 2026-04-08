@@ -6,7 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'app-register',
@@ -24,7 +24,7 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  private mockData = inject(MockDataService);
+  private store = inject(Store);
   private router = inject(Router);
 
   name = '';
@@ -33,7 +33,7 @@ export class RegisterComponent {
   hide = true;
 
   register() {
-    // In a real app, this would call an auth service
+    // In a real app, this would dispatch AuthActions.register
     alert('Account created successfully (Mock)!');
     this.router.navigate(['/login']);
   }

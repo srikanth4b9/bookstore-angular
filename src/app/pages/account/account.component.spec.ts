@@ -1,16 +1,27 @@
-import {signal, WritableSignal} from '@angular/core';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
 
 import {User, UserRole, Order, OrderStatus} from '../../models/models';
-import {MockDataService} from '../../services/mock-data.service';
 import {AccountComponent} from './account.component';
+import {selectCurrentUser} from '../../store/auth/auth.selectors';
+import {selectAllOrders} from '../../store/orders/orders.selectors';
 
 describe('AccountComponent', () => {
+  let store: MockStore;
+
   beforeEach(() => {
-    return MockBuilder(AccountComponent).mock(MockDataService, {
-      currentUser: signal(null),
-      orders: signal([]),
-    });
+    return MockBuilder(AccountComponent).provide(
+      provideMockStore({
+        selectors: [
+          {selector: selectCurrentUser, value: null},
+          {selector: selectAllOrders, value: []},
+        ],
+      }),
+    );
+  });
+
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
   it('should create', () => {
@@ -18,7 +29,7 @@ describe('AccountComponent', () => {
     expect(fixture.point.componentInstance).toBeTruthy();
   });
 
-  it('should expose user signal from MockDataService', () => {
+  it('should expose user signal from store', () => {
     const mockUser: User = {
       id: 'u1',
       name: 'John Doe',
@@ -28,8 +39,10 @@ describe('AccountComponent', () => {
       orderHistoryIds: [],
       wishlistIds: [],
     };
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.currentUser as WritableSignal<User | null>).set(mockUser);
+
+    store = MockRender(AccountComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectCurrentUser, mockUser);
+    store.refreshState();
 
     const fixture = MockRender(AccountComponent);
     fixture.detectChanges();
@@ -37,7 +50,7 @@ describe('AccountComponent', () => {
     expect(fixture.point.componentInstance.user()).toEqual(mockUser);
   });
 
-  it('should expose orders signal from MockDataService', () => {
+  it('should expose orders signal from store', () => {
     const mockOrders: Order[] = [
       {
         id: 'ORD-1',
@@ -58,8 +71,10 @@ describe('AccountComponent', () => {
         orderDate: new Date('2025-12-01'),
       },
     ];
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.orders as WritableSignal<Order[]>).set(mockOrders);
+
+    store = MockRender(AccountComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectAllOrders, mockOrders);
+    store.refreshState();
 
     const fixture = MockRender(AccountComponent);
     fixture.detectChanges();

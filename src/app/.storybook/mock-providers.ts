@@ -1,9 +1,16 @@
-import {signal, computed} from '@angular/core';
-import {MockDataService} from '../services/mock-data.service';
+import {provideStore} from '@ngrx/store';
+import {provideEffects} from '@ngrx/effects';
+
+import {reducers} from '../store';
+import {BooksState, booksAdapter} from '../store/books/books.reducer';
+import {CategoriesState, categoriesAdapter} from '../store/categories/categories.reducer';
+import {OrdersState, ordersAdapter} from '../store/orders/orders.reducer';
+import {AuthState} from '../store/auth/auth.reducer';
+import {CartState} from '../store/cart/cart.reducer';
 import {MOCK_BOOKS, MOCK_CATEGORIES, MOCK_USER, MOCK_ORDERS} from './mock-data';
 import {Book, CartItem, User} from '../models/models';
 
-export function createMockDataService(overrides?: {
+export function createMockStoreProviders(overrides?: {
   books?: Book[];
   cartItems?: CartItem[];
   user?: User | null;
@@ -12,52 +19,42 @@ export function createMockDataService(overrides?: {
   const books = overrides?.books ?? MOCK_BOOKS;
   const cartItems = overrides?.cartItems ?? [];
   const user = overrides?.user !== undefined ? overrides.user : MOCK_USER;
-  const isLoading = overrides?.isLoading ?? false;
 
-  const _cartItems = signal(cartItems);
+  const booksState: BooksState = booksAdapter.setAll(books, {
+    ...booksAdapter.getInitialState(),
+    pagination: {total: books.length, page: 1, limit: 12, pages: 1},
+    selectedBook: null,
+    loading: false,
+    error: null,
+  });
 
-  return {
-    provide: MockDataService,
-    useValue: {
-      books: signal(books),
-      pagination: signal({total: books.length, page: 1, limit: 12, pages: 1}),
-      categories: signal(MOCK_CATEGORIES),
-      currentUser: signal(user),
-      cartItems: _cartItems.asReadonly(),
-      cartSubtotal: computed(() =>
-        _cartItems().reduce((sum, item) => sum + item.bookPrice * item.quantity, 0),
-      ),
-      orders: signal(MOCK_ORDERS),
-      isLoading: signal(isLoading),
-      fetchBooks: () => Promise.resolve(),
-      fetchInitialData: () => Promise.resolve(),
-      addToCart: (book: Book) => {
-        _cartItems.update((items) => [
-          ...items,
-          {
-            id: `ci-${Date.now()}`,
-            bookId: book.id,
-            bookTitle: book.title,
-            bookPrice: book.price,
-            quantity: 1,
-            imageUrl: book.imageUrl,
-          },
-        ]);
+  const categoriesState: CategoriesState = categoriesAdapter.setAll(MOCK_CATEGORIES, {
+    ...categoriesAdapter.getInitialState(),
+    loading: false,
+    error: null,
+  });
+
+  const ordersState: OrdersState = ordersAdapter.setAll(MOCK_ORDERS, {
+    ...ordersAdapter.getInitialState(),
+    loading: false,
+    error: null,
+    lastPlacedOrderId: null,
+  });
+
+  const cartState: CartState = {items: cartItems};
+
+  const authState: AuthState = {user, loading: false, error: null};
+
+  return [
+    provideStore(reducers, {
+      initialState: {
+        books: booksState,
+        categories: categoriesState,
+        orders: ordersState,
+        cart: cartState,
+        auth: authState,
       },
-      removeFromCart: (id: string) => {
-        _cartItems.update((items) => items.filter((i) => i.id !== id));
-      },
-      updateQuantity: (id: string, qty: number) => {
-        _cartItems.update((items) =>
-          qty <= 0
-            ? items.filter((i) => i.id !== id)
-            : items.map((i) => (i.id === id ? {...i, quantity: qty} : i)),
-        );
-      },
-      placeOrder: () => Promise.resolve(MOCK_ORDERS[0]),
-      addBook: () => Promise.resolve(MOCK_BOOKS[0]),
-      updateBook: () => Promise.resolve(MOCK_BOOKS[0]),
-      deleteBook: () => Promise.resolve(),
-    },
-  };
+    }),
+    provideEffects(),
+  ];
 }

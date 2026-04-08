@@ -1,4 +1,4 @@
-import {Component, inject, signal, computed, effect, OnDestroy, untracked} from '@angular/core';
+import {Component, inject, signal, effect, OnDestroy, untracked} from '@angular/core';
 import {RouterLink, ActivatedRoute} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {CurrencyPipe, SlicePipe} from '@angular/common';
@@ -10,9 +10,19 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatIconModule} from '@angular/material/icon';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
-import {MockDataService} from '../../services/mock-data.service';
-import {Book} from '../../models/models';
+import {Store} from '@ngrx/store';
 import {Subject, debounceTime, distinctUntilChanged, takeUntil} from 'rxjs';
+
+import {Book} from '../../models/models';
+import {
+  selectAllBooks,
+  selectBooksPagination,
+  selectBooksLoading,
+} from '../../store/books/books.selectors';
+import {selectAllCategories} from '../../store/categories/categories.selectors';
+import {selectCartBookMap} from '../../store/cart/cart.selectors';
+import {BooksActions} from '../../store/books/books.actions';
+import {CartActions} from '../../store/cart/cart.actions';
 
 @Component({
   selector: 'app-books',
@@ -35,15 +45,15 @@ import {Subject, debounceTime, distinctUntilChanged, takeUntil} from 'rxjs';
   styleUrl: './books.component.scss',
 })
 export class BooksComponent implements OnDestroy {
-  private mockData = inject(MockDataService);
+  private store = inject(Store);
   private route = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
   private searchSubject = new Subject<string>();
 
-  books = this.mockData.books;
-  categories = this.mockData.categories;
-  pagination = this.mockData.pagination;
-  isLoading = this.mockData.isLoading;
+  books = this.store.selectSignal(selectAllBooks);
+  categories = this.store.selectSignal(selectAllCategories);
+  pagination = this.store.selectSignal(selectBooksPagination);
+  isLoading = this.store.selectSignal(selectBooksLoading);
 
   searchTerm = signal('');
   selectedCategory = signal('');
@@ -51,47 +61,37 @@ export class BooksComponent implements OnDestroy {
   sortOrder = signal<'asc' | 'desc'>('desc');
   viewMode = signal<'grid' | 'list'>('grid');
   addedBooks = signal<Set<string>>(new Set());
-  cartBookMap = computed(() => {
-    const map = new Map<string, {cartItemId: string; quantity: number}>();
-    for (const item of this.mockData.cartItems()) {
-      map.set(item.bookId, {cartItemId: item.id, quantity: item.quantity});
-    }
-    return map;
-  });
+  cartBookMap = this.store.selectSignal(selectCartBookMap);
 
   constructor() {
-    // Initial category from query params
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       if (params['category']) {
         this.selectedCategory.set(params['category']);
       }
     });
 
-    // Handle debounced search
     this.searchSubject
       .pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((term) => {
         this.searchTerm.set(term);
       });
 
-    // Reactive fetch for category and sort changes
     effect(() => {
-      // Signals that trigger a refetch
       this.selectedCategory();
       this.sortBy();
       this.sortOrder();
       this.searchTerm();
 
-      // We use untracked to avoid subscribing to pagination()
-      // so updates to pagination don't trigger this effect recursively
       const currentLimit = untracked(() => this.pagination().limit);
-      this.mockData.fetchBooks(
-        1,
-        currentLimit,
-        this.searchTerm(),
-        this.selectedCategory(),
-        this.sortBy(),
-        this.sortOrder(),
+      this.store.dispatch(
+        BooksActions.loadBooks({
+          page: 1,
+          limit: currentLimit,
+          search: this.searchTerm() || undefined,
+          category: this.selectedCategory() || undefined,
+          sortBy: this.sortBy(),
+          sortOrder: this.sortOrder(),
+        }),
       );
     });
   }
@@ -102,26 +102,24 @@ export class BooksComponent implements OnDestroy {
   }
 
   onFilterChange() {
-    this.resetAndFetch();
-  }
-
-  private resetAndFetch() {
-    // This is just a helper, the main logic is in the effect
+    // The main logic is in the effect
   }
 
   onPageChange(event: PageEvent) {
-    this.mockData.fetchBooks(
-      event.pageIndex + 1,
-      event.pageSize,
-      this.searchTerm(),
-      this.selectedCategory(),
-      this.sortBy(),
-      this.sortOrder(),
+    this.store.dispatch(
+      BooksActions.loadBooks({
+        page: event.pageIndex + 1,
+        limit: event.pageSize,
+        search: this.searchTerm() || undefined,
+        category: this.selectedCategory() || undefined,
+        sortBy: this.sortBy(),
+        sortOrder: this.sortOrder(),
+      }),
     );
   }
 
   addToCart(book: Book) {
-    this.mockData.addToCart(book);
+    this.store.dispatch(CartActions.addToCart({book}));
     this.addedBooks.update((set) => {
       const newSet = new Set(set);
       newSet.add(book.id);
@@ -140,14 +138,18 @@ export class BooksComponent implements OnDestroy {
   incrementQuantity(bookId: string) {
     const entry = this.cartBookMap().get(bookId);
     if (entry) {
-      this.mockData.updateQuantity(entry.cartItemId, entry.quantity + 1);
+      this.store.dispatch(
+        CartActions.updateQuantity({itemId: entry.cartItemId, quantity: entry.quantity + 1}),
+      );
     }
   }
 
   decrementQuantity(bookId: string) {
     const entry = this.cartBookMap().get(bookId);
     if (entry) {
-      this.mockData.updateQuantity(entry.cartItemId, entry.quantity - 1);
+      this.store.dispatch(
+        CartActions.updateQuantity({itemId: entry.cartItemId, quantity: entry.quantity - 1}),
+      );
     }
   }
 

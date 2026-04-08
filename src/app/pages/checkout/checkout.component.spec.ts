@@ -1,10 +1,13 @@
-import {signal, computed} from '@angular/core';
 import {Router} from '@angular/router';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
 
-import {CartItem, User, UserRole, Order, OrderStatus} from '../../models/models';
-import {MockDataService} from '../../services/mock-data.service';
+import {CartItem, User, UserRole} from '../../models/models';
 import {CheckoutComponent} from './checkout.component';
+import {selectCartItems, selectCartSubtotal} from '../../store/cart/cart.selectors';
+import {selectOrdersLoading, selectLastPlacedOrderId} from '../../store/orders/orders.selectors';
+import {selectCurrentUser} from '../../store/auth/auth.selectors';
+import {OrdersActions} from '../../store/orders/orders.actions';
 
 describe('CheckoutComponent', () => {
   const mockCartItems: CartItem[] = [
@@ -31,27 +34,26 @@ describe('CheckoutComponent', () => {
     wishlistIds: [],
   };
 
+  let store: MockStore;
+
   beforeEach(() => {
     return MockBuilder(CheckoutComponent)
-      .mock(MockDataService, {
-        cartItems: signal(mockCartItems),
-        cartSubtotal: computed(() =>
-          mockCartItems.reduce((s, i) => s + i.bookPrice * i.quantity, 0),
-        ),
-        isLoading: signal(false),
-        currentUser: signal(mockUser),
-        placeOrder: jest.fn().mockResolvedValue({
-          id: 'ORD-123',
-          userId: 'u1',
-          items: mockCartItems,
-          total: 10,
-          shippingAddress: mockUser.addresses[0],
-          paymentMethod: 'Credit Card',
-          status: OrderStatus.PENDING,
-          orderDate: new Date(),
-        } as Order),
-      })
+      .provide(
+        provideMockStore({
+          selectors: [
+            {selector: selectCartItems, value: mockCartItems},
+            {selector: selectCartSubtotal, value: 10},
+            {selector: selectOrdersLoading, value: false},
+            {selector: selectCurrentUser, value: mockUser},
+            {selector: selectLastPlacedOrderId, value: null},
+          ],
+        }),
+      )
       .mock(Router);
+  });
+
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
   it('should create', () => {
@@ -83,40 +85,46 @@ describe('CheckoutComponent', () => {
     expect(component.isFormValid()).toBeFalsy();
   });
 
-  it('should place order when form is valid', async () => {
+  it('should dispatch placeOrder when form is valid', () => {
     const fixture = MockRender(CheckoutComponent);
     const component = fixture.point.componentInstance;
-    const mockDataService = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
-    await component.placeOrder();
+    component.placeOrder();
 
-    expect(mockDataService.placeOrder).toHaveBeenCalledWith(component.address, 'Credit Card');
-    expect(component.orderPlaced()).toBe(true);
-    expect(component.lastOrderId()).toBe('ORD-123');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      OrdersActions.placeOrder({
+        userId: 'u1',
+        items: mockCartItems,
+        total: 10,
+        shippingAddress: component.address,
+        paymentMethod: 'Credit Card',
+      }),
+    );
   });
 
-  it('should not place order when form is invalid', async () => {
+  it('should not dispatch placeOrder when form is invalid', () => {
     const fixture = MockRender(CheckoutComponent);
     const component = fixture.point.componentInstance;
-    const mockDataService = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
     component.address.street = '';
-    await component.placeOrder();
+    component.placeOrder();
 
-    expect(mockDataService.placeOrder).not.toHaveBeenCalled();
-    expect(component.orderPlaced()).toBe(false);
+    expect(store.dispatch).not.toHaveBeenCalled();
   });
 
-  it('should handle order placement failure', async () => {
+  it('should set orderPlaced when lastPlacedOrderId changes', () => {
     const fixture = MockRender(CheckoutComponent);
-    const component = fixture.point.componentInstance;
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.placeOrder as jest.Mock).mockRejectedValue(new Error('Server error'));
-    window.alert = jest.fn();
+    store = fixture.point.injector.get(MockStore);
 
-    await component.placeOrder();
+    store.overrideSelector(selectLastPlacedOrderId, 'ORD-123');
+    store.refreshState();
+    fixture.detectChanges();
 
-    expect(window.alert).toHaveBeenCalledWith('Failed to place order. Please try again.');
-    expect(component.orderPlaced()).toBe(false);
+    expect(fixture.point.componentInstance.orderPlaced()).toBe(true);
+    expect(fixture.point.componentInstance.lastOrderId()).toBe('ORD-123');
   });
 });

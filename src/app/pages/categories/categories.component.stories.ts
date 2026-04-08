@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 import {CategoriesComponent} from './categories.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 
 const meta: Meta<CategoriesComponent> = {
   title: 'Pages/Categories',
@@ -24,7 +24,7 @@ export const Default: Story = {
   name: 'With Categories',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService()],
+      providers: [...createMockStoreProviders()],
     }),
   ],
 };
@@ -33,7 +33,7 @@ export const Loading: Story = {
   name: 'Loading State',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({isLoading: true})],
+      providers: [...createMockStoreProviders({isLoading: true})],
     }),
   ],
 };

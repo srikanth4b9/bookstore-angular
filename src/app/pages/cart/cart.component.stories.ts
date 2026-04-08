@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 import {CartComponent} from './cart.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 import {MOCK_CART_ITEMS} from '../../.storybook/mock-data';
 
 const meta: Meta<CartComponent> = {
@@ -25,7 +25,7 @@ export const WithItems: Story = {
   name: 'With Items',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({cartItems: MOCK_CART_ITEMS})],
+      providers: [...createMockStoreProviders({cartItems: MOCK_CART_ITEMS})],
     }),
   ],
 };
@@ -34,7 +34,7 @@ export const Empty: Story = {
   name: 'Empty Cart',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({cartItems: []})],
+      providers: [...createMockStoreProviders({cartItems: []})],
     }),
   ],
 };
@@ -43,7 +43,7 @@ export const SingleItem: Story = {
   name: 'Single Item',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({cartItems: [MOCK_CART_ITEMS[0]]})],
+      providers: [...createMockStoreProviders({cartItems: [MOCK_CART_ITEMS[0]]})],
     }),
   ],
 };
@@ -53,7 +53,7 @@ export const ManyItems: Story = {
   decorators: [
     applicationConfig({
       providers: [
-        createMockDataService({
+        ...createMockStoreProviders({
           cartItems: [
             ...MOCK_CART_ITEMS,
             {
