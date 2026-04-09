@@ -54,17 +54,23 @@ The setup file:
 
 ```typescript
 import {MyComponent} from './my.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
-import {signal} from '@angular/core';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
+import {selectAllBooks, selectBooksLoading} from '../../store/books/books.selectors';
+import {BooksActions} from '../../store/books/books.actions';
 
 describe('MyComponent', () => {
+  let store: MockStore;
+
   beforeEach(() => {
-    return MockBuilder(MyComponent).mock(MockDataService, {
-      books: signal([]),
-      isLoading: signal(false),
-      fetchBooks: jest.fn(),
-    });
+    return MockBuilder(MyComponent).provide(
+      provideMockStore({
+        selectors: [
+          {selector: selectAllBooks, value: []},
+          {selector: selectBooksLoading, value: false},
+        ],
+      }),
+    );
   });
 
   it('should create', () => {
@@ -72,26 +78,32 @@ describe('MyComponent', () => {
     expect(fixture.point.componentInstance).toBeTruthy();
   });
 
-  it('should call service method', () => {
+  it('should dispatch an action', () => {
     const fixture = MockRender(MyComponent);
-    const service = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
     fixture.point.componentInstance.someAction();
 
-    expect(service.fetchBooks).toHaveBeenCalled();
+    expect(store.dispatch).toHaveBeenCalledWith(BooksActions.loadBooks());
   });
 });
 ```
 
 ### Key Patterns
 
-**MockBuilder** — Declares which component to test and what to mock:
+**MockBuilder with provideMockStore** — Declares which component to test and provides the NgRx mock store:
 
 ```typescript
 MockBuilder(ComponentUnderTest)
-  .mock(ServiceToMock, {
-    /* mock implementation */
-  })
+  .provide(
+    provideMockStore({
+      selectors: [
+        {selector: selectAllBooks, value: [mockBook]},
+        {selector: selectBooksLoading, value: false},
+      ],
+    }),
+  )
   .mock(Router);
 ```
 
@@ -102,11 +114,11 @@ const fixture = MockRender(MyComponent);
 const component = fixture.point.componentInstance;
 ```
 
-**ngMocks.get** — Retrieves a mocked dependency:
+**MockStore** — Access the mock store to spy on dispatches or override selectors:
 
 ```typescript
-const service = ngMocks.get(MockDataService);
-const router = ngMocks.get(Router);
+const store = fixture.point.injector.get(MockStore);
+jest.spyOn(store, 'dispatch');
 ```
 
 **DOM interactions with ngMocks:**
@@ -120,20 +132,15 @@ ngMocks.trigger(element, 'click');
 ngMocks.change(element, 'new value');
 ```
 
-**Mocking signals:**
+**Overriding selectors in tests:**
 
 ```typescript
-import {signal, WritableSignal} from '@angular/core';
+import {MockStore} from '@ngrx/store/testing';
 
-// In MockBuilder
-.mock(MockDataService, {
-  books: signal([mockBook1, mockBook2]),
-  isLoading: signal(false),
-})
-
-// Update signal in test
-const service = ngMocks.get(MockDataService);
-(service.books as WritableSignal<Book[]>).set([newBook]);
+// Override a selector value mid-test
+const store = fixture.point.injector.get(MockStore);
+store.overrideSelector(selectAllBooks, [newBook]);
+store.refreshState();
 fixture.detectChanges();
 ```
 

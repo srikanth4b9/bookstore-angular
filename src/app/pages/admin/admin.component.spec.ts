@@ -1,16 +1,29 @@
-import {signal, WritableSignal} from '@angular/core';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
 
 import {Book, Order, OrderStatus} from '../../models/models';
-import {MockDataService} from '../../services/mock-data.service';
 import {AdminComponent} from './admin.component';
+import {selectAllBooks} from '../../store/books/books.selectors';
+import {selectAllOrders, selectTotalSales} from '../../store/orders/orders.selectors';
+import {BooksActions} from '../../store/books/books.actions';
 
 describe('AdminComponent', () => {
+  let store: MockStore;
+
   beforeEach(() => {
-    return MockBuilder(AdminComponent).mock(MockDataService, {
-      books: signal([]),
-      orders: signal([]),
-    });
+    return MockBuilder(AdminComponent).provide(
+      provideMockStore({
+        selectors: [
+          {selector: selectAllBooks, value: []},
+          {selector: selectAllOrders, value: []},
+          {selector: selectTotalSales, value: 0},
+        ],
+      }),
+    );
+  });
+
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
   it('should create', () => {
@@ -18,7 +31,7 @@ describe('AdminComponent', () => {
     expect(fixture.point.componentInstance).toBeTruthy();
   });
 
-  it('should expose books and orders from MockDataService', () => {
+  it('should expose books and orders from store', () => {
     const mockBooks: Book[] = [{id: '1', title: 'Book 1', author: 'Author 1', price: 10} as Book];
     const mockOrders: Order[] = [
       {
@@ -41,9 +54,10 @@ describe('AdminComponent', () => {
       },
     ];
 
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.books as WritableSignal<Book[]>).set(mockBooks);
-    (mockDataService.orders as WritableSignal<Order[]>).set(mockOrders);
+    store = MockRender(AdminComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectAllBooks, mockBooks);
+    store.overrideSelector(selectAllOrders, mockOrders);
+    store.refreshState();
 
     const fixture = MockRender(AdminComponent);
     fixture.detectChanges();
@@ -67,13 +81,10 @@ describe('AdminComponent', () => {
     ]);
   });
 
-  it('should compute totalSales from orders', () => {
-    const mockOrders: Order[] = [
-      {id: 'ORD-1', total: 34.99} as Order,
-      {id: 'ORD-2', total: 25.01} as Order,
-    ];
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.orders as WritableSignal<Order[]>).set(mockOrders);
+  it('should get totalSales from store selector', () => {
+    store = MockRender(AdminComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectTotalSales, 60);
+    store.refreshState();
 
     const fixture = MockRender(AdminComponent);
     fixture.detectChanges();
@@ -90,15 +101,19 @@ describe('AdminComponent', () => {
     expect(component.showAddForm()).toBe(true);
   });
 
-  it('should call addBook and hide form', () => {
+  it('should dispatch addBook action and hide form', () => {
     const fixture = MockRender(AdminComponent);
     const component = fixture.point.componentInstance;
-    window.alert = jest.fn();
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
     component.showAddForm.set(true);
+    component.newBook = {title: 'New Book', author: 'Author', price: 25};
     component.addBook();
 
-    expect(window.alert).toHaveBeenCalledWith('Book added successfully (Mock)!');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      BooksActions.addBook({book: {title: 'New Book', author: 'Author', price: 25}}),
+    );
     expect(component.showAddForm()).toBe(false);
   });
 

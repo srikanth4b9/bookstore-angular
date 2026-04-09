@@ -1,4 +1,4 @@
-import {Component, inject, signal, computed} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CurrencyPipe, DatePipe, UpperCasePipe} from '@angular/common';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -10,7 +10,11 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDialogModule} from '@angular/material/dialog';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
+
+import {selectAllBooks} from '../../store/books/books.selectors';
+import {selectAllOrders, selectTotalSales} from '../../store/orders/orders.selectors';
+import {BooksActions} from '../../store/books/books.actions';
 
 @Component({
   selector: 'app-admin',
@@ -34,10 +38,10 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './admin.component.scss',
 })
 export class AdminComponent {
-  private mockData = inject(MockDataService);
+  private store = inject(Store);
 
-  books = this.mockData.books;
-  orders = this.mockData.orders;
+  books = this.store.selectSignal(selectAllBooks);
+  orders = this.store.selectSignal(selectAllOrders);
 
   bookColumns: string[] = ['id', 'title', 'author', 'price', 'stock', 'actions'];
   orderColumns: string[] = ['id', 'orderDate', 'userId', 'total', 'status', 'actions'];
@@ -49,11 +53,10 @@ export class AdminComponent {
     price: 0,
   };
 
-  totalSales = computed(() => this.orders().reduce((acc, order) => acc + order.total, 0));
+  totalSales = this.store.selectSignal(selectTotalSales);
 
   addBook() {
-    // Mock implementation
-    alert('Book added successfully (Mock)!');
+    this.store.dispatch(BooksActions.addBook({book: this.newBook}));
     this.showAddForm.set(false);
   }
 }

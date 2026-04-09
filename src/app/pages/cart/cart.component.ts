@@ -10,7 +10,10 @@ import {MatListModule} from '@angular/material/list';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
+
+import {selectCartItems, selectCartSubtotal} from '../../store/cart/cart.selectors';
+import {CartActions} from '../../store/cart/cart.actions';
 
 @Component({
   selector: 'app-cart',
@@ -32,11 +35,11 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './cart.component.scss',
 })
 export class CartComponent {
-  private mockData = inject(MockDataService);
+  private store = inject(Store);
   private snackBar = inject(MatSnackBar);
 
-  cartItems = this.mockData.cartItems;
-  subtotal = this.mockData.cartSubtotal;
+  cartItems = this.store.selectSignal(selectCartItems);
+  subtotal = this.store.selectSignal(selectCartSubtotal);
 
   promoCode = signal('');
   isPromoApplied = signal(false);
@@ -48,11 +51,11 @@ export class CartComponent {
 
   updateQuantity(itemId: string, quantity: number) {
     if (quantity < 1) return;
-    this.mockData.updateQuantity(itemId, quantity);
+    this.store.dispatch(CartActions.updateQuantity({itemId, quantity}));
   }
 
   removeItem(itemId: string) {
-    this.mockData.removeFromCart(itemId);
+    this.store.dispatch(CartActions.removeFromCart({itemId}));
   }
 
   applyPromoCode() {

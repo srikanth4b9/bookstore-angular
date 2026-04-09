@@ -1,10 +1,11 @@
-import {signal, computed} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
 
 import {CartItem} from '../../models/models';
-import {MockDataService} from '../../services/mock-data.service';
 import {CartComponent} from './cart.component';
+import {selectCartItems, selectCartSubtotal} from '../../store/cart/cart.selectors';
+import {CartActions} from '../../store/cart/cart.actions';
 
 describe('CartComponent', () => {
   const mockCartItems: CartItem[] = [
@@ -13,20 +14,25 @@ describe('CartComponent', () => {
   ];
 
   let mockSnackBar: {open: jest.Mock};
+  let store: MockStore;
 
   beforeEach(() => {
     mockSnackBar = {open: jest.fn()};
 
     return MockBuilder(CartComponent)
-      .mock(MockDataService, {
-        cartItems: signal(mockCartItems),
-        cartSubtotal: computed(() =>
-          mockCartItems.reduce((s, i) => s + i.bookPrice * i.quantity, 0),
-        ),
-        updateQuantity: jest.fn(),
-        removeFromCart: jest.fn(),
-      })
+      .provide(
+        provideMockStore({
+          selectors: [
+            {selector: selectCartItems, value: mockCartItems},
+            {selector: selectCartSubtotal, value: 40},
+          ],
+        }),
+      )
       .provide({provide: MatSnackBar, useValue: mockSnackBar});
+  });
+
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
   it('should create', () => {
@@ -34,7 +40,7 @@ describe('CartComponent', () => {
     expect(fixture.point.componentInstance).toBeTruthy();
   });
 
-  it('should expose cart items and subtotal from MockDataService', () => {
+  it('should expose cart items and subtotal from store', () => {
     const fixture = MockRender(CartComponent);
     const component = fixture.point.componentInstance;
 
@@ -52,31 +58,33 @@ describe('CartComponent', () => {
     expect(component.finalTotal).toBe(35);
   });
 
-  it('should call updateQuantity on service when quantity >= 1', () => {
+  it('should dispatch updateQuantity action when quantity >= 1', () => {
     const fixture = MockRender(CartComponent);
-    const component = fixture.point.componentInstance;
-    const mockDataService = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
-    component.updateQuantity('ci-1', 3);
-    expect(mockDataService.updateQuantity).toHaveBeenCalledWith('ci-1', 3);
+    fixture.point.componentInstance.updateQuantity('ci-1', 3);
+    expect(store.dispatch).toHaveBeenCalledWith(
+      CartActions.updateQuantity({itemId: 'ci-1', quantity: 3}),
+    );
   });
 
-  it('should not call updateQuantity on service when quantity < 1', () => {
+  it('should not dispatch updateQuantity when quantity < 1', () => {
     const fixture = MockRender(CartComponent);
-    const component = fixture.point.componentInstance;
-    const mockDataService = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
-    component.updateQuantity('ci-1', 0);
-    expect(mockDataService.updateQuantity).not.toHaveBeenCalled();
+    fixture.point.componentInstance.updateQuantity('ci-1', 0);
+    expect(store.dispatch).not.toHaveBeenCalled();
   });
 
-  it('should call removeFromCart on service', () => {
+  it('should dispatch removeFromCart action', () => {
     const fixture = MockRender(CartComponent);
-    const component = fixture.point.componentInstance;
-    const mockDataService = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
+    jest.spyOn(store, 'dispatch');
 
-    component.removeItem('ci-1');
-    expect(mockDataService.removeFromCart).toHaveBeenCalledWith('ci-1');
+    fixture.point.componentInstance.removeItem('ci-1');
+    expect(store.dispatch).toHaveBeenCalledWith(CartActions.removeFromCart({itemId: 'ci-1'}));
   });
 
   it('should apply SAVE10 promo code for 10% discount', () => {
@@ -87,7 +95,7 @@ describe('CartComponent', () => {
     component.applyPromoCode();
 
     expect(component.isPromoApplied()).toBe(true);
-    expect(component.discountAmount()).toBe(4); // 10% of 40
+    expect(component.discountAmount()).toBe(4);
     expect(mockSnackBar.open).toHaveBeenCalledWith(
       'Promo code SAVE10 applied! 10% discount added.',
       'Close',

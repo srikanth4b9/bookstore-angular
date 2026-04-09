@@ -6,7 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,7 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  private mockData = inject(MockDataService);
+  private store = inject(Store);
   private router = inject(Router);
 
   email = '';
@@ -32,7 +32,7 @@ export class LoginComponent {
   hide = true;
 
   login() {
-    // In a real app, this would call an auth service
+    // In a real app, this would dispatch AuthActions.login
     alert('Logged in successfully (Mock)!');
     this.router.navigate(['/']);
   }

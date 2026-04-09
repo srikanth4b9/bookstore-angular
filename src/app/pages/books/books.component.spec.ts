@@ -1,20 +1,51 @@
-import {BooksComponent} from './books.component';
-import {MockBuilder, MockRender, ngMocks, MockInstance} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
+import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
 import {ActivatedRoute} from '@angular/router';
 import {of} from 'rxjs';
-import {signal} from '@angular/core';
-import {Book, CartItem} from '../../models/models';
+
+import {BooksComponent} from './books.component';
+import {Book} from '../../models/models';
+import {Action} from '@ngrx/store';
+import {
+  selectAllBooks,
+  selectBooksPagination,
+  selectBooksLoading,
+} from '../../store/books/books.selectors';
+import {selectAllCategories} from '../../store/categories/categories.selectors';
+import {selectCartBookMap} from '../../store/cart/cart.selectors';
+import {BooksActions} from '../../store/books/books.actions';
+import {CartActions} from '../../store/cart/cart.actions';
+
+const MOCK_BOOK: Book = {
+  id: '1',
+  title: 'Test Book',
+  author: 'Author',
+  price: 10,
+  imageUrl: '',
+  category: 'Tech',
+  description: '',
+  rating: 5,
+  genre: [],
+  availability: true,
+  stock: 10,
+  reviews: [],
+  createdAt: new Date(),
+  isbn: '123',
+};
+
+const DEFAULT_SELECTORS = [
+  {selector: selectAllBooks, value: [] as Book[]},
+  {selector: selectAllCategories, value: []},
+  {selector: selectBooksPagination, value: {total: 0, page: 1, limit: 12, pages: 1}},
+  {selector: selectBooksLoading, value: false},
+  {selector: selectCartBookMap, value: new Map()},
+];
 
 class BooksUI {
   constructor(private fixture: ReturnType<typeof MockRender<BooksComponent>>) {}
 
   get searchInput() {
     return ngMocks.find('input[placeholder="Title, author, ISBN..."]');
-  }
-
-  get categorySelect() {
-    return ngMocks.find('mat-select[placeholder="Category"]', null);
   }
 
   get firstAddButton() {
@@ -34,161 +65,161 @@ class BooksUI {
     this.fixture.detectChanges();
   }
 
-  selectCategory(value: string) {
-    if (this.categorySelect) {
-      ngMocks.change(this.categorySelect, value);
-      this.fixture.detectChanges();
-    }
-  }
-
   clickFirstAddButton() {
     ngMocks.click(this.firstAddButton);
     this.fixture.detectChanges();
   }
 }
 
-const MOCK_CART_ITEM: CartItem = {
-  id: 'ci1',
-  bookId: 'b1',
-  bookTitle: 'Test',
-  bookPrice: 10,
-  quantity: 2,
-  imageUrl: '',
-};
+function collectActions(store: MockStore): unknown[] {
+  const dispatched: unknown[] = [];
+  store.scannedActions$.subscribe((action) => dispatched.push(action));
+  return dispatched;
+}
+
+function renderWithDispatchSpy(): {
+  fixture: ReturnType<typeof MockRender<BooksComponent>>;
+  store: MockStore;
+} {
+  const fixture = MockRender(BooksComponent);
+  const store = fixture.point.injector.get(MockStore);
+  jest.spyOn(store, 'dispatch');
+  return {fixture, store};
+}
+
+function renderWithSelectorOverrides(overrides: {selector: unknown; value: unknown}[]): MockStore {
+  const store = MockRender(BooksComponent).point.injector.get(MockStore);
+  for (const {selector, value} of overrides) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    store.overrideSelector(selector as any, value);
+  }
+  store.refreshState();
+  return store;
+}
 
 describe('BooksComponent', () => {
-  MockInstance.scope();
+  let store: MockStore;
 
   beforeEach(() => {
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal<Book[]>([]),
-        categories: signal([]),
-        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        addToCart: jest.fn(),
-        cartItems: signal<CartItem[]>([]),
-        updateQuantity: jest.fn(),
-      }),
-    });
-
     return MockBuilder(BooksComponent)
-      .mock(MockDataService)
+      .provide(provideMockStore({selectors: DEFAULT_SELECTORS}))
       .provide({
         provide: ActivatedRoute,
-        useValue: {
-          queryParams: of({}),
-        },
+        useValue: {queryParams: of({})},
       });
   });
 
-  it('should call fetchBooks on init', () => {
-    const fixture = MockRender(BooksComponent);
-    const mockDataService = ngMocks.get(MockDataService);
-    fixture.detectChanges();
-
-    // Initial call from effect()
-    expect(mockDataService.fetchBooks).toHaveBeenCalled();
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
-  it('should update search term when input changes', async () => {
+  it('should dispatch loadBooks on init', () => {
     const fixture = MockRender(BooksComponent);
+    store = fixture.point.injector.get(MockStore);
+    const dispatched = collectActions(store);
+
+    expect(dispatched.some((a) => (a as Action).type === BooksActions.loadBooks.type)).toBe(true);
+  });
+
+  it('should dispatch loadBooks with search term after debounce', () => {
+    jest.useFakeTimers();
+
+    const fixture = MockRender(BooksComponent);
+    store = fixture.point.injector.get(MockStore);
     const ui = new BooksUI(fixture);
-    const mockDataService = ngMocks.get(MockDataService);
 
     ui.triggerSearch('Angular');
+    jest.advanceTimersByTime(400);
+    fixture.detectChanges();
 
-    // Wait for debounceTime(400)
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const dispatched = collectActions(store);
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(
-      1,
-      12,
-      'Angular',
-      '',
-      'createdAt',
-      'desc',
-    );
+    expect(
+      dispatched.some(
+        (a) =>
+          (a as Action).type === BooksActions.loadBooks.type &&
+          (a as Action & {search: string}).search === 'Angular',
+      ),
+    ).toBe(true);
+
+    jest.useRealTimers();
   });
 
-  it('should add book to cart when clicking add button', async () => {
-    // Setup mock data
-    const mockBook: Book = {
-      id: '1',
-      title: 'Test Book',
-      author: 'Author',
-      price: 10,
-      imageUrl: '',
-      category: 'Tech',
-      description: '',
-      rating: 5,
-      genre: [],
-      availability: true,
-      stock: 10,
-      reviews: [],
-      createdAt: new Date(),
-      isbn: '123',
-    };
+  it('should dispatch addToCart when clicking add button', async () => {
+    renderWithSelectorOverrides([{selector: selectAllBooks, value: [MOCK_BOOK]}]);
 
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal([mockBook]),
-        pagination: signal({total: 1, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        addToCart: jest.fn(),
-        cartItems: signal<CartItem[]>([]),
-        updateQuantity: jest.fn(),
-      }),
-    });
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
-    const fixture = MockRender(BooksComponent);
-    const ui = new BooksUI(fixture);
-
-    // Wait for defer block
     await fixture.whenStable();
     fixture.detectChanges();
 
+    const ui = new BooksUI(fixture);
     ui.clickFirstAddButton();
 
-    const mockDataService = ngMocks.get(MockDataService);
-    expect(mockDataService.addToCart).toHaveBeenCalledWith(mockBook);
+    expect(store.dispatch).toHaveBeenCalledWith(CartActions.addToCart({book: MOCK_BOOK}));
   });
 
-  it('should change category when selection changes', () => {
-    const fixture = MockRender(BooksComponent);
-    const mockDataService = ngMocks.get(MockDataService);
+  it('should dispatch loadBooks when category changes', () => {
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
     fixture.point.componentInstance.selectedCategory.set('Tech');
     fixture.detectChanges();
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', 'Tech', 'createdAt', 'desc');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      BooksActions.loadBooks({
+        page: 1,
+        limit: 12,
+        search: undefined,
+        category: 'Tech',
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      }),
+    );
   });
 
-  it('should call fetchBooks when sortBy changes', () => {
-    const fixture = MockRender(BooksComponent);
-    const mockDataService = ngMocks.get(MockDataService);
+  it('should dispatch loadBooks when sortBy changes', () => {
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
     fixture.point.componentInstance.sortBy.set('price');
     fixture.detectChanges();
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', '', 'price', 'desc');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      BooksActions.loadBooks({
+        page: 1,
+        limit: 12,
+        search: undefined,
+        category: undefined,
+        sortBy: 'price',
+        sortOrder: 'desc',
+      }),
+    );
   });
 
-  it('should call fetchBooks when sortOrder changes', () => {
-    const fixture = MockRender(BooksComponent);
-    const mockDataService = ngMocks.get(MockDataService);
+  it('should dispatch loadBooks when sortOrder changes', () => {
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
     fixture.point.componentInstance.sortOrder.set('asc');
     fixture.detectChanges();
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', '', 'createdAt', 'asc');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      BooksActions.loadBooks({
+        page: 1,
+        limit: 12,
+        search: undefined,
+        category: undefined,
+        sortBy: 'createdAt',
+        sortOrder: 'asc',
+      }),
+    );
   });
 
-  it('should call fetchBooks when onPageChange is called', () => {
-    const fixture = MockRender(BooksComponent);
-    const mockDataService = ngMocks.get(MockDataService);
+  it('should dispatch loadBooks when onPageChange is called', () => {
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
     fixture.point.componentInstance.onPageChange({
       pageIndex: 1,
@@ -196,43 +227,24 @@ describe('BooksComponent', () => {
       length: 100,
     });
 
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(2, 24, '', '', 'createdAt', 'desc');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      BooksActions.loadBooks({
+        page: 2,
+        limit: 24,
+        search: undefined,
+        category: undefined,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      }),
+    );
   });
 
   it('should toggle view mode', async () => {
-    // Setup mock data so that the @for loop has something to render
-    const mockBook: Book = {
-      id: '1',
-      title: 'Test Book',
-      author: 'Author',
-      price: 10,
-      imageUrl: '',
-      category: 'Tech',
-      description: '',
-      rating: 5,
-      genre: [],
-      availability: true,
-      stock: 10,
-      reviews: [],
-      createdAt: new Date(),
-      isbn: '123',
-    };
-
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal([mockBook]),
-        pagination: signal({total: 1, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        cartItems: signal<CartItem[]>([]),
-        updateQuantity: jest.fn(),
-      }),
-    });
+    renderWithSelectorOverrides([{selector: selectAllBooks, value: [MOCK_BOOK]}]);
 
     const fixture = MockRender(BooksComponent);
     const ui = new BooksUI(fixture);
 
-    // Wait for defer block
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -249,96 +261,65 @@ describe('BooksComponent', () => {
   });
 
   it('should set category from query params on init', async () => {
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal<Book[]>([]),
-        categories: signal([]),
-        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        addToCart: jest.fn(),
-        cartItems: signal<CartItem[]>([]),
-        updateQuantity: jest.fn(),
-      }),
-    });
-
     await MockBuilder(BooksComponent)
-      .mock(MockDataService)
+      .provide(provideMockStore({selectors: DEFAULT_SELECTORS}))
       .provide({
         provide: ActivatedRoute,
-        useValue: {
-          queryParams: of({category: 'Tech'}),
-        },
+        useValue: {queryParams: of({category: 'Tech'})},
       });
 
     const fixture = MockRender(BooksComponent);
-    const mockDataService = ngMocks.get(MockDataService);
+    store = fixture.point.injector.get(MockStore);
 
     expect(fixture.point.componentInstance.selectedCategory()).toBe('Tech');
-    expect(mockDataService.fetchBooks).toHaveBeenCalledWith(1, 12, '', 'Tech', 'createdAt', 'desc');
+
+    const dispatched = collectActions(store);
+
+    expect(
+      dispatched.some(
+        (a) =>
+          (a as Action).type === BooksActions.loadBooks.type &&
+          (a as Action & {category: string}).category === 'Tech',
+      ),
+    ).toBe(true);
   });
 
-  it('should build cartBookMap from cartItems', () => {
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal<Book[]>([]),
-        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        addToCart: jest.fn(),
-        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM}]),
-        updateQuantity: jest.fn(),
-      }),
-    });
+  it('should build cartBookMap from store selector', () => {
+    const cartMap = new Map([['b1', {cartItemId: 'ci1', quantity: 2}]]);
+    renderWithSelectorOverrides([{selector: selectCartBookMap, value: cartMap}]);
 
     const fixture = MockRender(BooksComponent);
     fixture.detectChanges();
 
-    const map = fixture.point.componentInstance.cartBookMap();
-    expect(map.get('b1')).toEqual({cartItemId: 'ci1', quantity: 2});
+    expect(fixture.point.componentInstance.cartBookMap().get('b1')).toEqual({
+      cartItemId: 'ci1',
+      quantity: 2,
+    });
   });
 
-  it('should call updateQuantity when incrementQuantity is called', () => {
-    const updateQuantity = jest.fn();
+  it('should dispatch updateQuantity when incrementQuantity is called', () => {
+    const cartMap = new Map([['b1', {cartItemId: 'ci1', quantity: 2}]]);
+    renderWithSelectorOverrides([{selector: selectCartBookMap, value: cartMap}]);
 
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal<Book[]>([]),
-        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        addToCart: jest.fn(),
-        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM}]),
-        updateQuantity,
-      }),
-    });
-
-    const fixture = MockRender(BooksComponent);
-    fixture.detectChanges();
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
     fixture.point.componentInstance.incrementQuantity('b1');
-    expect(updateQuantity).toHaveBeenCalledWith('ci1', 3);
+    expect(store.dispatch).toHaveBeenCalledWith(
+      CartActions.updateQuantity({itemId: 'ci1', quantity: 3}),
+    );
   });
 
-  it('should call updateQuantity when decrementQuantity is called', () => {
-    const updateQuantity = jest.fn();
+  it('should dispatch updateQuantity when decrementQuantity is called', () => {
+    const cartMap = new Map([['b1', {cartItemId: 'ci1', quantity: 3}]]);
+    renderWithSelectorOverrides([{selector: selectCartBookMap, value: cartMap}]);
 
-    MockInstance(MockDataService, {
-      init: () => ({
-        books: signal<Book[]>([]),
-        pagination: signal({total: 0, page: 1, limit: 12, pages: 1}),
-        isLoading: signal(false),
-        fetchBooks: jest.fn(),
-        addToCart: jest.fn(),
-        cartItems: signal<CartItem[]>([{...MOCK_CART_ITEM, quantity: 3}]),
-        updateQuantity,
-      }),
-    });
-
-    const fixture = MockRender(BooksComponent);
-    fixture.detectChanges();
+    const {fixture, store: s} = renderWithDispatchSpy();
+    store = s;
 
     fixture.point.componentInstance.decrementQuantity('b1');
-    expect(updateQuantity).toHaveBeenCalledWith('ci1', 2);
+    expect(store.dispatch).toHaveBeenCalledWith(
+      CartActions.updateQuantity({itemId: 'ci1', quantity: 2}),
+    );
   });
 });

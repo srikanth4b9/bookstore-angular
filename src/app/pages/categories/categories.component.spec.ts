@@ -1,15 +1,29 @@
-import {CategoriesComponent} from './categories.component';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
-import {MockDataService} from '../../services/mock-data.service';
-import {signal, WritableSignal} from '@angular/core';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
+
 import {Category} from '../../models/models';
+import {CategoriesComponent} from './categories.component';
+import {
+  selectAllCategories,
+  selectCategoriesLoading,
+} from '../../store/categories/categories.selectors';
 
 describe('CategoriesComponent', () => {
+  let store: MockStore;
+
   beforeEach(() => {
-    return MockBuilder(CategoriesComponent).mock(MockDataService, {
-      categories: signal([]),
-      isLoading: signal(false),
-    });
+    return MockBuilder(CategoriesComponent).provide(
+      provideMockStore({
+        selectors: [
+          {selector: selectAllCategories, value: []},
+          {selector: selectCategoriesLoading, value: false},
+        ],
+      }),
+    );
+  });
+
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
   it('should create', () => {
@@ -17,13 +31,15 @@ describe('CategoriesComponent', () => {
     expect(fixture.point.componentInstance).toBeTruthy();
   });
 
-  it('should display categories from MockDataService', () => {
-    const mockCats = [
+  it('should display categories from store', () => {
+    const mockCats: Category[] = [
       {id: '1', name: 'Cat 1'},
       {id: '2', name: 'Cat 2'},
     ];
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.categories as WritableSignal<Category[]>).set(mockCats);
+
+    store = MockRender(CategoriesComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectAllCategories, mockCats);
+    store.refreshState();
 
     const fixture = MockRender(CategoriesComponent);
     fixture.detectChanges();
@@ -31,9 +47,10 @@ describe('CategoriesComponent', () => {
     expect(fixture.point.componentInstance.categories()).toEqual(mockCats);
   });
 
-  it('should reflect isLoading state from MockDataService', () => {
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.isLoading as WritableSignal<boolean>).set(true);
+  it('should reflect isLoading state from store', () => {
+    store = MockRender(CategoriesComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectCategoriesLoading, true);
+    store.refreshState();
 
     const fixture = MockRender(CategoriesComponent);
     fixture.detectChanges();

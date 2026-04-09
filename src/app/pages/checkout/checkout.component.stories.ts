@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 import {CheckoutComponent} from './checkout.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 import {MOCK_CART_ITEMS} from '../../.storybook/mock-data';
 
 const meta: Meta<CheckoutComponent> = {
@@ -25,7 +25,7 @@ export const WithItems: Story = {
   name: 'With Cart Items',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({cartItems: MOCK_CART_ITEMS})],
+      providers: [...createMockStoreProviders({cartItems: MOCK_CART_ITEMS})],
     }),
   ],
 };
@@ -34,7 +34,7 @@ export const EmptyCart: Story = {
   name: 'Empty Cart',
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({cartItems: []})],
+      providers: [...createMockStoreProviders({cartItems: []})],
     }),
   ],
 };

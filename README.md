@@ -18,13 +18,13 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **Advanced Search**: Case-insensitive, partial matching for Title, Author, or ISBN using MongoDB Regex, with debounced input to optimize performance.
 - **Dynamic Filtering**: Narrow down results by Category with real-time book count badges.
 - **Smart Sorting**: Fully functional server-side sorting by Price, Rating, Title, and New Arrivals.
-- **Performance Optimized**: Reactive Signal-based state management with loop-free updates and RxJS debouncing.
+- **Performance Optimized**: NgRx store-based state management with selector signals, effects for async operations, and RxJS debouncing.
 - **Dual View Modes**: Seamlessly toggle between a visual **Grid View** and a detailed **List View**.
 - **Rich Details**: Comprehensive book pages featuring interactive ratings, chip-based genres, and customer reviews.
 
 ### 3️⃣ Shopping Experience
 
-- **Signal-Based Cart**: High-performance, real-time cart updates using Angular Signals.
+- **NgRx Cart State**: High-performance, real-time cart updates managed via the NgRx cart feature slice.
 - **Quantity Management**: Intuitive controls to update or remove items directly in the cart.
 - **Wizard-Style Checkout**: A smooth, multi-step `mat-stepper` flow for Shipping, Payment, and Review.
 
@@ -43,7 +43,7 @@ A modern, production-ready, full-stack E-commerce application for a Library/Book
 - **Angular Material UI**: Integrated a comprehensive Design System using `mat-card`, `mat-toolbar`, `mat-stepper`, `mat-table`, and more.
 - **Deferrable Views (`@defer`)**: Optimized performance using the latest Angular deferral concepts with custom `@loading`, `@placeholder`, and `@error` states.
 - **Standalone Components**: Modular architecture without the overhead of NgModules.
-- **Angular Signals**: Modern, fine-grained reactivity for state management (Cart, Books, User, Loading states).
+- **NgRx State Management**: Centralized store with 5 feature slices (books, categories, cart, orders, auth), actions, reducers, selectors, and effects. Components read state via `store.selectSignal()` for signal-based reactivity.
 - **Reactive Routing**: Seamless navigation with lazy loading and query parameter handling.
 - **SCSS Architecture**: Professional styling with global variables, mixins, and a responsive Design System.
 
@@ -107,7 +107,8 @@ GitHub Actions pipelines run on every pull request to `main`:
 │   │   ├── .storybook/     # Shared mock data & providers for stories
 │   │   ├── components/     # Reusable UI components (Navbar, etc.)
 │   │   ├── pages/          # Page-level components (Home, Books, Admin, etc.)
-│   │   ├── services/       # State management and API services (Signals)
+│   │   ├── services/       # API services (BooksApi, CategoriesApi, OrdersApi)
+│   │   ├── store/          # NgRx state management (books, categories, cart, orders, auth)
 │   │   ├── models/         # Shared TypeScript interfaces
 │   │   ├── config/         # API and App configurations
 │   │   └── styles/         # Global SCSS variables and mixins

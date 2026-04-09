@@ -91,3 +91,10 @@ export interface Category {
   description?: string;
   bookCount?: number;
 }
+
+export interface Pagination {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}

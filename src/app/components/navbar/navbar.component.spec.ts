@@ -1,16 +1,27 @@
-import {signal, WritableSignal} from '@angular/core';
-import {MockBuilder, MockRender, ngMocks} from 'ng-mocks';
+import {MockBuilder, MockRender} from 'ng-mocks';
+import {provideMockStore, MockStore} from '@ngrx/store/testing';
 
-import {CartItem, User, UserRole} from '../../models/models';
-import {MockDataService} from '../../services/mock-data.service';
+import {User, UserRole} from '../../models/models';
 import {NavbarComponent} from './navbar.component';
+import {selectCurrentUser} from '../../store/auth/auth.selectors';
+import {selectCartCount} from '../../store/cart/cart.selectors';
 
 describe('NavbarComponent', () => {
+  let store: MockStore;
+
   beforeEach(() => {
-    return MockBuilder(NavbarComponent).mock(MockDataService, {
-      currentUser: signal(null),
-      cartItems: signal([]),
-    });
+    return MockBuilder(NavbarComponent).provide(
+      provideMockStore({
+        selectors: [
+          {selector: selectCurrentUser, value: null},
+          {selector: selectCartCount, value: 0},
+        ],
+      }),
+    );
+  });
+
+  afterEach(() => {
+    store?.resetSelectors();
   });
 
   it('should create', () => {
@@ -18,7 +29,7 @@ describe('NavbarComponent', () => {
     expect(fixture.point.componentInstance).toBeTruthy();
   });
 
-  it('should expose user signal from MockDataService', () => {
+  it('should expose user signal from store', () => {
     const mockUser: User = {
       id: 'u1',
       name: 'John Doe',
@@ -28,8 +39,10 @@ describe('NavbarComponent', () => {
       orderHistoryIds: [],
       wishlistIds: [],
     };
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.currentUser as WritableSignal<User | null>).set(mockUser);
+
+    store = MockRender(NavbarComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectCurrentUser, mockUser);
+    store.refreshState();
 
     const fixture = MockRender(NavbarComponent);
     fixture.detectChanges();
@@ -37,13 +50,10 @@ describe('NavbarComponent', () => {
     expect(fixture.point.componentInstance.user()).toEqual(mockUser);
   });
 
-  it('should compute cart count from cart items', () => {
-    const mockItems: CartItem[] = [
-      {id: 'ci-1', bookId: '1', bookTitle: 'Book 1', bookPrice: 10, quantity: 2, imageUrl: ''},
-      {id: 'ci-2', bookId: '2', bookTitle: 'Book 2', bookPrice: 20, quantity: 3, imageUrl: ''},
-    ];
-    const mockDataService = ngMocks.get(MockDataService);
-    (mockDataService.cartItems as WritableSignal<CartItem[]>).set(mockItems);
+  it('should compute cart count from store', () => {
+    store = MockRender(NavbarComponent).point.injector.get(MockStore);
+    store.overrideSelector(selectCartCount, 5);
+    store.refreshState();
 
     const fixture = MockRender(NavbarComponent);
     fixture.detectChanges();

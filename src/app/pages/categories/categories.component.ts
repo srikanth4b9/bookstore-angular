@@ -4,7 +4,12 @@ import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MockDataService} from '../../services/mock-data.service';
+import {Store} from '@ngrx/store';
+
+import {
+  selectAllCategories,
+  selectCategoriesLoading,
+} from '../../store/categories/categories.selectors';
 
 @Component({
   selector: 'app-categories',
@@ -14,7 +19,8 @@ import {MockDataService} from '../../services/mock-data.service';
   styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent {
-  private mockData = inject(MockDataService);
-  categories = this.mockData.categories;
-  isLoading = this.mockData.isLoading;
+  private store = inject(Store);
+
+  categories = this.store.selectSignal(selectAllCategories);
+  isLoading = this.store.selectSignal(selectCategoriesLoading);
 }

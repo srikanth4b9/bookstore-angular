@@ -125,7 +125,7 @@ src/
   app/
     .storybook/       # Shared mock data & providers for stories
       mock-data.ts    # Reusable mock books, users, orders, etc.
-      mock-providers.ts # createMockDataService() factory
+      mock-providers.ts # Mock store providers for Storybook stories
     components/       # Shared UI components
       navbar/         # Top navigation bar
     config/           # Frontend configuration
@@ -133,8 +133,13 @@ src/
     models/           # TypeScript interfaces and enums
       models.ts       # Book, User, Order, Cart, Category, etc.
     pages/            # Route-level components (each has *.stories.ts)
-    services/         # Angular services (state + API calls)
-      mock-data.service.ts
+    services/         # API services (BooksApi, CategoriesApi, OrdersApi)
+    store/            # NgRx state management
+      books/          # Books feature (actions, reducer, selectors, effects)
+      categories/     # Categories feature (actions, reducer, selectors, effects)
+      cart/            # Cart feature (actions, reducer, selectors)
+      orders/          # Orders feature (actions, reducer, selectors, effects)
+      auth/            # Auth feature (actions, reducer, selectors)
   styles.scss         # Global Material theme
   test-setup.ts       # Jest test environment config
   main.ts             # App entry point

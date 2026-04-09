@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/angular';
 import {applicationConfig} from '@storybook/angular';
 import {AdminComponent} from './admin.component';
-import {createMockDataService} from '../../.storybook/mock-providers';
+import {createMockStoreProviders} from '../../.storybook/mock-providers';
 import {MOCK_BOOKS} from '../../.storybook/mock-data';
 
 const meta: Meta<AdminComponent> = {
@@ -18,7 +18,7 @@ const meta: Meta<AdminComponent> = {
   },
   decorators: [
     applicationConfig({
-      providers: [createMockDataService({books: MOCK_BOOKS})],
+      providers: [...createMockStoreProviders({books: MOCK_BOOKS})],
     }),
   ],
 };
